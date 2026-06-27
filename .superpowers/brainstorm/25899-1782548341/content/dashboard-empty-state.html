@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InstantCreator — Dashboard Empty State</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Serif+Display&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --canvas: #000000;
+    --ink: #fcfdff;
+    --body: rgba(252,253,255,0.86);
+    --charcoal: rgba(252,253,255,0.7);
+    --mute: #a1a4a5;
+    --surface-card: #0a0a0c;
+    --surface-elevated: #101012;
+    --hairline: rgba(255,255,255,0.06);
+    --hairline-strong: rgba(255,255,255,0.14);
+    --accent-green: #11ff99;
+    --accent-blue: #3b9eff;
+  }
+  body { background:var(--canvas); color:var(--ink); font-family:'Inter',system-ui,sans-serif; display:flex; min-height:100vh; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes dotPulse { 0%,100% { box-shadow:0 0 0 0 rgba(17,255,153,0.4); } 50% { box-shadow:0 0 0 6px rgba(17,255,153,0); } }
+  @keyframes shimmer { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
+
+  .sidebar { width:240px; background:var(--surface-card); border-right:1px solid var(--hairline-strong); padding:24px 0; display:flex; flex-direction:column; animation:fadeIn 0.5s ease; flex-shrink:0; }
+  .sidebar-logo { padding:0 20px 24px; font-weight:600; font-size:15px; letter-spacing:-0.3px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--hairline); }
+  .sidebar-logo .dot { width:7px; height:7px; border-radius:50%; background:var(--accent-green); animation:dotPulse 2s ease-in-out infinite; }
+  .sidebar-section { padding:16px 12px 8px; font-size:11px; font-weight:500; letter-spacing:1.2px; text-transform:uppercase; color:rgba(252,253,255,0.3); }
+  .sidebar-item { display:flex; align-items:center; gap:10px; padding:9px 20px; font-size:14px; color:var(--charcoal); cursor:pointer; transition:color 0.2s,background 0.2s; position:relative; }
+  .sidebar-item:hover { color:var(--ink); background:rgba(255,255,255,0.03); }
+  .sidebar-item.active { color:var(--ink); background:rgba(255,255,255,0.05); }
+  .sidebar-item.active::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%); width:2px; height:20px; background:var(--ink); border-radius:1px; }
+  .sidebar-item .icon { font-size:16px; width:20px; text-align:center; }
+  .sidebar-item .badge { margin-left:auto; background:var(--surface-elevated); border:1px solid var(--hairline); padding:1px 7px; border-radius:9999px; font-size:11px; color:var(--mute); }
+  .sidebar-bottom { margin-top:auto; padding:16px 20px; border-top:1px solid var(--hairline); display:flex; align-items:center; gap:10px; }
+  .sidebar-avatar { width:32px; height:32px; border-radius:50%; background:var(--surface-elevated); border:1px solid var(--hairline-strong); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; }
+  .sidebar-user { font-size:13px; }
+  .sidebar-user-name { font-weight:500; }
+  .sidebar-user-plan { font-size:11px; color:var(--mute); }
+
+  .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding:16px 32px; border-bottom:1px solid var(--hairline); animation:fadeIn 0.5s ease; }
+  .topbar-title { font-size:16px; font-weight:500; }
+  .topbar-actions { display:flex; gap:10px; align-items:center; }
+  .btn-sm { padding:6px 14px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.2s; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+  .btn-sm-primary { background:var(--ink); color:var(--canvas); border:none; }
+  .btn-sm-primary:hover { background:#e8e9eb; transform:translateY(-1px); }
+  .btn-sm-ghost { background:var(--surface-elevated); color:var(--ink); border:1px solid var(--hairline-strong); }
+  .btn-sm-ghost:hover { border-color:rgba(255,255,255,0.25); }
+
+  .content { flex:1; padding:48px 32px; overflow-y:auto; }
+
+  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:32px; animation:fadeUp 0.6s ease 0.15s both; }
+  .stat-mini { background:var(--surface-card); border:1px solid var(--hairline); border-radius:10px; padding:16px; }
+  .stat-mini-label { font-size:12px; color:var(--mute); margin-bottom:6px; }
+  .stat-mini-value { font-family:'DM Serif Display',Georgia,serif; font-size:24px; color:rgba(252,253,255,0.3); }
+  .stat-mini-shimmer { height:8px; margin-top:8px; border-radius:4px; background:linear-gradient(90deg,var(--surface-elevated),rgba(255,255,255,0.04),var(--surface-elevated)); background-size:200% 100%; animation:shimmer 2s ease-in-out infinite; }
+
+  .progress-bar { margin-bottom:32px; animation:fadeUp 0.6s ease 0.1s both; }
+  .progress-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .progress-label { font-size:13px; color:var(--mute); }
+  .progress-count { font-size:13px; color:var(--charcoal); }
+  .progress-track { height:3px; background:var(--surface-elevated); border-radius:2px; overflow:hidden; }
+  .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--accent-blue),var(--accent-green)); border-radius:2px; transition:width 1s ease 0.5s; }
+
+  .empty-state { max-width:640px; margin:0 auto; animation:fadeUp 0.6s ease 0.2s both; }
+  .empty-welcome { text-align:center; margin-bottom:48px; }
+  .empty-welcome h1 { font-family:'DM Serif Display',Georgia,serif; font-size:36px; font-weight:400; letter-spacing:-0.5px; margin-bottom:12px; }
+  .empty-welcome p { font-size:16px; color:var(--charcoal); line-height:1.5; }
+
+  .setup-checklist { display:flex; flex-direction:column; gap:12px; }
+  .checklist-card {
+    background:var(--surface-card); border:1px solid var(--hairline-strong); border-radius:12px;
+    padding:24px 28px; position:relative; overflow:hidden;
+    transition:border-color 0.3s,transform 0.3s,box-shadow 0.3s;
+    display:flex; align-items:center; gap:20px; cursor:pointer;
+  }
+  .checklist-card:hover { border-color:rgba(255,255,255,0.25); transform:translateY(-1px); box-shadow:0 4px 20px rgba(0,0,0,0.3); }
+  .checklist-card::before,.checklist-card::after { content:'+'; position:absolute; font-family:'Inter',monospace; font-size:13px; font-weight:300; color:rgba(255,255,255,0.1); transition:color 0.3s,transform 0.3s; line-height:1; }
+  .checklist-card::before { top:8px; left:10px; }
+  .checklist-card::after { bottom:8px; right:10px; }
+  .checklist-card:hover::before,.checklist-card:hover::after { color:rgba(255,255,255,0.3); }
+  .checklist-card:hover::before { transform:rotate(90deg); }
+
+  .checklist-number { width:40px; height:40px; border-radius:10px; background:var(--surface-elevated); border:1px solid var(--hairline-strong); display:flex; align-items:center; justify-content:center; font-family:'DM Serif Display',Georgia,serif; font-size:18px; flex-shrink:0; transition:border-color 0.3s,background 0.3s; }
+  .checklist-card:hover .checklist-number { border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.06); }
+  .checklist-card.highlight .checklist-number { border-color:var(--accent-blue); background:rgba(59,158,255,0.08); color:var(--accent-blue); }
+  .checklist-info { flex:1; }
+  .checklist-title { font-size:15px; font-weight:500; margin-bottom:4px; }
+  .checklist-desc { font-size:13px; color:var(--charcoal); line-height:1.4; }
+  .checklist-arrow { font-size:16px; color:var(--mute); transition:transform 0.3s,color 0.3s; }
+  .checklist-card:hover .checklist-arrow { transform:translateX(3px); color:var(--ink); }
+  .checklist-tag { font-size:11px; color:var(--mute); border:1px solid var(--hairline); padding:2px 8px; border-radius:9999px; margin-left:8px; transition:border-color 0.3s; }
+  .checklist-card:hover .checklist-tag { border-color:var(--hairline-strong); }
+  .checklist-card.highlight .checklist-tag { border-color:rgba(59,158,255,0.3); color:var(--accent-blue); }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo"><span class="dot"></span> InstantCreator</div>
+  <div class="sidebar-section">Main</div>
+  <div class="sidebar-item active"><span class="icon">◻</span> Dashboard</div>
+  <div class="sidebar-item"><span class="icon">📦</span> Products <span class="badge">0</span></div>
+  <div class="sidebar-item"><span class="icon">👥</span> Influencers <span class="badge">0</span></div>
+  <div class="sidebar-item"><span class="icon">📋</span> Orders <span class="badge">0</span></div>
+  <div class="sidebar-item"><span class="icon">💰</span> Payouts</div>
+  <div class="sidebar-section">Settings</div>
+  <div class="sidebar-item"><span class="icon">⚙</span> Settings</div>
+  <div class="sidebar-bottom">
+    <div class="sidebar-avatar">N</div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name">Noor's Brand</div>
+      <div class="sidebar-user-plan">Free trial</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Dashboard</div>
+    <div class="topbar-actions">
+      <button class="btn-sm btn-sm-ghost">📖 Docs</button>
+      <button class="btn-sm btn-sm-primary">+ Connect Shopify</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-mini"><div class="stat-mini-label">Total Orders</div><div class="stat-mini-value">—</div><div class="stat-mini-shimmer"></div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Active Influencers</div><div class="stat-mini-value">—</div><div class="stat-mini-shimmer"></div></div>
+      <div class="stat-mini"><div class="stat-mini-label">RTO Rate</div><div class="stat-mini-value">—</div><div class="stat-mini-shimmer"></div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Commission Due</div><div class="stat-mini-value">—</div><div class="stat-mini-shimmer"></div></div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-header"><span class="progress-label">Setup progress</span><span class="progress-count">0 of 4 complete</span></div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    <div class="empty-state">
+      <div class="empty-welcome">
+        <h1>Welcome to InstantCreator</h1>
+        <p>Complete these steps to start tracking influencer orders and commissions.</p>
+      </div>
+      <div class="setup-checklist">
+        <div class="checklist-card highlight" style="animation:fadeUp 0.6s ease 0.3s both">
+          <div class="checklist-number">1</div>
+          <div class="checklist-info"><div class="checklist-title">Connect your Shopify store <span class="checklist-tag">Required</span></div><div class="checklist-desc">One-click OAuth. We'll sync your products and start tracking orders.</div></div>
+          <div class="checklist-arrow">→</div>
+        </div>
+        <div class="checklist-card" style="animation:fadeUp 0.6s ease 0.4s both">
+          <div class="checklist-number">2</div>
+          <div class="checklist-info"><div class="checklist-title">List your first product</div><div class="checklist-desc">Choose which products influencers can promote and set commission rates.</div></div>
+          <div class="checklist-arrow">→</div>
+        </div>
+        <div class="checklist-card" style="animation:fadeUp 0.6s ease 0.5s both">
+          <div class="checklist-number">3</div>
+          <div class="checklist-info"><div class="checklist-title">Invite your first influencer</div><div class="checklist-desc">Send an invite by email or phone. They'll get a unique discount code.</div></div>
+          <div class="checklist-arrow">→</div>
+        </div>
+        <div class="checklist-card" style="animation:fadeUp 0.6s ease 0.6s both">
+          <div class="checklist-number">4</div>
+          <div class="checklist-info"><div class="checklist-title">Set your RTO threshold</div><div class="checklist-desc">Default is 25%. Influencers above this get auto-flagged after 30 orders.</div></div>
+          <div class="checklist-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

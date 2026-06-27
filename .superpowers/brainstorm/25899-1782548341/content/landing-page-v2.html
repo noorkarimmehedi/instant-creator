@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InstantCreator — Landing Page v2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Serif+Display&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --canvas: #000000;
+    --ink: #fcfdff;
+    --body: rgba(252,253,255,0.86);
+    --charcoal: rgba(252,253,255,0.7);
+    --mute: #a1a4a5;
+    --surface-card: #0a0a0c;
+    --surface-elevated: #101012;
+    --surface-deep: #06060a;
+    --hairline: rgba(255,255,255,0.06);
+    --hairline-strong: rgba(255,255,255,0.14);
+    --accent-orange: #ff801f;
+    --accent-blue: #3b9eff;
+    --accent-green: #11ff99;
+    --accent-red: #ff2047;
+    --accent-yellow: #ffc53d;
+  }
+
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes glowPulse {
+    0%,100% { opacity:0.15; transform:translate(-50%,-50%) scale(1); }
+    50% { opacity:0.25; transform:translate(-50%,-50%) scale(1.05); }
+  }
+  @keyframes lineGrow { from { width:0; } to { width:100%; } }
+  @keyframes dotPulse {
+    0%,100% { box-shadow:0 0 0 0 rgba(17,255,153,0.4); }
+    50% { box-shadow:0 0 0 6px rgba(17,255,153,0); }
+  }
+
+  .animate-on-scroll { opacity:0; transform:translateY(30px); transition:opacity 0.7s ease, transform 0.7s ease; }
+  .animate-on-scroll.visible { opacity:1; transform:translateY(0); }
+  .stagger-1 { transition-delay:0.1s; }
+  .stagger-2 { transition-delay:0.2s; }
+  .stagger-3 { transition-delay:0.3s; }
+  .stagger-4 { transition-delay:0.4s; }
+
+  /* Swiss Card */
+  .swiss-card {
+    background: var(--surface-card);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 12px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+  .swiss-card:hover {
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .swiss-card::before, .swiss-card::after {
+    content: '+';
+    position: absolute;
+    font-family: 'Inter', monospace;
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.12);
+    transition: color 0.3s, transform 0.3s;
+    line-height: 1;
+  }
+  .swiss-card::before { top:10px; left:12px; }
+  .swiss-card::after { bottom:10px; right:12px; }
+  .swiss-card:hover::before, .swiss-card:hover::after { color:rgba(255,255,255,0.35); }
+  .swiss-card:hover::before { transform:rotate(90deg); }
+  .swiss-corners::before, .swiss-corners::after {
+    content: '+';
+    position: absolute;
+    font-family: 'Inter', monospace;
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.12);
+    transition: color 0.3s, transform 0.3s;
+    line-height: 1;
+  }
+  .swiss-corners::before { top:10px; right:12px; }
+  .swiss-corners::after { bottom:10px; left:12px; }
+  .swiss-card:hover .swiss-corners::before, .swiss-card:hover .swiss-corners::after { color:rgba(255,255,255,0.35); }
+  .swiss-card:hover .swiss-corners::after { transform:rotate(90deg); }
+
+  /* Nav */
+  nav {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 40px;
+    border-bottom:1px solid var(--hairline);
+    position:sticky; top:0;
+    background:rgba(0,0,0,0.85);
+    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    z-index:100;
+    animation:fadeIn 0.6s ease;
+  }
+  .nav-logo { font-weight:600; font-size:17px; letter-spacing:-0.5px; display:flex; align-items:center; gap:8px; }
+  .nav-logo .dot { width:8px; height:8px; border-radius:50%; background:var(--accent-green); animation:dotPulse 2s ease-in-out infinite; }
+  .nav-links { display:flex; gap:28px; align-items:center; font-size:14px; color:var(--charcoal); }
+  .nav-links a { color:inherit; text-decoration:none; transition:color 0.2s; position:relative; }
+  .nav-links a:hover { color:var(--ink); }
+  .nav-links a::after { content:''; position:absolute; bottom:-4px; left:0; width:0; height:1px; background:var(--ink); transition:width 0.3s ease; }
+  .nav-links a:hover::after { width:100%; }
+  .btn-primary { background:var(--ink); color:var(--canvas); padding:8px 20px; border-radius:8px; font-weight:500; font-size:14px; text-decoration:none; transition:background 0.2s,transform 0.15s; display:inline-block; }
+  .btn-primary:hover { background:#e8e9eb; transform:translateY(-1px); }
+  .btn-outline { background:transparent; color:var(--ink); padding:8px 20px; border-radius:8px; font-weight:500; font-size:14px; border:1px solid var(--hairline-strong); text-decoration:none; transition:border-color 0.2s,background 0.2s,transform 0.15s; display:inline-block; }
+  .btn-outline:hover { border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.04); transform:translateY(-1px); }
+
+  /* Hero */
+  .hero { text-align:center; padding:120px 40px 100px; position:relative; overflow:hidden; }
+  .hero-glow { position:absolute; top:50%; left:50%; width:800px; height:600px; background:radial-gradient(ellipse,rgba(255,89,0,0.08),transparent 70%); transform:translate(-50%,-50%); animation:glowPulse 6s ease-in-out infinite; pointer-events:none; }
+  .hero-badge { display:inline-flex; align-items:center; gap:8px; background:var(--surface-elevated); border:1px solid var(--hairline-strong); color:var(--body); padding:6px 16px; border-radius:9999px; font-size:13px; margin-bottom:32px; animation:fadeUp 0.8s ease 0.2s both; position:relative; }
+  .hero-badge .badge-dot { width:6px; height:6px; border-radius:50%; background:var(--accent-green); }
+  .hero h1 { font-family:'DM Serif Display',Georgia,serif; font-size:80px; font-weight:400; line-height:1.0; letter-spacing:-2px; margin-bottom:28px; max-width:800px; margin-left:auto; margin-right:auto; animation:fadeUp 0.8s ease 0.4s both; position:relative; }
+  .hero h1 .accent-word { background:linear-gradient(135deg,var(--accent-orange),var(--accent-yellow)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .hero-sub { font-size:18px; color:var(--charcoal); max-width:520px; margin:0 auto 40px; line-height:1.6; animation:fadeUp 0.8s ease 0.6s both; position:relative; }
+  .hero-ctas { display:flex; gap:12px; justify-content:center; animation:fadeUp 0.8s ease 0.8s both; position:relative; }
+
+  /* Section shared */
+  section { padding:96px 40px; position:relative; }
+  .section-line { width:100%; height:1px; background:var(--hairline); position:relative; overflow:hidden; }
+  .section-line::after { content:''; position:absolute; top:0; left:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); animation:lineGrow 1.5s ease forwards; }
+  .section-header { text-align:center; margin-bottom:56px; }
+  .section-header h2 { font-family:'DM Serif Display',Georgia,serif; font-size:48px; font-weight:400; line-height:1.05; letter-spacing:-1px; }
+  .section-header p { font-size:17px; color:var(--charcoal); margin-top:14px; line-height:1.5; }
+  .section-label { font-size:12px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--mute); margin-bottom:16px; }
+
+  /* Problem */
+  .problem-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:1000px; margin:0 auto; }
+  .stat-number { font-family:'DM Serif Display',Georgia,serif; font-size:48px; font-weight:400; margin-bottom:12px; }
+  .stat-line { width:32px; height:2px; margin:16px 0; border-radius:1px; }
+  .stat-desc { font-size:14px; color:var(--charcoal); line-height:1.5; }
+
+  /* Steps */
+  .steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; max-width:1000px; margin:0 auto; position:relative; }
+  .steps-grid::before { content:''; position:absolute; top:36px; left:16.66%; right:16.66%; height:1px; background:linear-gradient(90deg,transparent,var(--hairline-strong),transparent); }
+  .step-card { text-align:center; }
+  .step-number { width:56px; height:56px; border-radius:14px; background:var(--surface-elevated); border:1px solid var(--hairline-strong); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-family:'DM Serif Display',Georgia,serif; font-size:22px; transition:border-color 0.3s,background 0.3s,transform 0.3s; position:relative; z-index:1; }
+  .step-card:hover .step-number { border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.08); transform:scale(1.05); }
+  .step-card h3 { font-size:17px; font-weight:500; margin-bottom:8px; }
+  .step-card p { font-size:14px; color:var(--charcoal); line-height:1.5; max-width:260px; margin:0 auto; }
+
+  /* Features */
+  .features-section { position:relative; overflow:hidden; }
+  .features-glow { position:absolute; top:0; left:50%; width:900px; height:500px; background:radial-gradient(ellipse,rgba(0,117,255,0.12),transparent 70%); transform:translateX(-50%); animation:glowPulse 8s ease-in-out infinite; pointer-events:none; }
+  .features-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; max-width:1000px; margin:0 auto; position:relative; }
+  .feature-icon { width:40px; height:40px; border-radius:10px; background:var(--surface-elevated); border:1px solid var(--hairline-strong); display:flex; align-items:center; justify-content:center; margin-bottom:16px; font-size:18px; transition:transform 0.3s,border-color 0.3s; }
+  .swiss-card:hover .feature-icon { transform:scale(1.1); border-color:rgba(255,255,255,0.3); }
+  .feature-title { font-size:17px; font-weight:500; margin-bottom:8px; }
+  .feature-desc { font-size:14px; color:var(--charcoal); line-height:1.6; }
+  .feature-tag { display:inline-block; margin-top:14px; font-size:12px; color:var(--mute); padding:3px 10px; border:1px solid var(--hairline); border-radius:9999px; transition:border-color 0.3s; }
+  .swiss-card:hover .feature-tag { border-color:var(--hairline-strong); }
+
+  /* Pricing */
+  .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:1000px; margin:0 auto; }
+  .pricing-card { display:flex; flex-direction:column; }
+  .pricing-card.featured { background:var(--surface-elevated); }
+  .pricing-badge { display:none; position:absolute; top:12px; right:12px; background:var(--canvas); border:1px solid var(--hairline-strong); padding:3px 10px; border-radius:9999px; font-size:11px; color:var(--body); }
+  .pricing-card.featured .pricing-badge { display:inline-flex; }
+  .pricing-tier-name { font-size:14px; color:var(--charcoal); margin-bottom:6px; }
+  .pricing-price { font-family:'DM Serif Display',Georgia,serif; font-size:44px; font-weight:400; letter-spacing:-1px; margin-bottom:2px; }
+  .pricing-period { font-size:13px; color:rgba(252,253,255,0.4); margin-bottom:28px; }
+  .pricing-features { list-style:none; font-size:13px; color:var(--charcoal); flex:1; }
+  .pricing-features li { padding:8px 0; border-bottom:1px solid var(--hairline); display:flex; align-items:center; gap:10px; }
+  .pricing-features li::before { content:'→'; color:var(--mute); font-size:12px; }
+  .pricing-cta { margin-top:28px; text-align:center; padding:10px; border:1px solid var(--hairline-strong); border-radius:8px; font-size:14px; font-weight:500; transition:background 0.2s,border-color 0.2s,transform 0.15s; cursor:pointer; }
+  .pricing-cta:hover { border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.04); transform:translateY(-1px); }
+  .pricing-card.featured .pricing-cta { background:var(--ink); color:var(--canvas); border-color:var(--ink); }
+  .pricing-card.featured .pricing-cta:hover { background:#e8e9eb; }
+
+  /* Footer */
+  footer { padding:56px 40px; border-top:1px solid var(--hairline); }
+  .footer-inner { display:flex; justify-content:space-between; align-items:center; max-width:1000px; margin:0 auto; font-size:13px; color:rgba(252,253,255,0.4); }
+  .footer-links { display:flex; gap:24px; }
+  .footer-links a { color:inherit; text-decoration:none; transition:color 0.2s; }
+  .footer-links a:hover { color:var(--charcoal); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span class="dot"></span> InstantCreator</div>
+  <div class="nav-links">
+    <a href="#">Features</a>
+    <a href="#">Pricing</a>
+    <a href="#">For Creators</a>
+    <a href="#" class="btn-primary">Get Started</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><span class="badge-dot"></span> Bangladesh's First Influencer-Brand Marketplace</div>
+  <h1>Track orders.<br>Filter <span class="accent-word">fraud</span>.<br>Pay creators.</h1>
+  <p class="hero-sub">The only platform that connects Shopify brands with influencers — and catches fake orders before you pay commission.</p>
+  <div class="hero-ctas">
+    <a href="#" class="btn-primary">Start Free Trial</a>
+    <a href="#" class="btn-outline">See How It Works</a>
+  </div>
+</section>
+
+<div class="section-line"></div>
+
+<section>
+  <div class="section-header">
+    <div class="section-label">The Problem</div>
+    <h2>Influencer campaigns are<br>bleeding money</h2>
+  </div>
+  <div class="problem-grid">
+    <div class="swiss-card animate-on-scroll stagger-1"><div class="swiss-corners"></div>
+      <div class="stat-number" style="color:var(--accent-red)">৳5L+</div>
+      <div class="stat-line" style="background:var(--accent-red)"></div>
+      <div class="stat-desc">Lost monthly to fake COD orders from fraudulent influencers</div>
+    </div>
+    <div class="swiss-card animate-on-scroll stagger-2"><div class="swiss-corners"></div>
+      <div class="stat-number" style="color:var(--accent-orange)">40%+</div>
+      <div class="stat-line" style="background:var(--accent-orange)"></div>
+      <div class="stat-desc">Average RTO rate on unvetted influencer-driven campaigns</div>
+    </div>
+    <div class="swiss-card animate-on-scroll stagger-3"><div class="swiss-corners"></div>
+      <div class="stat-number" style="color:var(--accent-yellow)">Zero</div>
+      <div class="stat-line" style="background:var(--accent-yellow)"></div>
+      <div class="stat-desc">Tools built for BD's COD market to track influencer performance</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-line"></div>
+
+<section>
+  <div class="section-header">
+    <div class="section-label">How It Works</div>
+    <h2>Three steps to profitable<br>influencer campaigns</h2>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card animate-on-scroll stagger-1"><div class="step-number">1</div><h3>Connect Shopify</h3><p>One-click OAuth. Your products and orders sync automatically.</p></div>
+    <div class="step-card animate-on-scroll stagger-2"><div class="step-number">2</div><h3>Invite Influencers</h3><p>Set commission rates. Each creator gets a unique discount code.</p></div>
+    <div class="step-card animate-on-scroll stagger-3"><div class="step-number">3</div><h3>Track & Pay</h3><p>See real delivery status. Pay only for orders that actually land.</p></div>
+  </div>
+</section>
+
+<div class="section-line"></div>
+
+<section class="features-section">
+  <div class="features-glow"></div>
+  <div class="section-header" style="position:relative"><div class="section-label">Features</div><h2>Built for Bangladesh's<br>COD market</h2></div>
+  <div class="features-grid">
+    <div class="swiss-card animate-on-scroll stagger-1"><div class="swiss-corners"></div>
+      <div class="feature-icon">⚡</div><div class="feature-title">RTO Fraud Detection</div>
+      <div class="feature-desc">Auto-flag influencers with return rates above 25%. Commission only triggers on delivered orders.</div>
+      <span class="feature-tag">Anti-fraud</span>
+    </div>
+    <div class="swiss-card animate-on-scroll stagger-2"><div class="swiss-corners"></div>
+      <div class="feature-icon">🔗</div><div class="feature-title">Shopify Integration</div>
+      <div class="feature-desc">Real-time order sync. Discount codes auto-generated per influencer. No manual tracking.</div>
+      <span class="feature-tag">One-click setup</span>
+    </div>
+    <div class="swiss-card animate-on-scroll stagger-3"><div class="swiss-corners"></div>
+      <div class="feature-icon">💸</div><div class="feature-title">bKash Payouts</div>
+      <div class="feature-desc">Pay influencers directly via bKash or bank transfer. No more screenshots and WhatsApp threads.</div>
+      <span class="feature-tag">Instant payout</span>
+    </div>
+    <div class="swiss-card animate-on-scroll stagger-4"><div class="swiss-corners"></div>
+      <div class="feature-icon">🔍</div><div class="feature-title">Creator Marketplace</div>
+      <div class="feature-desc">Browse verified influencers by niche, follower count, and RTO history. Find creators that convert.</div>
+      <span class="feature-tag">Discovery</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-line"></div>
+
+<section>
+  <div class="section-header"><div class="section-label">Pricing</div><h2>Simple, transparent pricing</h2><p>Start free. Scale when you're ready.</p></div>
+  <div class="pricing-grid">
+    <div class="swiss-card pricing-card animate-on-scroll stagger-1"><div class="swiss-corners"></div>
+      <div class="pricing-tier-name">Starter</div><div class="pricing-price">৳2,000</div><div class="pricing-period">/month</div>
+      <ul class="pricing-features"><li>Up to 10 influencers</li><li>1 Shopify store</li><li>Basic reports</li><li>Email support</li></ul>
+      <div class="pricing-cta">Get Started</div>
+    </div>
+    <div class="swiss-card pricing-card featured animate-on-scroll stagger-2"><div class="swiss-corners"></div>
+      <div class="pricing-badge">Popular</div>
+      <div class="pricing-tier-name">Growth</div><div class="pricing-price">৳5,000</div><div class="pricing-period">/month</div>
+      <ul class="pricing-features"><li>Up to 30 influencers</li><li>1 Shopify store</li><li>bKash payouts</li><li>RTO auto-flagging</li><li>Full reports</li></ul>
+      <div class="pricing-cta">Get Started</div>
+    </div>
+    <div class="swiss-card pricing-card animate-on-scroll stagger-3"><div class="swiss-corners"></div>
+      <div class="pricing-tier-name">Pro</div><div class="pricing-price">৳12,000</div><div class="pricing-period">/month</div>
+      <ul class="pricing-features"><li>Unlimited influencers</li><li>3 Shopify stores</li><li>bKash + Bank payouts</li><li>CSV exports</li><li>WhatsApp support</li></ul>
+      <div class="pricing-cta">Get Started</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>© 2026 InstantCreator · Arc Lab Technology</div>
+    <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
