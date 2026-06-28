@@ -33,9 +33,9 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <PressButton href="/sign-up" tone="brand" className="text-[13px]">
+        <div className="flex items-center gap-2.5">
+          <ThemeToggle className="h-8 w-8 rounded-[10px]" />
+          <PressButton href="/sign-up" tone="brand" size="compact">
             Get Started
           </PressButton>
         </div>

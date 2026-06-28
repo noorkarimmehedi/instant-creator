@@ -1,10 +1,12 @@
 import Link from "next/link";
 
 type PressButtonTone = "brand" | "creator" | "ink";
+type PressButtonSize = "default" | "compact";
 
 interface PressButtonProps {
   children: React.ReactNode;
   tone?: PressButtonTone;
+  size?: PressButtonSize;
   href?: string;
   type?: "button" | "submit";
   className?: string;
@@ -28,20 +30,35 @@ const tones: Record<PressButtonTone, { front: string; edge: string; focus: strin
   },
 };
 
+const sizes: Record<PressButtonSize, { root: string; front: string; radius: string }> = {
+  default: {
+    root: "h-[42px] text-sm",
+    front: "h-10 px-5",
+    radius: "rounded-[12px]",
+  },
+  compact: {
+    root: "h-9 text-[13px]",
+    front: "h-[34px] px-4",
+    radius: "rounded-[10px]",
+  },
+};
+
 export function PressButton({
   children,
   tone = "brand",
+  size = "default",
   href,
   type = "button",
   className = "",
 }: PressButtonProps) {
   const toneClasses = tones[tone];
-  const classes = `group relative inline-block h-[42px] shrink-0 cursor-pointer border-0 bg-transparent p-0 font-sans text-sm font-semibold tracking-[-0.005em] text-white outline-offset-4 [-webkit-tap-highlight-color:transparent] focus-visible:rounded-[12px] focus-visible:outline-2 focus-visible:outline-offset-[6px] ${toneClasses.focus} ${className}`;
+  const sizeClasses = sizes[size];
+  const classes = `group relative inline-block ${sizeClasses.root} shrink-0 cursor-pointer border-0 bg-transparent p-0 font-sans font-semibold tracking-[-0.005em] text-white outline-offset-4 [-webkit-tap-highlight-color:transparent] focus-visible:${sizeClasses.radius} focus-visible:outline-2 focus-visible:outline-offset-[6px] ${toneClasses.focus} ${className}`;
   const content = (
     <>
-      <span className="absolute inset-0 rounded-[12px] bg-black/25 translate-y-px transition-transform duration-[600ms] ease-[cubic-bezier(0.3,0.7,0.4,1)] will-change-transform group-hover:translate-y-0.5 group-hover:duration-[250ms] group-hover:ease-[cubic-bezier(0.3,0.7,0.4,1.5)] group-active:translate-y-0 group-active:duration-[34ms]" />
-      <span className={`absolute inset-0 rounded-[12px] ${toneClasses.edge}`} />
-      <span className={`relative flex h-10 items-center justify-center rounded-[12px] px-5 text-white translate-y-[-2px] transition-transform duration-[600ms] ease-[cubic-bezier(0.3,0.7,0.4,1)] will-change-transform group-hover:translate-y-[-3px] group-hover:duration-[250ms] group-hover:ease-[cubic-bezier(0.3,0.7,0.4,1.5)] group-active:translate-y-[-1px] group-active:duration-[34ms] ${toneClasses.front}`}>
+      <span className={`absolute inset-0 ${sizeClasses.radius} bg-black/25 translate-y-px transition-transform duration-[600ms] ease-[cubic-bezier(0.3,0.7,0.4,1)] will-change-transform group-hover:translate-y-0.5 group-hover:duration-[250ms] group-hover:ease-[cubic-bezier(0.3,0.7,0.4,1.5)] group-active:translate-y-0 group-active:duration-[34ms]`} />
+      <span className={`absolute inset-0 ${sizeClasses.radius} ${toneClasses.edge}`} />
+      <span className={`relative flex ${sizeClasses.front} items-center justify-center ${sizeClasses.radius} text-white translate-y-[-2px] transition-transform duration-[600ms] ease-[cubic-bezier(0.3,0.7,0.4,1)] will-change-transform group-hover:translate-y-[-3px] group-hover:duration-[250ms] group-hover:ease-[cubic-bezier(0.3,0.7,0.4,1.5)] group-active:translate-y-[-1px] group-active:duration-[34ms] ${toneClasses.front}`}>
         {children}
       </span>
     </>
