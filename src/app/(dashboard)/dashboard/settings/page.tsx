@@ -42,7 +42,7 @@ export default async function SettingsPage() {
   return (
     <>
       <Topbar title="Settings" />
-      <div className="p-8 max-w-3xl space-y-6 animate-[fade-up_0.6s_ease-out_both]">
+      <div className="mx-auto w-full max-w-5xl p-4 sm:p-8 space-y-6 animate-[fade-up_0.6s_ease-out_both]">
         {/* Profile */}
         <SwissCard>
           <h2 className="text-lg font-medium text-ink mb-4">Profile</h2>
