@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -60,6 +61,19 @@ const settingsNav = [
   { href: "/creator/settings", label: "Settings", icon: SettingsIcon },
 ];
 
+function PendingDot() {
+  const { pending } = useLinkStatus();
+
+  return (
+    <span
+      aria-hidden="true"
+      className={`ml-auto h-1.5 w-1.5 rounded-full bg-current transition-opacity ${
+        pending ? "opacity-70 animate-pulse" : "opacity-0"
+      }`}
+    />
+  );
+}
+
 export function CreatorSidebarClient({
   displayName,
   verified,
@@ -94,6 +108,7 @@ export function CreatorSidebarClient({
             <Link key={item.href} href={item.href} className={navLinkClass(active)}>
               <item.icon className="h-4 w-4 shrink-0" />
               {item.label}
+              <PendingDot />
             </Link>
           );
         })}
@@ -107,6 +122,7 @@ export function CreatorSidebarClient({
             <Link key={item.href} href={item.href} className={navLinkClass(active)}>
               <item.icon className="h-4 w-4 shrink-0" />
               {item.label}
+              <PendingDot />
             </Link>
           );
         })}
