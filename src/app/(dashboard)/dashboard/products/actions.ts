@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
+import { readPercentageValue } from "@/lib/products/formatting";
 
 type Result = { ok: true } | { ok: false; error: string };
 
@@ -88,8 +89,39 @@ export async function addProductFromUrl(
   return { ok: true };
 }
 
+export async function updateProductTerms(
+  _prev: Result | null,
+  formData: FormData
+): Promise<Result> {
+  const { userId } = await auth();
+  if (!userId) return { ok: false, error: "Unauthorized" };
+
+  const productId = String(formData.get("product_id") ?? "").trim();
+  if (!productId) return { ok: false, error: "Missing product." };
+
+  const commissionPercentage = readPercentage(formData, "commission_percentage");
+  const couponDiscountPercentage = readPercentage(formData, "coupon_discount_percentage");
+  if (commissionPercentage === null || couponDiscountPercentage === null) {
+    return { ok: false, error: "Commission and coupon discount must be between 0 and 100%." };
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("products")
+    .update({
+      commission_percentage: commissionPercentage,
+      coupon_discount_percentage: couponDiscountPercentage,
+    })
+    .eq("id", productId)
+    .eq("clerk_user_id", userId);
+
+  if (error) return { ok: false, error: `Failed to update the product: ${error.message}` };
+
+  revalidatePath("/dashboard/products");
+  revalidatePath("/creator/products");
+  return { ok: true };
+}
+
 function readPercentage(formData: FormData, key: string) {
-  const value = Number(formData.get(key) ?? 0);
-  if (!Number.isFinite(value) || value < 0 || value > 100) return null;
-  return value;
+  return readPercentageValue(formData.get(key));
 }

@@ -1,10 +1,10 @@
-import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
 import { AddProductForm } from "./AddProductForm";
+import { ProductCard } from "./ProductCard";
 
 export default async function ProductsPage() {
   const { userId } = await auth();
@@ -48,39 +48,8 @@ export default async function ProductsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {products.map((p) => (
-                <a
-                  key={p.id}
-                  href={p.source_url ?? "#"}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group overflow-hidden rounded-lg border border-hairline bg-surface-card transition-colors hover:border-overlay-strong"
-                >
-                  <div className="relative aspect-square w-full bg-surface-elevated">
-                    {p.image_url ? (
-                      <Image
-                        src={p.image_url}
-                        alt={p.name}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-xs text-stone">
-                        No image
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-3">
-                    <p className="truncate text-sm text-ink">{p.name}</p>
-                    <p className="mt-1 text-xs text-mute">
-                      {p.price ? `$${p.price}` : "—"}
-                    </p>
-                    <p className="mt-2 text-xs text-charcoal">
-                      {p.commission_percentage}% commission · {p.coupon_discount_percentage}% coupon
-                    </p>
-                  </div>
-                </a>
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}

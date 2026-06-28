@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { formatTaka } from "@/lib/products/formatting";
 import { buildTrackedProductUrl } from "@/lib/shopify/discounts";
 import { generateShopifyCoupon } from "./actions";
 
@@ -68,7 +69,7 @@ export function ProductPromotionCard({
         <div>
           <p className="truncate text-sm text-ink">{product.name}</p>
           <p className="mt-1 text-xs text-mute">
-            {product.price ? `$${product.price}` : "Price unavailable"}
+            {formatTaka(product.price)}
           </p>
         </div>
 
