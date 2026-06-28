@@ -21,14 +21,25 @@ export async function GET(req: Request) {
 
   const cookieStore = await cookies();
   const savedState = cookieStore.get("shopify_state")?.value;
+  const clientId = cookieStore.get("shopify_client_id")?.value;
+  const clientSecret = cookieStore.get("shopify_client_secret")?.value;
 
   if (state !== savedState) {
     return NextResponse.json({ error: "Invalid state" }, { status: 403 });
   }
 
-  cookieStore.delete("shopify_state");
+  if (!clientId || !clientSecret) {
+    return NextResponse.json(
+      { error: "Missing Shopify OAuth credentials" },
+      { status: 400 }
+    );
+  }
 
-  const accessToken = await exchangeCodeForToken(shop, code);
+  cookieStore.delete("shopify_state");
+  cookieStore.delete("shopify_client_id");
+  cookieStore.delete("shopify_client_secret");
+
+  const accessToken = await exchangeCodeForToken(shop, code, clientId, clientSecret);
 
   const supabase = createSupabaseAdmin();
   await supabase
@@ -40,6 +51,22 @@ export async function GET(req: Request) {
       updated_at: new Date().toISOString(),
     })
     .eq("clerk_user_id", userId);
+
+  const webhookAddress = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/shopify`;
+  await fetch(`https://${shop}/admin/api/2024-10/webhooks.json`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Shopify-Access-Token": accessToken,
+    },
+    body: JSON.stringify({
+      webhook: {
+        topic: "orders/create",
+        address: webhookAddress,
+        format: "json",
+      },
+    }),
+  });
 
   return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings?connected=true`);
 }

@@ -1,0 +1,127 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { UserButton } from "@clerk/nextjs";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+
+function HomeIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" fillRule="evenodd" clipRule="evenodd" className={className} aria-hidden="true">
+      <path d="M2.52 7.823C2 8.77 2 9.915 2 12.203v1.522c0 3.9 0 5.851 1.172 7.063S6.229 22 10 22h4c3.771 0 5.657 0 6.828-1.212S22 17.626 22 13.725v-1.521c0-2.289 0-3.433-.52-4.381c-.518-.949-1.467-1.537-3.364-2.715l-2-1.241C14.111 2.622 13.108 2 12 2s-2.11.622-4.116 1.867l-2 1.241C3.987 6.286 3.038 6.874 2.519 7.823m6.927 7.575a.75.75 0 1 0-.894 1.204A5.77 5.77 0 0 0 12 17.75a5.77 5.77 0 0 0 3.447-1.148a.75.75 0 1 0-.894-1.204A4.27 4.27 0 0 1 12 16.25a4.27 4.27 0 0 1-2.553-.852" />
+    </svg>
+  );
+}
+
+function MarketplaceIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 2 3.75 6.5 12 11l8.25-4.5L12 2Z" />
+      <path d="M4 8.15v8.35L11 22v-8.35L4 8.15Z" />
+      <path d="M13 13.65V22l7-5.5V8.15l-7 5.5Z" />
+    </svg>
+  );
+}
+
+function OrdersIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M13 9.22a5 5 0 1 1 10 0V12h2V9.22a7 7 0 1 0-14 0V12h2Z" />
+      <path d="M25 12v3.1a1 1 0 1 1-2 0V12H13v3.1a1 1 0 0 1-2 0V12H4v20a2 2 0 0 0 2 2h24a2 2 0 0 0 2-2V12Z" />
+    </svg>
+  );
+}
+
+function EarningsIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H18a2 2 0 0 1 2 2v1H6.5A2.5 2.5 0 0 0 4 8.5v-3Z" />
+      <path d="M4 8.5A2.5 2.5 0 0 1 6.5 6H20a2 2 0 0 1 2 2v10.5a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 4 18.5v-10Zm14.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+    </svg>
+  );
+}
+
+function SettingsIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth={2} className={className} aria-hidden="true">
+      <path d="M12 3v2m0 0a7 7 0 0 0-7 7m7-7a7 7 0 0 1 7 7m0 0h2m-2 0a7 7 0 0 1-7 7m0 0v2m0-2a7 7 0 0 1-7-7m0 0H3m4.5-7.794l1 1.732M18.062 8.5l1.732-1M15.5 18.062l1 1.732M5.938 15.5l-1.732 1m0-9l1.732 1M15.5 5.938l1-1.732M18.062 15.5l1.732 1M8.5 18.062l-1 1.732M12 12L7 7.101M12 12l-1.812 6.762M12 12l6.762-1.812" />
+    </svg>
+  );
+}
+
+const mainNav = [
+  { href: "/creator", label: "Dashboard", icon: HomeIcon },
+  { href: "/creator/products", label: "Products", icon: MarketplaceIcon },
+  { href: "/creator/orders", label: "Orders", icon: OrdersIcon },
+  { href: "/creator/earnings", label: "Earnings", icon: EarningsIcon },
+];
+
+const settingsNav = [
+  { href: "/creator/settings", label: "Settings", icon: SettingsIcon },
+];
+
+export function CreatorSidebarClient({
+  displayName,
+  verified,
+}: {
+  displayName: string;
+  verified: boolean;
+}) {
+  const pathname = usePathname();
+  const navLinkClass = (active: boolean) => `
+    flex items-center gap-2 rounded-[8px] border px-2.5 py-1.5 text-sm transition-all duration-200
+    ${
+      active
+        ? "border-hairline-strong bg-surface-card text-ink font-medium"
+        : "border-transparent text-mute hover:border-hairline-strong hover:bg-surface-card hover:text-ink"
+    }
+  `;
+
+  return (
+    <aside className="flex h-screen w-[220px] flex-col border-r border-hairline bg-surface-deep">
+      <div className="flex h-14 items-center gap-2.5 border-b border-hairline px-4">
+        <span className="h-2 w-2 rounded-full bg-accent-orange animate-[dot-pulse_2s_ease-in-out_infinite]" />
+        <span className="text-[15px] font-medium tracking-tight text-ink">
+          Instant<span className="font-bold text-accent-red">/</span>Creator
+        </span>
+      </div>
+
+      <nav className="flex-1 px-3 py-4 space-y-0.5">
+        <p className="px-1 mb-2 text-sm font-medium text-ink">Creator Hub</p>
+        {mainNav.map((item) => {
+          const active = pathname === item.href;
+          return (
+            <Link key={item.href} href={item.href} className={navLinkClass(active)}>
+              <item.icon className="h-4 w-4 shrink-0" />
+              {item.label}
+            </Link>
+          );
+        })}
+
+        <div className="my-4 h-px bg-hairline" />
+
+        <p className="px-1 mb-2 text-sm font-medium text-ink">Settings</p>
+        {settingsNav.map((item) => {
+          const active = pathname === item.href;
+          return (
+            <Link key={item.href} href={item.href} className={navLinkClass(active)}>
+              <item.icon className="h-4 w-4 shrink-0" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="border-t border-hairline px-4 py-4 flex items-center gap-3">
+        <UserButton />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm text-ink">{displayName}</p>
+          <p className="text-xs text-mute">
+            {verified ? "Verified Creator" : "Creator"}
+          </p>
+        </div>
+        <ThemeToggle />
+      </div>
+    </aside>
+  );
+}

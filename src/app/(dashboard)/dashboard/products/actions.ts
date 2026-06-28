@@ -1,0 +1,95 @@
+"use server";
+
+import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+import { createSupabaseAdmin } from "@/lib/supabase/server";
+
+type Result = { ok: true } | { ok: false; error: string };
+
+export async function addProductFromUrl(
+  _prev: Result | null,
+  formData: FormData
+): Promise<Result> {
+  const { userId } = await auth();
+  if (!userId) return { ok: false, error: "Unauthorized" };
+
+  const url = String(formData.get("url") ?? "").trim();
+  if (!url) return { ok: false, error: "Please paste a product URL." };
+
+  const commissionPercentage = readPercentage(formData, "commission_percentage");
+  const couponDiscountPercentage = readPercentage(formData, "coupon_discount_percentage");
+  if (commissionPercentage === null || couponDiscountPercentage === null) {
+    return { ok: false, error: "Commission and coupon discount must be between 0 and 100%." };
+  }
+
+  const apiKey = process.env.FIRECRAWL_API_KEY;
+  if (!apiKey) return { ok: false, error: "FIRECRAWL_API_KEY is not configured." };
+
+  let payload: { data?: { product?: Record<string, unknown> } };
+  try {
+    const res = await fetch("https://api.firecrawl.dev/v2/scrape", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        url,
+        formats: ["product"],
+      }),
+    });
+    if (!res.ok) {
+      return { ok: false, error: `Firecrawl error (${res.status}).` };
+    }
+    payload = await res.json();
+  } catch {
+    return { ok: false, error: "Failed to reach Firecrawl." };
+  }
+
+  const product = payload?.data?.product;
+  if (!product) {
+    return { ok: false, error: "No product found on that page." };
+  }
+
+  const title = (product.title as string) || "Untitled product";
+  const variants =
+    (product.variants as
+      | Array<{ price?: { amount?: number }; images?: { url?: string }[] }>
+      | undefined) ?? [];
+  const priceAmount = variants[0]?.price?.amount;
+  const priceNum = typeof priceAmount === "number" ? priceAmount : 0;
+
+  const images: string[] = Array.from(
+    new Set(
+      variants
+        .flatMap((v) => (v?.images ?? []))
+        .map((i) => i?.url)
+        .filter((u): u is string => Boolean(u))
+    )
+  );
+
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase.from("products").insert({
+    clerk_user_id: userId,
+    name: title,
+    price: priceNum,
+    selling_price: priceNum,
+    url,
+    source_url: url,
+    image_url: images[0] ?? null,
+    images,
+    commission_percentage: commissionPercentage,
+    coupon_discount_percentage: couponDiscountPercentage,
+  });
+
+  if (error) return { ok: false, error: `Failed to save the product: ${error.message}` };
+
+  revalidatePath("/dashboard/products");
+  return { ok: true };
+}
+
+function readPercentage(formData: FormData, key: string) {
+  const value = Number(formData.get(key) ?? 0);
+  if (!Number.isFinite(value) || value < 0 || value > 100) return null;
+  return value;
+}

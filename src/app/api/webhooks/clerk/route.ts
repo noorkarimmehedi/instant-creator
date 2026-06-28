@@ -30,22 +30,35 @@ export async function POST(req: Request) {
   }
 
   if (event.type === "user.created") {
-    const { id, email_addresses, first_name, last_name } = event.data as {
-      id: string;
-      email_addresses: Array<{ email_address: string }>;
-      first_name: string | null;
-      last_name: string | null;
-    };
+    const { id, email_addresses, first_name, last_name, unsafe_metadata } =
+      event.data as {
+        id: string;
+        email_addresses: Array<{ email_address: string }>;
+        first_name: string | null;
+        last_name: string | null;
+        unsafe_metadata?: { role?: string };
+      };
 
     const email = email_addresses[0]?.email_address ?? "";
-    const name = [first_name, last_name].filter(Boolean).join(" ") || "My Brand";
+    const name =
+      [first_name, last_name].filter(Boolean).join(" ") || "My Brand";
+    const role = unsafe_metadata?.role;
 
     const supabase = createSupabaseAdmin();
-    await supabase.from("brands").insert({
-      clerk_user_id: id,
-      email,
-      name,
-    });
+
+    if (role === "influencer") {
+      await supabase.from("influencers").insert({
+        clerk_user_id: id,
+        email,
+        display_name: name === "My Brand" ? null : name,
+      });
+    } else {
+      await supabase.from("brands").insert({
+        clerk_user_id: id,
+        email,
+        name,
+      });
+    }
   }
 
   return NextResponse.json({ received: true });

@@ -1,6 +1,40 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Light (default) ---------- */
 :root {
+  --canvas: #ffffff;
+  --ink: #0a0a0c;
+  --body: rgba(10, 10, 12, 0.86);
+  --charcoal: rgba(10, 10, 12, 0.7);
+  --mute: #6b6f72;
+  --ash: #5b6063;
+  --stone: #9ca0a3;
+  --surface-card: #ffffff;
+  --surface-elevated: #f4f5f6;
+  --surface-deep: #fcfcfd;
+  --hairline: rgba(0, 0, 0, 0.08);
+  --hairline-strong: rgba(0, 0, 0, 0.12);
+  --marks: rgba(0, 0, 0, 0.14);
+  --marks-strong: rgba(0, 0, 0, 0.32);
+  --overlay: rgba(0, 0, 0, 0.04);
+  --overlay-strong: rgba(0, 0, 0, 0.16);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --accent-orange: #ff7a1f;
+  --accent-orange-glow: rgba(255, 89, 0, 0.16);
+  --accent-yellow: #d99e0a;
+  --accent-blue: #2b7fff;
+  --accent-blue-glow: rgba(0, 117, 255, 0.22);
+  --accent-green: #07b27a;
+  --accent-green-glow: rgba(34, 255, 153, 0.14);
+  --accent-red: #e13247;
+  --accent-red-glow: rgba(255, 32, 71, 0.22);
+  color-scheme: light;
+}
+
+/* ---------- Dark ---------- */
+.dark {
   --canvas: #000000;
   --ink: #fcfdff;
   --body: rgba(252, 253, 255, 0.86);
@@ -13,6 +47,11 @@
   --surface-deep: #06060a;
   --hairline: rgba(255, 255, 255, 0.06);
   --hairline-strong: rgba(255, 255, 255, 0.14);
+  --marks: rgba(255, 255, 255, 0.12);
+  --marks-strong: rgba(255, 255, 255, 0.35);
+  --overlay: rgba(255, 255, 255, 0.04);
+  --overlay-strong: rgba(255, 255, 255, 0.22);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
   --accent-orange: #ff801f;
   --accent-orange-glow: rgba(255, 89, 0, 0.22);
   --accent-yellow: #ffc53d;
@@ -22,6 +61,7 @@
   --accent-green-glow: rgba(34, 255, 153, 0.18);
   --accent-red: #ff2047;
   --accent-red-glow: rgba(255, 32, 71, 0.34);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -37,11 +77,16 @@
   --color-surface-deep: var(--surface-deep);
   --color-hairline: var(--hairline);
   --color-hairline-strong: var(--hairline-strong);
+  --color-marks: var(--marks);
+  --color-marks-strong: var(--marks-strong);
+  --color-overlay: var(--overlay);
+  --color-overlay-strong: var(--overlay-strong);
   --color-accent-orange: var(--accent-orange);
   --color-accent-yellow: var(--accent-yellow);
   --color-accent-blue: var(--accent-blue);
   --color-accent-green: var(--accent-green);
   --color-accent-red: var(--accent-red);
+  --shadow-card: var(--shadow-card);
   --font-display: "DM Serif Display", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
   --font-mono: "Geist Mono", monospace;
@@ -51,6 +96,26 @@ body {
   background: var(--canvas);
   color: var(--ink);
   font-family: var(--font-body);
+}
+
+.auth-page [class^="cl-"],
+.auth-page [class*=" cl-"],
+.auth-page [class^="cl-"]::before,
+.auth-page [class*=" cl-"]::before,
+.auth-page [class^="cl-"]::after,
+.auth-page [class*=" cl-"]::after {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.auth-page .cl-socialButtonsBlockButton,
+.auth-page button[class*="socialButtonsBlockButton"],
+.auth-page [class*="socialButtons"] button,
+.auth-page [class*="socialButtons"] [role="button"],
+.auth-page [class*="SocialButtons"] button,
+.auth-page [class*="SocialButtons"] [role="button"] {
+  border: 1px solid var(--stone) !important;
+  box-shadow: inset 0 0 0 1px var(--stone) !important;
 }
 
 @keyframes fade-up {

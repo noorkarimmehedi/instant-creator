@@ -27,15 +27,15 @@ export function SwissCard({
         group relative overflow-hidden rounded-[12px] border p-8
         ${bg} ${highlightBorder}
         transition-all duration-300
-        hover:border-white/25 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)]
+        hover:border-overlay-strong hover:-translate-y-0.5 hover:shadow-card
         ${onClick ? "cursor-pointer" : ""}
         ${className}
       `}
     >
-      <span className="absolute top-2.5 left-3 text-sm font-light text-white/[0.12] transition-all duration-300 group-hover:text-white/[0.35] group-hover:rotate-90 leading-none select-none">+</span>
-      <span className="absolute top-2.5 right-3 text-sm font-light text-white/[0.12] transition-all duration-300 group-hover:text-white/[0.35] leading-none select-none">+</span>
-      <span className="absolute bottom-2.5 left-3 text-sm font-light text-white/[0.12] transition-all duration-300 group-hover:text-white/[0.35] group-hover:rotate-90 leading-none select-none">+</span>
-      <span className="absolute bottom-2.5 right-3 text-sm font-light text-white/[0.12] transition-all duration-300 group-hover:text-white/[0.35] leading-none select-none">+</span>
+      <span className="absolute top-2.5 left-3 text-sm font-light text-marks transition-all duration-300 group-hover:text-marks-strong group-hover:rotate-90 leading-none select-none">+</span>
+      <span className="absolute top-2.5 right-3 text-sm font-light text-marks transition-all duration-300 group-hover:text-marks-strong leading-none select-none">+</span>
+      <span className="absolute bottom-2.5 left-3 text-sm font-light text-marks transition-all duration-300 group-hover:text-marks-strong group-hover:rotate-90 leading-none select-none">+</span>
+      <span className="absolute bottom-2.5 right-3 text-sm font-light text-marks transition-all duration-300 group-hover:text-marks-strong leading-none select-none">+</span>
       {children}
     </div>
   );

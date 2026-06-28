@@ -1,0 +1,106 @@
+"use client";
+
+import { useState } from "react";
+import { SwissCard } from "@/components/ui/SwissCard";
+import { Button } from "@/components/ui/Button";
+import { updatePayout } from "./actions";
+
+export function PayoutSection({
+  bkash,
+  bank,
+}: {
+  bkash: string | null;
+  bank: { bank_name?: string; account_number?: string; account_holder?: string } | null;
+}) {
+  const [method, setMethod] = useState<"bkash" | "bank">(
+    bank?.bank_name ? "bank" : "bkash"
+  );
+
+  return (
+    <SwissCard>
+      <h2 className="text-lg font-medium text-ink mb-4">Payout Method</h2>
+      <form action={updatePayout} className="space-y-4">
+        <input type="hidden" name="method" value={method} />
+
+        <div className="flex gap-2">
+          {(["bkash", "bank"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMethod(m)}
+              className={`rounded-md px-4 py-2 text-sm font-medium transition-all duration-200 cursor-pointer ${
+                method === m
+                  ? "bg-ink text-canvas"
+                  : "bg-surface-elevated text-mute border border-hairline-strong hover:border-overlay-strong"
+              }`}
+            >
+              {m === "bkash" ? "bKash" : "Bank Account"}
+            </button>
+          ))}
+        </div>
+
+        {method === "bkash" ? (
+          <div>
+            <label className="text-xs text-mute uppercase tracking-wide block mb-1">
+              bKash Number
+            </label>
+            <input
+              name="bkash_number"
+              type="tel"
+              defaultValue={bkash ?? ""}
+              placeholder="01XXXXXXXXX"
+              className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-orange transition-colors"
+              required
+            />
+          </div>
+        ) : (
+          <>
+            <div>
+              <label className="text-xs text-mute uppercase tracking-wide block mb-1">
+                Bank Name
+              </label>
+              <input
+                name="bank_name"
+                type="text"
+                defaultValue={bank?.bank_name ?? ""}
+                placeholder="e.g. Dutch Bangla Bank"
+                className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-orange transition-colors"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-xs text-mute uppercase tracking-wide block mb-1">
+                Account Number
+              </label>
+              <input
+                name="account_number"
+                type="text"
+                defaultValue={bank?.account_number ?? ""}
+                placeholder="Your account number"
+                className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-orange transition-colors"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-xs text-mute uppercase tracking-wide block mb-1">
+                Account Holder Name
+              </label>
+              <input
+                name="account_holder"
+                type="text"
+                defaultValue={bank?.account_holder ?? ""}
+                placeholder="Name on the account"
+                className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-orange transition-colors"
+                required
+              />
+            </div>
+          </>
+        )}
+
+        <div className="flex justify-end">
+          <Button type="submit">Save payout method</Button>
+        </div>
+      </form>
+    </SwissCard>
+  );
+}

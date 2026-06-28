@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "../ui/Button";
+import { ThemeToggle } from "../ui/ThemeToggle";
 
 const navLinks = [
   { href: "#problem", label: "Problem" },
@@ -14,7 +15,9 @@ export function Navbar() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2.5 text-ink font-medium">
           <span className="h-2 w-2 rounded-full bg-accent-green animate-[dot-pulse_2s_ease-in-out_infinite]" />
-          <span className="text-[15px] tracking-tight">InstantCreator</span>
+          <span className="text-[15px] tracking-tight">
+            Instant<span className="font-bold text-accent-red">/</span>Creator
+          </span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
@@ -30,9 +33,12 @@ export function Navbar() {
           ))}
         </div>
 
-        <Button href="/sign-up" className="text-[13px] px-4 py-1.5">
-          Get Started
-        </Button>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <Button href="/sign-up" className="text-[13px] px-4 py-1.5">
+            Get Started
+          </Button>
+        </div>
       </div>
     </nav>
   );

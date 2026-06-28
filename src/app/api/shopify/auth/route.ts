@@ -3,17 +3,29 @@ import { NextResponse } from "next/server";
 import { buildShopifyAuthUrl, generateNonce } from "@/lib/shopify/oauth";
 import { cookies } from "next/headers";
 
-export async function GET(req: Request) {
+function normalizeShop(shop: string) {
+  return shop
+    .trim()
+    .replace(/^https?:\/\//, "")
+    .replace(/\/.*$/, "");
+}
+
+export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { searchParams } = new URL(req.url);
-  const shop = searchParams.get("shop");
+  const formData = await req.formData();
+  const shop = normalizeShop(String(formData.get("shop") ?? ""));
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  const clientSecret = String(formData.get("client_secret") ?? "").trim();
 
-  if (!shop) {
-    return NextResponse.json({ error: "Missing shop parameter" }, { status: 400 });
+  if (!shop || !clientId || !clientSecret) {
+    return NextResponse.json(
+      { error: "Missing Shopify store, client ID, or client secret" },
+      { status: 400 }
+    );
   }
 
   const state = generateNonce();
@@ -24,7 +36,19 @@ export async function GET(req: Request) {
     sameSite: "lax",
     maxAge: 600,
   });
+  cookieStore.set("shopify_client_id", clientId, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 600,
+  });
+  cookieStore.set("shopify_client_secret", clientSecret, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 600,
+  });
 
-  const authUrl = buildShopifyAuthUrl(shop, state);
+  const authUrl = buildShopifyAuthUrl(shop, state, clientId);
   return NextResponse.redirect(authUrl);
 }

@@ -1,9 +1,13 @@
 import crypto from "crypto";
 
-export function buildShopifyAuthUrl(shop: string, state: string): string {
+export function buildShopifyAuthUrl(
+  shop: string,
+  state: string,
+  clientId: string
+): string {
   const params = new URLSearchParams({
-    client_id: process.env.SHOPIFY_API_KEY!,
-    scope: "read_products,read_orders",
+    client_id: clientId,
+    scope: "read_products,read_orders,write_discounts",
     redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/shopify/callback`,
     state,
   });
@@ -13,14 +17,16 @@ export function buildShopifyAuthUrl(shop: string, state: string): string {
 
 export async function exchangeCodeForToken(
   shop: string,
-  code: string
+  code: string,
+  clientId: string,
+  clientSecret: string
 ): Promise<string> {
   const res = await fetch(`https://${shop}/admin/oauth/access_token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client_id: process.env.SHOPIFY_API_KEY!,
-      client_secret: process.env.SHOPIFY_API_SECRET!,
+      client_id: clientId,
+      client_secret: clientSecret,
       code,
     }),
   });

@@ -13,11 +13,11 @@ interface ButtonProps {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-ink text-canvas hover:bg-[#e8e9eb]",
+    "bg-ink text-canvas hover:opacity-90",
   ghost:
-    "bg-surface-elevated text-ink border border-hairline-strong hover:border-white/25",
+    "bg-surface-elevated text-ink border border-hairline-strong hover:border-overlay-strong",
   outline:
-    "bg-transparent text-ink border border-hairline-strong hover:border-white/30 hover:bg-white/[0.04]",
+    "bg-transparent text-ink border border-hairline-strong hover:border-overlay-strong hover:bg-overlay",
 };
 
 export function Button({

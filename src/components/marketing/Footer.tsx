@@ -5,7 +5,8 @@ export function Footer() {
     <footer className="border-t border-hairline py-10">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
         <p className="text-xs text-mute">
-          &copy; {new Date().getFullYear()} InstantCreator. All rights reserved.
+          &copy; {new Date().getFullYear()} Instant
+          <span className="font-bold text-accent-red">/</span>Creator. All rights reserved.
         </p>
         <div className="flex gap-6">
           <Link href="/privacy" className="text-xs text-mute hover:text-ink transition-colors">

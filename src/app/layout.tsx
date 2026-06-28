@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, DM_Serif_Display, Geist_Mono } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ThemeProvider } from "next-themes";
+import { ClerkThemedProvider } from "@/components/ClerkThemedProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -20,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "InstantCreator — Bangladesh's First Influencer-Brand Marketplace",
+  title: "Instant/Creator — Bangladesh's First Influencer-Brand Marketplace",
   description:
     "Track orders. Filter fraud. Pay creators. The only platform connecting Shopify brands with influencers in Bangladesh.",
 };
@@ -31,23 +32,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      appearance={{
-        variables: {
-          colorBackground: "#0a0a0c",
-          colorPrimary: "#fcfdff",
-          colorInputForeground: "#fcfdff",
-        },
-      }}
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.variable} ${dmSerif.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <html
-        lang="en"
-        className={`${inter.variable} ${dmSerif.variable} ${geistMono.variable} h-full antialiased`}
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-canvas text-ink font-body"
       >
-        <body className="min-h-full flex flex-col bg-canvas text-ink font-body">
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <ClerkThemedProvider>{children}</ClerkThemedProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }
