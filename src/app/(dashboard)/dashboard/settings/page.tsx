@@ -38,6 +38,7 @@ export default async function SettingsPage() {
   const brandName = brand?.name ?? name;
   const brandEmail = brand?.email ?? email;
   const isConnected = !!brand?.shopify_token;
+  const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://your-instantcreator-domain.com"}/api/shopify/callback`;
 
   return (
     <>
@@ -93,6 +94,20 @@ export default async function SettingsPage() {
               <p className="text-sm text-charcoal">
                 Connect your Shopify store to sync products and track influencer-driven orders.
               </p>
+              <div className="rounded-md border border-hairline bg-surface-elevated p-4 text-sm text-charcoal">
+                <p className="font-medium text-ink">How to create a Shopify app</p>
+                <ol className="mt-3 list-decimal space-y-2 pl-5">
+                  <li>Open Shopify Admin for your store.</li>
+                  <li>Go to Settings, then Apps and sales channels.</li>
+                  <li>Click Develop apps. If prompted, enable custom app development.</li>
+                  <li>Click Create an app, give it a name like InstantCreator, and create it.</li>
+                  <li>Open the app configuration and add the callback URL from InstantCreator: {callbackUrl}.</li>
+                  <li>Configure Admin API access and allow the permissions needed for products, orders, discounts, and webhooks.</li>
+                  <li>Save the app, then install it on your store.</li>
+                  <li>Copy the Client ID and Client Secret from the app credentials page.</li>
+                  <li>Enter your store URL below in the format your-store.myshopify.com, then paste the Client ID and Client Secret.</li>
+                </ol>
+              </div>
               <form action="/api/shopify/auth" method="POST" className="space-y-4">
                 <div>
                   <label className="text-xs text-mute uppercase tracking-wide block mb-1">

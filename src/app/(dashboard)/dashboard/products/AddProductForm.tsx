@@ -2,7 +2,6 @@
 
 import { useActionState } from "react";
 import { addProductFromUrl } from "./actions";
-import { Button } from "@/components/ui/Button";
 
 export function AddProductForm() {
   const [state, formAction, pending] = useActionState(addProductFromUrl, null);
@@ -20,9 +19,18 @@ export function AddProductForm() {
           placeholder="https://example.com/products/abc"
           className="flex-1 rounded-md border border-hairline-strong bg-surface-elevated px-4 py-2.5 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-blue transition-colors"
         />
-        <Button type="submit" variant={pending ? "ghost" : "primary"}>
-          {pending ? "Extracting…" : "Add product"}
-        </Button>
+        <button
+          type="submit"
+          disabled={pending}
+          aria-busy={pending}
+          className="group relative inline-block shrink-0 cursor-pointer border-0 bg-transparent p-0 font-sans text-sm font-semibold tracking-[-0.005em] text-white outline-offset-4 [-webkit-tap-highlight-color:transparent] disabled:cursor-wait focus-visible:rounded-[12px] focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-[#1a1614]"
+        >
+          <span className="absolute inset-0 translate-y-px rounded-[12px] bg-black/25 transition-transform duration-[600ms] ease-[cubic-bezier(0.3,0.7,0.4,1)] will-change-transform group-hover:translate-y-0.5 group-hover:duration-[250ms] group-hover:ease-[cubic-bezier(0.3,0.7,0.4,1.5)] group-active:translate-y-0 group-active:duration-[34ms]" />
+          <span className="absolute inset-0 rounded-[12px] bg-[linear-gradient(to_left,#520019_0%,#a30037_8%,#a30037_92%,#520019_100%)]" />
+          <span className="relative block translate-y-[-2px] rounded-[12px] bg-[#f00045] px-6 py-2.5 text-white transition-transform duration-[600ms] ease-[cubic-bezier(0.3,0.7,0.4,1)] will-change-transform group-hover:translate-y-[-3px] group-hover:duration-[250ms] group-hover:ease-[cubic-bezier(0.3,0.7,0.4,1.5)] group-active:translate-y-[-1px] group-active:duration-[34ms]">
+            {pending ? "Extracting…" : "Add product"}
+          </span>
+        </button>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <div>

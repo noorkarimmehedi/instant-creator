@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "../ui/Button";
+import { PressButton } from "../ui/PressButton";
 import { ThemeToggle } from "../ui/ThemeToggle";
 
 const navLinks = [
@@ -35,9 +35,9 @@ export function Navbar() {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Button href="/sign-up" className="text-[13px] px-4 py-1.5">
+          <PressButton href="/sign-up" tone="brand" className="text-[13px]">
             Get Started
-          </Button>
+          </PressButton>
         </div>
       </div>
     </nav>

@@ -1,5 +1,5 @@
 import { Badge } from "../ui/Badge";
-import { Button } from "../ui/Button";
+import { PressButton } from "../ui/PressButton";
 
 export function Hero() {
   return (
@@ -32,10 +32,10 @@ export function Hero() {
         </p>
 
         <div className="mt-10 flex items-center justify-center gap-4 animate-[fade-up_0.6s_ease-out_0.45s_both]">
-          <Button href="/sign-up">Start Free Trial</Button>
-          <Button href="#how-it-works" variant="outline">
+          <PressButton href="/sign-up" tone="creator">Start Free Trial</PressButton>
+          <PressButton href="#how-it-works" tone="ink">
             See How It Works
-          </Button>
+          </PressButton>
         </div>
       </div>
     </section>
