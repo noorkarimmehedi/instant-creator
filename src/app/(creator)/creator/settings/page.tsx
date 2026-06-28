@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
-import { Button } from "@/components/ui/Button";
+import { PressButton } from "@/components/ui/PressButton";
 import { updateProfile, updateSocials } from "./actions";
 import { AvatarUpload } from "./AvatarUpload";
 import { PayoutSection } from "./PayoutSection";
@@ -104,7 +104,7 @@ export default async function CreatorSettingsPage() {
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit">Save profile</Button>
+              <PressButton type="submit" tone="creator">Save profile</PressButton>
             </div>
           </form>
         </SwissCard>
@@ -128,7 +128,7 @@ export default async function CreatorSettingsPage() {
               </div>
             ))}
             <div className="flex justify-end">
-              <Button type="submit">Save socials</Button>
+              <PressButton type="submit" tone="creator">Save socials</PressButton>
             </div>
           </form>
         </SwissCard>

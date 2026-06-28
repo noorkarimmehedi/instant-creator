@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
-import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { PressButton } from "@/components/ui/PressButton";
 import { updateProfile } from "./actions";
 
 export default async function SettingsPage() {
@@ -67,7 +67,7 @@ export default async function SettingsPage() {
               <p className="text-sm text-ink">{brandEmail || "—"}</p>
             </div>
             <div className="flex justify-end">
-              <Button type="submit">Save changes</Button>
+              <PressButton type="submit" tone="brand">Save changes</PressButton>
             </div>
           </form>
         </SwissCard>
@@ -148,7 +148,7 @@ export default async function SettingsPage() {
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <Button type="submit">Connect Shopify</Button>
+                  <PressButton type="submit" tone="brand">Connect Shopify</PressButton>
                 </div>
               </form>
             </div>
@@ -185,9 +185,12 @@ export default async function SettingsPage() {
               </p>
               <p className="text-xs text-mute mt-1">Manage your subscription and billing details.</p>
             </div>
-            <Button variant="outline" href="#pricing">
+            <a
+              href="#pricing"
+              className="inline-flex h-10 items-center justify-center rounded-[10px] border border-[#111] bg-[linear-gradient(180deg,#2F2F2F,#181818)] px-5 text-sm font-medium text-white transition-opacity hover:opacity-95"
+            >
               Upgrade
-            </Button>
+            </a>
           </div>
         </SwissCard>
       </div>

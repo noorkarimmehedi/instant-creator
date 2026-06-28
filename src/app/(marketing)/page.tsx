@@ -7,7 +7,7 @@ import { PricingSection } from "@/components/marketing/PricingSection";
 function SectionDivider() {
   return (
     <div className="mx-auto max-w-6xl px-6">
-      <div className="h-px bg-gradient-to-r from-transparent via-hairline-strong to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#d82f43]/20 to-transparent" />
     </div>
   );
 }

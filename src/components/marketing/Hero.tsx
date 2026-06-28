@@ -15,7 +15,7 @@ export function Hero() {
           <Badge dot>Bangladesh&apos;s First Influencer-Brand Marketplace</Badge>
         </div>
 
-        <h1 className="mt-8 font-display text-[clamp(48px,8vw,80px)] font-normal leading-[0.95] tracking-tight animate-[fade-up_0.6s_ease-out_0.15s_both]">
+        <h1 className="mt-8 font-body text-[clamp(46px,7.4vw,84px)] font-black leading-[0.92] tracking-[-0.07em] animate-[fade-up_0.6s_ease-out_0.15s_both]">
           Track orders.
           <br />
           Filter{" "}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SwissCard } from "@/components/ui/SwissCard";
-import { Button } from "@/components/ui/Button";
+import { PressButton } from "@/components/ui/PressButton";
 import { updatePayout } from "./actions";
 
 export function PayoutSection({
@@ -98,7 +98,7 @@ export function PayoutSection({
         )}
 
         <div className="flex justify-end">
-          <Button type="submit">Save payout method</Button>
+          <PressButton type="submit" tone="creator">Save payout method</PressButton>
         </div>
       </form>
     </SwissCard>
