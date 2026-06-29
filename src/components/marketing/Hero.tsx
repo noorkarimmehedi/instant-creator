@@ -38,8 +38,8 @@ export function Hero() {
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 animate-[fade-up_0.6s_ease-out_0.45s_both] sm:flex-row">
-          <PressButton href="/sign-up" tone="creator" variant="cal">Start Free Trial</PressButton>
-          <PressButton href="#how-it-works" tone="ink" variant="calOutline">
+          <PressButton href="/sign-up" tone="creator">Start Free Trial</PressButton>
+          <PressButton href="#how-it-works" tone="ink">
             See How It Works
           </PressButton>
         </div>
