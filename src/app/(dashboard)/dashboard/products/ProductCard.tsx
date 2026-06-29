@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/Button";
 import { formatTaka } from "@/lib/products/formatting";
-import { updateProductTerms } from "./actions";
+import { deleteProduct, updateProductTerms } from "./actions";
 
 type Product = {
   id: string;
@@ -18,6 +18,7 @@ type Product = {
 
 export function ProductCard({ product }: { product: Product }) {
   const [state, formAction, pending] = useActionState(updateProductTerms, null);
+  const [deleteState, deleteAction, deletePending] = useActionState(deleteProduct, null);
 
   return (
     <div className="group overflow-hidden rounded-lg border border-hairline bg-surface-card transition-colors hover:border-overlay-strong">
@@ -92,6 +93,28 @@ export function ProductCard({ product }: { product: Product }) {
               {pending ? "Saving…" : "Save"}
             </Button>
           </div>
+        </form>
+
+        <form
+          action={deleteAction}
+          onSubmit={(event) => {
+            if (!confirm(`Delete ${product.name}? This removes the product from creator browse pages.`)) {
+              event.preventDefault();
+            }
+          }}
+          className="flex items-center justify-between gap-2"
+        >
+          <input type="hidden" name="product_id" value={product.id} />
+          <span className={`text-xs ${deleteState?.ok ? "text-accent-green" : "text-accent-red"}`}>
+            {deleteState ? (deleteState.ok ? "Deleted" : deleteState.error) : ""}
+          </span>
+          <button
+            type="submit"
+            disabled={deletePending}
+            className="rounded-md border border-accent-red/30 px-3 py-1.5 text-xs font-medium text-accent-red transition-colors hover:bg-accent-red/10 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {deletePending ? "Deleting…" : "Delete"}
+          </button>
         </form>
       </div>
     </div>

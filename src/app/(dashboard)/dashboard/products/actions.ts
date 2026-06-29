@@ -122,6 +122,53 @@ export async function updateProductTerms(
   return { ok: true };
 }
 
+export async function deleteProduct(
+  _prev: Result | null,
+  formData: FormData
+): Promise<Result> {
+  const { userId } = await auth();
+  if (!userId) return { ok: false, error: "Unauthorized" };
+
+  const productId = String(formData.get("product_id") ?? "").trim();
+  if (!productId) return { ok: false, error: "Missing product." };
+
+  const supabase = createSupabaseAdmin();
+  const { data: product, error: productError } = await supabase
+    .from("products")
+    .select("id")
+    .eq("id", productId)
+    .eq("clerk_user_id", userId)
+    .single();
+
+  if (productError || !product) {
+    return { ok: false, error: "Product could not be found." };
+  }
+
+  const { error: couponsError } = await supabase
+    .from("product_coupons")
+    .delete()
+    .eq("product_id", productId);
+  if (couponsError) return { ok: false, error: `Failed to delete product coupons: ${couponsError.message}` };
+
+  const { error: variantsError } = await supabase
+    .from("product_variants")
+    .delete()
+    .eq("product_id", productId);
+  if (variantsError) return { ok: false, error: `Failed to delete product variants: ${variantsError.message}` };
+
+  const { error: deleteError } = await supabase
+    .from("products")
+    .delete()
+    .eq("id", productId)
+    .eq("clerk_user_id", userId);
+
+  if (deleteError) return { ok: false, error: `Failed to delete product: ${deleteError.message}` };
+
+  revalidatePath("/dashboard/products");
+  revalidatePath("/creator/products");
+  return { ok: true };
+}
+
 function readPercentage(formData: FormData, key: string) {
   return readPercentageValue(formData.get(key));
 }

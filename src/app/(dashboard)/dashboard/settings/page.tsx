@@ -5,7 +5,7 @@ import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
 import { Badge } from "@/components/ui/Badge";
 import { PressButton } from "@/components/ui/PressButton";
-import { updateProfile } from "./actions";
+import { disconnectShopify, updateProfile } from "./actions";
 
 export default async function SettingsPage() {
   const { userId } = await auth();
@@ -84,10 +84,21 @@ export default async function SettingsPage() {
           </div>
 
           {isConnected ? (
-            <div className="space-y-2">
+            <div className="space-y-4">
               <p className="text-sm text-charcoal">
                 Connected to <span className="text-ink font-medium">{brand?.shopify_store}</span>
               </p>
+              <div className="rounded-md border border-hairline bg-surface-elevated p-4 text-sm text-charcoal">
+                Disconnecting removes the stored Shopify token from Instant/Creator. Reconnect Shopify after changing app permissions so Shopify can issue a fresh token.
+              </div>
+              <form action={disconnectShopify} className="flex justify-end">
+                <button
+                  type="submit"
+                  className="rounded-[8px] border border-accent-red/30 px-4 py-2 text-sm font-medium text-accent-red transition-colors hover:bg-accent-red/10"
+                >
+                  Disconnect Shopify
+                </button>
+              </form>
             </div>
           ) : (
             <div className="space-y-4">

@@ -22,3 +22,25 @@ export async function updateProfile(formData: FormData) {
   revalidateTag("brand", "max");
   revalidatePath("/dashboard/settings");
 }
+
+export async function disconnectShopify() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("brands")
+    .update({
+      shopify_store: null,
+      shopify_token: null,
+      onboarding_step: 0,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("clerk_user_id", userId);
+
+  if (error) throw new Error("Failed to disconnect Shopify");
+
+  revalidateTag("brand", "max");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/settings");
+}
