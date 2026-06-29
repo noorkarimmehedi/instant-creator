@@ -11,6 +11,7 @@ type ShopifyDiscountCode = {
 type ShopifyOrder = {
   id: number;
   order_number: number;
+  name?: string;
   email: string | null;
   total_price: string;
   currency: string;
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true });
   }
 
-  const codes = order.discount_codes.map((dc) => dc.code);
+  const codes = order.discount_codes.map((dc) => dc.code.trim().toUpperCase());
 
   const supabase = createSupabaseAdmin();
 
@@ -72,7 +73,7 @@ export async function POST(req: Request) {
   const productIds = [...new Set(coupons.map((c) => c.product_id))];
   const { data: products } = await supabase
     .from("products")
-    .select("id, clerk_user_id, commission_percentage")
+    .select("id, clerk_user_id, org_id, commission_percentage")
     .in("id", productIds);
 
   const productMap = new Map(
@@ -92,9 +93,11 @@ export async function POST(req: Request) {
       return [{
         shopify_order_id: String(order.id),
         shopify_order_number: String(order.order_number ?? order.id),
+        order_number: order.name ?? `#${order.order_number ?? order.id}`,
         product_coupon_id: coupon.id,
         product_id: coupon.product_id,
-        brand_clerk_user_id: product.clerk_user_id,
+        brand_clerk_user_id: product.clerk_user_id ?? product.org_id,
+        org_id: product.org_id,
         influencer_clerk_user_id: coupon.influencer_clerk_user_id,
         customer_email: order.email ?? null,
         discount_code: coupon.code,
@@ -108,8 +111,23 @@ export async function POST(req: Request) {
     });
 
   if (rows.length > 0) {
-    await supabase.from("orders").delete().eq("shopify_order_id", String(order.id));
-    await supabase.from("orders").insert(rows);
+    for (const row of rows) {
+      const { data: updated, error: updateError } = await supabase
+        .from("orders")
+        .update(row)
+        .eq("shopify_order_id", String(order.id))
+        .select("id");
+
+      if (updateError) {
+        console.error("Failed to attribute Shopify order", updateError);
+        continue;
+      }
+
+      if (!updated || updated.length === 0) {
+        const { error: insertError } = await supabase.from("orders").insert(row);
+        if (insertError) console.error("Failed to insert attributed Shopify order", insertError);
+      }
+    }
   }
 
   return NextResponse.json({ received: true });
