@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { ChevronRight, Play } from "lucide-react";
 
 type PressButtonTone = "brand" | "creator" | "ink";
 type PressButtonSize = "default" | "compact";
+type PressButtonVariant = "press" | "cal" | "calOutline";
+type PressButtonIcon = "arrow" | "play" | "none";
 
 interface PressButtonProps {
   children: React.ReactNode;
@@ -9,6 +12,8 @@ interface PressButtonProps {
   size?: PressButtonSize;
   href?: string;
   type?: "button" | "submit";
+  variant?: PressButtonVariant;
+  icon?: PressButtonIcon;
   className?: string;
 }
 
@@ -49,10 +54,54 @@ export function PressButton({
   size = "default",
   href,
   type = "button",
+  variant = "press",
+  icon = "none",
   className = "",
 }: PressButtonProps) {
   const toneClasses = tones[tone];
   const sizeClasses = sizes[size];
+  const isCal = variant === "cal" || variant === "calOutline";
+  const calSolid = variant === "cal";
+
+  if (isCal) {
+    const calClasses = `group inline-flex h-12 shrink-0 items-center gap-3 rounded-[12px] border px-4 pl-5 text-sm font-bold tracking-[-0.02em] outline-offset-4 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-[6px] ${toneClasses.focus} ${
+      calSolid
+        ? "border-[#141414] bg-[#141414] text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.15)] hover:bg-[#2a1116]"
+        : "border-[#5a1f27]/25 bg-white/35 text-[#5a1f27] shadow-[inset_0_2px_0_rgba(255,255,255,0.55)] hover:border-[#5a1f27]/45 hover:bg-[#fff0eb] hover:text-[#141414]"
+    } ${className}`;
+
+    const Icon = icon === "play" ? Play : ChevronRight;
+    const content = (
+      <>
+        <span className="leading-5">{children}</span>
+        {icon !== "none" && (
+          <span
+            className={`flex h-6 w-6 items-center justify-center rounded-full transition-all duration-200 group-hover:translate-x-0.5 ${
+              calSolid ? "bg-[#898989] text-white" : "bg-[#5a1f27] text-white"
+            }`}
+            aria-hidden="true"
+          >
+            <Icon className="h-3.5 w-3.5" fill={icon === "play" ? "currentColor" : "none"} strokeWidth={2.4} />
+          </span>
+        )}
+      </>
+    );
+
+    if (href) {
+      return (
+        <Link href={href} className={calClasses}>
+          {content}
+        </Link>
+      );
+    }
+
+    return (
+      <button type={type} className={calClasses}>
+        {content}
+      </button>
+    );
+  }
+
   const classes = `group relative inline-block ${sizeClasses.root} shrink-0 cursor-pointer border-0 bg-transparent p-0 font-sans font-semibold tracking-[-0.005em] text-white outline-offset-4 [-webkit-tap-highlight-color:transparent] focus-visible:${sizeClasses.radius} focus-visible:outline-2 focus-visible:outline-offset-[6px] ${toneClasses.focus} ${className}`;
   const content = (
     <>

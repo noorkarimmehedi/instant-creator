@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-type ButtonVariant = "primary" | "ghost" | "outline";
+type ButtonVariant = "primary" | "ghost" | "outline" | "navbarPrimary" | "navbarToggle";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -18,6 +18,10 @@ const variants: Record<ButtonVariant, string> = {
     "bg-surface-elevated text-ink border border-hairline-strong hover:border-overlay-strong hover:bg-overlay",
   outline:
     "bg-transparent text-ink border border-hairline-strong hover:border-overlay-strong hover:bg-overlay",
+  navbarPrimary:
+    "bg-gradient-to-br from-gray-100 to-gray-300 text-black shadow-sm hover:from-gray-200 hover:to-gray-400 hover:text-black",
+  navbarToggle:
+    "border border-[#333] bg-[rgba(31,31,31,0.62)] text-gray-300 hover:border-[#333] hover:bg-[rgba(31,31,31,0.78)] hover:text-white",
 };
 
 export function Button({

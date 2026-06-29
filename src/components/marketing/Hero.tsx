@@ -31,9 +31,9 @@ export function Hero() {
           The only platform connecting Shopify brands with influencers in Bangladesh — with built-in RTO fraud detection, order tracking, and automated payouts.
         </p>
 
-        <div className="mt-10 flex items-center justify-center gap-4 animate-[fade-up_0.6s_ease-out_0.45s_both]">
-          <PressButton href="/sign-up" tone="creator">Start Free Trial</PressButton>
-          <PressButton href="#how-it-works" tone="ink">
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 animate-[fade-up_0.6s_ease-out_0.45s_both] sm:flex-row">
+          <PressButton href="/sign-up" tone="creator" variant="cal">Start Free Trial</PressButton>
+          <PressButton href="#how-it-works" tone="ink" variant="calOutline">
             See How It Works
           </PressButton>
         </div>

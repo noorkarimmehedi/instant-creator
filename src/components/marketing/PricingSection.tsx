@@ -17,7 +17,7 @@ const tiers = [
       "Email support",
     ],
     cta: "Start Free Trial",
-    variant: "ghost" as const,
+    variant: "navbarToggle" as const,
     elevated: false,
     highlighted: false,
   },
@@ -34,7 +34,7 @@ const tiers = [
       "Custom commission rules",
     ],
     cta: "Start Free Trial",
-    variant: "primary" as const,
+    variant: "navbarPrimary" as const,
     elevated: true,
     highlighted: true,
     badge: "Popular",
@@ -53,7 +53,7 @@ const tiers = [
       "Custom integrations",
     ],
     cta: "Contact Sales",
-    variant: "ghost" as const,
+    variant: "navbarToggle" as const,
     elevated: false,
     highlighted: false,
   },
@@ -100,7 +100,7 @@ export function PricingSection() {
                 </ul>
 
                 <div className="mt-8">
-                  <Button href="/sign-up" variant={tier.variant} className="w-full">
+                  <Button href="/sign-up" variant={tier.variant} className="h-10 w-full">
                     {tier.cta}
                   </Button>
                 </div>

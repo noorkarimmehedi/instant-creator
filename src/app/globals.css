@@ -20,7 +20,7 @@
   --marks-strong: rgba(0, 0, 0, 0.32);
   --overlay: rgba(0, 0, 0, 0.04);
   --overlay-strong: rgba(0, 0, 0, 0.16);
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 4px 14px rgba(90, 31, 39, 0.045);
   --accent-orange: #ff7a1f;
   --accent-orange-glow: rgba(255, 89, 0, 0.16);
   --accent-yellow: #d99e0a;
@@ -51,7 +51,7 @@
   --marks-strong: rgba(255, 255, 255, 0.35);
   --overlay: rgba(255, 255, 255, 0.04);
   --overlay-strong: rgba(255, 255, 255, 0.22);
-  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.28);
   --accent-orange: #ff801f;
   --accent-orange-glow: rgba(255, 89, 0, 0.22);
   --accent-yellow: #ffc53d;

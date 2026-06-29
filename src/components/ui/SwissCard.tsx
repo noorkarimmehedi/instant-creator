@@ -27,7 +27,7 @@ export function SwissCard({
         group relative overflow-hidden rounded-[12px] border p-8
         ${bg} ${highlightBorder}
         transition-all duration-300
-        hover:border-overlay-strong hover:-translate-y-0.5 hover:shadow-card
+        hover:border-overlay-strong hover:-translate-y-px hover:shadow-card
         ${onClick ? "cursor-pointer" : ""}
         ${className}
       `}
