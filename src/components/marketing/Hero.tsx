@@ -1,4 +1,5 @@
 import { Badge } from "../ui/Badge";
+import { ContainerTextFlip } from "../ui/container-text-flip";
 import { PressButton } from "../ui/PressButton";
 
 export function Hero() {
@@ -19,9 +20,14 @@ export function Hero() {
           Track orders.
           <br />
           Filter{" "}
-          <span className="bg-gradient-to-r from-accent-orange to-accent-yellow bg-clip-text text-transparent">
-            fraud
-          </span>
+          <ContainerTextFlip
+            words={["fraud", "RTO", "risk", "loss"]}
+            interval={2200}
+            animationDuration={600}
+            className="-mx-1 -my-2 align-baseline !bg-transparent bg-none px-1 pt-0 pb-0 text-[1em] leading-none !shadow-none dark:!bg-transparent dark:!shadow-none"
+            textClassName="text-accent-orange"
+            style={{ background: "transparent", boxShadow: "none" }}
+          />
           .
           <br />
           Pay creators.
