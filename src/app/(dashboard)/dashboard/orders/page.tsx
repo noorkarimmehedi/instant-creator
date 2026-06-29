@@ -29,7 +29,7 @@ export default async function BrandOrdersPage() {
   const { data } = await supabase
     .from("orders")
     .select("*, products(name), influencers:influencer_clerk_user_id(display_name)")
-    .or(`brand_clerk_user_id.eq.${userId},org_id.eq.${userId}`)
+    .eq("brand_clerk_user_id", userId)
     .order("created_at", { ascending: false });
 
   const orders = (data ?? []) as Order[];

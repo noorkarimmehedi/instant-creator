@@ -73,7 +73,7 @@ export async function POST(req: Request) {
   const productIds = [...new Set(coupons.map((c) => c.product_id))];
   const { data: products } = await supabase
     .from("products")
-    .select("id, clerk_user_id, org_id, commission_percentage")
+    .select("id, clerk_user_id, commission_percentage")
     .in("id", productIds);
 
   const productMap = new Map(
@@ -96,8 +96,7 @@ export async function POST(req: Request) {
         order_number: order.name ?? `#${order.order_number ?? order.id}`,
         product_coupon_id: coupon.id,
         product_id: coupon.product_id,
-        brand_clerk_user_id: product.clerk_user_id ?? product.org_id,
-        org_id: product.org_id,
+        brand_clerk_user_id: product.clerk_user_id,
         influencer_clerk_user_id: coupon.influencer_clerk_user_id,
         customer_email: order.email ?? null,
         discount_code: coupon.code,
