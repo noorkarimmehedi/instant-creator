@@ -186,3 +186,8 @@ body {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+@keyframes spinner-fade {
+  0% { opacity: 0.85; }
+  100% { opacity: 0.16; }
+}
