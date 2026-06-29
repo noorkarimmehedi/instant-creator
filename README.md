@@ -2,6 +2,8 @@
 
 Built with [Next.js](https://nextjs.org) and bootstrapped from [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+Production deploys run through Vercel from the `main` branch.
+
 ## Getting Started
 
 First, run the development server:

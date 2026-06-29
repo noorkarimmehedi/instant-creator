@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -61,19 +60,6 @@ const settingsNav = [
   { href: "/creator/settings", label: "Settings", icon: SettingsIcon },
 ];
 
-function PendingDot() {
-  const { pending } = useLinkStatus();
-
-  return (
-    <span
-      aria-hidden="true"
-      className={`ml-auto h-1.5 w-1.5 rounded-full bg-current transition-opacity ${
-        pending ? "opacity-70 animate-pulse" : "opacity-0"
-      }`}
-    />
-  );
-}
-
 export function CreatorSidebarClient({
   displayName,
   verified,
@@ -94,7 +80,6 @@ export function CreatorSidebarClient({
   return (
     <aside className="flex h-screen w-[220px] flex-col border-r border-hairline bg-surface-deep">
       <div className="flex h-14 items-center gap-2.5 border-b border-hairline px-4">
-        <span className="h-2 w-2 rounded-full bg-accent-orange animate-[dot-pulse_2s_ease-in-out_infinite]" />
         <span className="text-[15px] font-medium tracking-tight text-ink">
           Instant<span className="font-bold text-accent-red">/</span>Creator
         </span>
@@ -108,7 +93,6 @@ export function CreatorSidebarClient({
             <Link key={item.href} href={item.href} className={navLinkClass(active)}>
               <item.icon className="h-4 w-4 shrink-0" />
               {item.label}
-              <PendingDot />
             </Link>
           );
         })}
@@ -122,7 +106,6 @@ export function CreatorSidebarClient({
             <Link key={item.href} href={item.href} className={navLinkClass(active)}>
               <item.icon className="h-4 w-4 shrink-0" />
               {item.label}
-              <PendingDot />
             </Link>
           );
         })}
