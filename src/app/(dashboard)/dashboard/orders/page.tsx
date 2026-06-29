@@ -14,11 +14,10 @@ type Order = {
   currency: string;
   status: string;
   customer_email: string | null;
+  product_id: string | null;
   influencer_clerk_user_id: string;
   shopify_created_at: string | null;
   created_at: string;
-  products: { name: string } | null;
-  influencers: { display_name: string | null } | null;
 };
 
 export default async function BrandOrdersPage() {
@@ -28,11 +27,28 @@ export default async function BrandOrdersPage() {
   const supabase = createSupabaseAdmin();
   const { data } = await supabase
     .from("orders")
-    .select("*, products(name), influencers:influencer_clerk_user_id(display_name)")
+    .select("*")
     .eq("brand_clerk_user_id", userId)
     .order("created_at", { ascending: false });
 
   const orders = (data ?? []) as Order[];
+
+  // The orders table has no FK relationships to products/influencers in this
+  // shared database, so resolve names with separate lookups instead of embeds.
+  const productIds = Array.from(new Set(orders.map((o) => o.product_id).filter(Boolean))) as string[];
+  const influencerIds = Array.from(new Set(orders.map((o) => o.influencer_clerk_user_id).filter(Boolean)));
+
+  const { data: productRows } = productIds.length > 0
+    ? await supabase.from("products").select("id, name").in("id", productIds)
+    : { data: [] };
+  const { data: influencerRows } = influencerIds.length > 0
+    ? await supabase.from("influencers").select("clerk_user_id, display_name").in("clerk_user_id", influencerIds)
+    : { data: [] };
+
+  const productNames = new Map(((productRows ?? []) as { id: string; name: string }[]).map((p) => [p.id, p.name]));
+  const influencerNames = new Map(
+    ((influencerRows ?? []) as { clerk_user_id: string; display_name: string | null }[]).map((i) => [i.clerk_user_id, i.display_name])
+  );
 
   const totalRevenue = orders.reduce((sum, o) => sum + Number(o.order_total), 0);
   const totalCommissions = orders.reduce((sum, o) => sum + Number(o.commission_amount), 0);
@@ -90,10 +106,10 @@ export default async function BrandOrdersPage() {
                         #{order.shopify_order_number ?? "—"}
                       </td>
                       <td className="py-3 pr-4 text-charcoal">
-                        {order.products?.name ?? "—"}
+                        {productNames.get(order.product_id ?? "") ?? "—"}
                       </td>
                       <td className="py-3 pr-4 text-charcoal">
-                        {order.influencers?.display_name ?? "Creator"}
+                        {influencerNames.get(order.influencer_clerk_user_id) ?? "Creator"}
                       </td>
                       <td className="py-3 pr-4">
                         <code className="rounded bg-surface-elevated px-1.5 py-0.5 text-xs text-ink">
