@@ -55,7 +55,7 @@ export function MiniNavbar({ links }: { links: NavLink[] }) {
           <div className="group relative">
             <div className="pointer-events-none absolute inset-0 -m-2 rounded-full bg-gray-100 opacity-35 blur-lg transition-all duration-300 ease-out group-hover:-m-3 group-hover:opacity-55 group-hover:blur-xl" />
             <Link
-              href="/sign-up"
+              href="/get-started"
               className="relative z-10 inline-flex h-8 items-center justify-center whitespace-nowrap rounded-full bg-gradient-to-br from-gray-100 to-gray-300 px-4 text-sm font-semibold text-black shadow-sm transition-all duration-200 hover:from-gray-200 hover:to-gray-400"
             >
               Get Started
@@ -89,7 +89,7 @@ export function MiniNavbar({ links }: { links: NavLink[] }) {
         <div className="mt-4 flex w-full flex-col items-center gap-3">
           <ThemeToggle className="h-10 w-full rounded-full border-[#333] bg-[rgba(31,31,31,0.62)] text-gray-300 hover:border-white/50 hover:bg-white/10 hover:text-white" />
           <Link
-            href="/sign-up"
+            href="/get-started"
             className="inline-flex h-10 w-full items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-300 px-4 text-sm font-semibold text-black transition-all duration-200 hover:from-gray-200 hover:to-gray-400"
           >
             Get Started

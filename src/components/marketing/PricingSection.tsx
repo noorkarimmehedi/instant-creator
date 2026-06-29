@@ -100,7 +100,7 @@ export function PricingSection() {
                 </ul>
 
                 <div className="mt-8">
-                  <Button href="/sign-up" variant={tier.variant} className="h-10 w-full">
+                  <Button href="/get-started" variant={tier.variant} className="h-10 w-full">
                     {tier.cta}
                   </Button>
                 </div>
