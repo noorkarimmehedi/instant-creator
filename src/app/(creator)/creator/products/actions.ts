@@ -13,7 +13,6 @@ type ProductForCoupon = {
   id: string;
   name: string;
   clerk_user_id: string | null;
-  org_id: string | null;
   coupon_discount_percentage: number | string | null;
 };
 
@@ -50,7 +49,7 @@ export async function generateShopifyCoupon(
 
   const { data: product, error: productError } = await supabase
     .from("products")
-    .select("id, name, clerk_user_id, org_id, coupon_discount_percentage")
+    .select("id, name, clerk_user_id, coupon_discount_percentage")
     .eq("id", productId)
     .single();
 
@@ -60,18 +59,15 @@ export async function generateShopifyCoupon(
   }
 
   const typedProduct = product as ProductForCoupon;
-  const ownerId = typedProduct.clerk_user_id ?? typedProduct.org_id;
-  if (!ownerId) {
+  if (!typedProduct.clerk_user_id) {
     return { ok: false, error: "This product is not connected to a brand." };
   }
 
-  const typedBrand = typedProduct.clerk_user_id
-    ? ((await supabase
-        .from("brands")
-        .select("shopify_store, shopify_token")
-        .eq("clerk_user_id", typedProduct.clerk_user_id)
-        .single()).data as BrandForCoupon | null)
-    : await getLegacyShopifyCredentials(ownerId);
+  const typedBrand = ((await supabase
+    .from("brands")
+    .select("shopify_store, shopify_token")
+    .eq("clerk_user_id", typedProduct.clerk_user_id)
+    .single()).data as BrandForCoupon | null);
 
   if (!typedBrand?.shopify_store || !typedBrand.shopify_token) {
     return { ok: false, error: "The brand needs to reconnect Shopify before coupons can be generated." };
@@ -118,16 +114,3 @@ export async function generateShopifyCoupon(
   return { ok: true, coupon: { code: discount.code } };
 }
 
-async function getLegacyShopifyCredentials(orgId: string): Promise<BrandForCoupon | null> {
-  const supabase = createSupabaseAdmin();
-  const { data } = await supabase
-    .from("app_settings")
-    .select("key, value")
-    .in("key", [`${orgId}:shopify_store_url`, `${orgId}:shopify_admin_api_token`]);
-
-  const settings = new Map((data ?? []).map((row) => [row.key, row.value]));
-  return {
-    shopify_store: settings.get(`${orgId}:shopify_store_url`) ?? null,
-    shopify_token: settings.get(`${orgId}:shopify_admin_api_token`) ?? null,
-  };
-}
