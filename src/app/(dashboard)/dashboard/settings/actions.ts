@@ -33,6 +33,7 @@ export async function disconnectShopify() {
     .update({
       shopify_store: null,
       shopify_token: null,
+      shopify_api_secret: null,
       onboarding_step: 0,
       updated_at: new Date().toISOString(),
     })

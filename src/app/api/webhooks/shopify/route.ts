@@ -31,14 +31,30 @@ function verifyHmac(body: string, hmacHeader: string, secret: string): boolean {
 }
 
 export async function POST(req: Request) {
-  const secret = process.env.SHOPIFY_API_SECRET;
-  if (!secret) {
-    return NextResponse.json({ error: "Not configured" }, { status: 500 });
-  }
-
   const hmac = req.headers.get("x-shopify-hmac-sha256");
   if (!hmac) {
     return NextResponse.json({ error: "Missing HMAC" }, { status: 401 });
+  }
+
+  const shopDomain = req.headers.get("x-shopify-shop-domain");
+  if (!shopDomain) {
+    return NextResponse.json({ error: "Missing shop domain" }, { status: 401 });
+  }
+
+  const supabase = createSupabaseAdmin();
+
+  // Each brand connects its own Shopify app, so the webhook is signed with that
+  // brand's API secret. Look up the secret for the sending store and verify
+  // against it.
+  const { data: brand } = await supabase
+    .from("brands")
+    .select("shopify_api_secret")
+    .eq("shopify_store", shopDomain)
+    .single();
+
+  const secret = brand?.shopify_api_secret;
+  if (!secret) {
+    return NextResponse.json({ error: "Unknown store" }, { status: 401 });
   }
 
   const rawBody = await req.text();
@@ -58,8 +74,6 @@ export async function POST(req: Request) {
   }
 
   const codes = order.discount_codes.map((dc) => dc.code.trim().toUpperCase());
-
-  const supabase = createSupabaseAdmin();
 
   const { data: coupons } = await supabase
     .from("product_coupons")

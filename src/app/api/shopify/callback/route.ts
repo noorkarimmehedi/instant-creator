@@ -47,6 +47,7 @@ export async function GET(req: Request) {
     .update({
       shopify_store: shop,
       shopify_token: accessToken,
+      shopify_api_secret: clientSecret,
       onboarding_step: 1,
       updated_at: new Date().toISOString(),
     })
