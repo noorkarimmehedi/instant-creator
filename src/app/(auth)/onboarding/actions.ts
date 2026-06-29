@@ -16,14 +16,6 @@ export async function getUserRole(): Promise<"brand" | "influencer" | null> {
 
   const supabase = createSupabaseAdmin();
 
-  const { data: brand } = await supabase
-    .from("brands")
-    .select("id")
-    .eq("clerk_user_id", userId)
-    .single();
-
-  if (brand) return "brand";
-
   const { data: influencer } = await supabase
     .from("influencers")
     .select("id")
@@ -31,6 +23,17 @@ export async function getUserRole(): Promise<"brand" | "influencer" | null> {
     .single();
 
   if (influencer) return "influencer";
+
+  const { data: brand } = await supabase
+    .from("brands")
+    .select("name")
+    .eq("clerk_user_id", userId)
+    .single();
+
+  if (brand) {
+    const name = String(brand.name ?? "").trim();
+    if (name && name !== "My Brand") return "brand";
+  }
 
   return null;
 }
@@ -41,17 +44,6 @@ export async function getOnboardingState(): Promise<OnboardingState> {
 
   const supabase = createSupabaseAdmin();
 
-  const { data: brand } = await supabase
-    .from("brands")
-    .select("name")
-    .eq("clerk_user_id", userId)
-    .single();
-
-  if (brand) {
-    const name = String(brand.name ?? "").trim();
-    return { role: "brand", name: name && name !== "My Brand" ? name : null };
-  }
-
   const { data: influencer } = await supabase
     .from("influencers")
     .select("display_name")
@@ -61,6 +53,17 @@ export async function getOnboardingState(): Promise<OnboardingState> {
   if (influencer) {
     const name = String(influencer.display_name ?? "").trim();
     return { role: "influencer", name: name || null };
+  }
+
+  const { data: brand } = await supabase
+    .from("brands")
+    .select("name")
+    .eq("clerk_user_id", userId)
+    .single();
+
+  if (brand) {
+    const name = String(brand.name ?? "").trim();
+    if (name && name !== "My Brand") return { role: "brand", name };
   }
 
   return { role: null, name: null };
@@ -78,6 +81,8 @@ export async function selectRole(formData: FormData) {
   const supabase = createSupabaseAdmin();
 
   if (role === "brand") {
+    await supabase.from("influencers").delete().eq("clerk_user_id", userId);
+
     const { data: existing } = await supabase
       .from("brands")
       .select("id")
@@ -98,6 +103,8 @@ export async function selectRole(formData: FormData) {
   }
 
   if (role === "influencer") {
+    await supabase.from("brands").delete().eq("clerk_user_id", userId);
+
     const { data: existing } = await supabase
       .from("influencers")
       .select("id")

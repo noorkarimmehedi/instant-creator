@@ -40,8 +40,7 @@ export async function POST(req: Request) {
       };
 
     const email = email_addresses[0]?.email_address ?? "";
-    const name =
-      [first_name, last_name].filter(Boolean).join(" ") || "My Brand";
+    const name = [first_name, last_name].filter(Boolean).join(" ");
     const role = unsafe_metadata?.role;
 
     const supabase = createSupabaseAdmin();
@@ -50,13 +49,13 @@ export async function POST(req: Request) {
       await supabase.from("influencers").insert({
         clerk_user_id: id,
         email,
-        display_name: name === "My Brand" ? null : name,
+        display_name: name || null,
       });
-    } else {
+    } else if (role === "brand") {
       await supabase.from("brands").insert({
         clerk_user_id: id,
         email,
-        name,
+        name: name || "My Brand",
       });
     }
   }
