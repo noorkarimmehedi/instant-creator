@@ -16,19 +16,23 @@ export type ShopifyDiscountResult = {
   discountCodeId: string;
 };
 
-export function buildCouponCode(productName: string, influencerUserId: string) {
-  const productPart = productName
+export function buildCouponCode(influencerName: string | null, productId: string, influencerUserId: string) {
+  const creatorPart = (influencerName || "CREATOR")
     .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, "-")
+    .replace(/[^A-Z0-9]+/g, "")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 24)
-    .replace(/-+$/g, "") || "PRODUCT";
-  const creatorPart = (influencerUserId.split("_").at(-1) ?? influencerUserId)
-    .replace(/[^a-zA-Z0-9]/g, "")
-    .slice(0, 8)
-    .toUpperCase();
+    .slice(0, 18) || "CREATOR";
+  const digits = String(hashToThreeDigits(`${productId}:${influencerUserId}`)).padStart(3, "0");
 
-  return `${productPart}-${creatorPart || "CREATOR"}`;
+  return `${creatorPart}${digits}`;
+}
+
+function hashToThreeDigits(value: string) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 31 + value.charCodeAt(i)) % 1000;
+  }
+  return hash;
 }
 
 export function buildTrackedProductUrl(sourceUrl: string, influencerUserId: string, code: string) {

@@ -21,6 +21,10 @@ type BrandForCoupon = {
   shopify_token: string | null;
 };
 
+type InfluencerForCoupon = {
+  display_name: string | null;
+};
+
 export async function generateShopifyCoupon(
   _prev: Result | null,
   formData: FormData
@@ -72,7 +76,13 @@ export async function generateShopifyCoupon(
     return { ok: false, error: "This product does not have a valid coupon discount." };
   }
 
-  const code = buildCouponCode(typedProduct.name, userId);
+  const { data: influencer } = await supabase
+    .from("influencers")
+    .select("display_name")
+    .eq("clerk_user_id", userId)
+    .single();
+  const typedInfluencer = influencer as InfluencerForCoupon | null;
+  const code = buildCouponCode(typedInfluencer?.display_name ?? null, typedProduct.id, userId);
   let discount;
   try {
     discount = await createShopifyDiscountCode({
