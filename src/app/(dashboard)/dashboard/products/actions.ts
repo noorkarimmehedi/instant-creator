@@ -7,6 +7,8 @@ import { readPercentageValue } from "@/lib/products/formatting";
 
 type Result = { ok: true } | { ok: false; error: string };
 
+type SupabaseError = { code?: string; message?: string };
+
 export async function addProductFromUrl(
   _prev: Result | null,
   formData: FormData
@@ -154,7 +156,9 @@ export async function deleteProduct(
     .from("product_variants")
     .delete()
     .eq("product_id", productId);
-  if (variantsError) return { ok: false, error: `Failed to delete product variants: ${variantsError.message}` };
+  if (variantsError && !isMissingTableError(variantsError)) {
+    return { ok: false, error: `Failed to delete product variants: ${variantsError.message}` };
+  }
 
   const { error: deleteError } = await supabase
     .from("products")
@@ -171,4 +175,12 @@ export async function deleteProduct(
 
 function readPercentage(formData: FormData, key: string) {
   return readPercentageValue(formData.get(key));
+}
+
+function isMissingTableError(error: SupabaseError) {
+  return (
+    error.code === "PGRST205" ||
+    error.message?.includes("Could not find the table") ||
+    error.message?.includes("does not exist")
+  );
 }
