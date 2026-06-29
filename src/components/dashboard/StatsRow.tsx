@@ -46,7 +46,7 @@ export async function StatsRow() {
       {stats.map((stat) => (
         <SwissCard key={stat.label} className="p-5">
           <p className="text-xs text-mute uppercase tracking-wide">{stat.label}</p>
-          <p className="mt-2 font-display text-3xl text-ink">{stat.value}</p>
+          <p className="mt-2 text-3xl font-medium text-ink">{stat.value}</p>
         </SwissCard>
       ))}
     </div>

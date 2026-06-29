@@ -17,7 +17,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen bg-[#ffffff]">
+    <div className="flex h-screen bg-[#ffffff] font-body">
       <Suspense fallback={<SidebarSkeleton />}>
         <DashboardSidebar />
       </Suspense>
