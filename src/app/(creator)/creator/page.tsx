@@ -1,8 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getCachedInfluencer } from "@/lib/queries/influencer";
+import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { CreatorOnboardingChecklist } from "./CreatorOnboardingChecklist";
+
+type OrderStat = { commission_amount: number | string | null; status: string | null };
 
 export default async function CreatorDashboardPage() {
   const { userId } = await auth();
@@ -10,14 +13,30 @@ export default async function CreatorDashboardPage() {
 
   const influencer = await getCachedInfluencer(userId);
 
+  const supabase = createSupabaseAdmin();
+  const { data } = await supabase
+    .from("orders")
+    .select("commission_amount, status")
+    .eq("influencer_clerk_user_id", userId);
+  const orders = (data ?? []) as OrderStat[];
+
+  const totalOrders = orders.length;
+  const paidEarnings = orders
+    .filter((o) => String(o.status ?? "").toLowerCase() === "paid")
+    .reduce((sum, o) => sum + Number(o.commission_amount ?? 0), 0);
+  const pendingEarnings = orders.reduce((sum, o) => sum + Number(o.commission_amount ?? 0), 0) - paidEarnings;
+
+  const formatBdt = (value: number) =>
+    value.toLocaleString("en-US", { style: "currency", currency: "BDT" });
+
   return (
     <>
       <Topbar title="Creator Dashboard" />
       <div className="p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard label="Total Orders" value="0" />
-          <StatCard label="Pending Earnings" value="৳0" />
-          <StatCard label="Total Paid" value="৳0" />
+          <StatCard label="Total Orders" value={String(totalOrders)} />
+          <StatCard label="Pending Earnings" value={formatBdt(pendingEarnings)} />
+          <StatCard label="Total Paid" value={formatBdt(paidEarnings)} />
         </div>
         <CreatorOnboardingChecklist onboardingStep={influencer.onboarding_step} />
       </div>
