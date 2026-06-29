@@ -107,7 +107,6 @@ export async function POST(req: Request) {
       return [{
         shopify_order_id: String(order.id),
         shopify_order_number: String(order.order_number ?? order.id),
-        order_number: order.name ?? `#${order.order_number ?? order.id}`,
         product_coupon_id: coupon.id,
         product_id: coupon.product_id,
         brand_clerk_user_id: product.clerk_user_id,
@@ -123,6 +122,7 @@ export async function POST(req: Request) {
       }];
     });
 
+  let dbError = false;
   if (rows.length > 0) {
     for (const row of rows) {
       const { data: updated, error: updateError } = await supabase
@@ -133,14 +133,23 @@ export async function POST(req: Request) {
 
       if (updateError) {
         console.error("Failed to attribute Shopify order", updateError);
+        dbError = true;
         continue;
       }
 
       if (!updated || updated.length === 0) {
         const { error: insertError } = await supabase.from("orders").insert(row);
-        if (insertError) console.error("Failed to insert attributed Shopify order", insertError);
+        if (insertError) {
+          console.error("Failed to insert attributed Shopify order", insertError);
+          dbError = true;
+        }
       }
     }
+  }
+
+  // Return a 5xx on DB failure so Shopify retries delivery instead of dropping the order.
+  if (dbError) {
+    return NextResponse.json({ error: "Failed to record order" }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });
