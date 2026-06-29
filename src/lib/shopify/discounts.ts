@@ -99,6 +99,11 @@ export async function createShopifyDiscountCode({
 }
 
 function formatShopifyError(resource: string, errors: unknown) {
+  const message = typeof errors === "string" ? errors : JSON.stringify(errors ?? "");
+  if (message.includes("merchant approval") || message.includes("write_price_rules")) {
+    return `Shopify failed to create the ${resource}: reconnect Shopify from brand settings so the merchant can approve the write_price_rules scope.`;
+  }
+
   if (!errors) return `Shopify failed to create the ${resource}.`;
   if (typeof errors === "string") return `Shopify failed to create the ${resource}: ${errors}`;
   return `Shopify failed to create the ${resource}: ${JSON.stringify(errors)}`;

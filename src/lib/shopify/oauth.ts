@@ -1,5 +1,7 @@
 import crypto from "crypto";
 
+export const SHOPIFY_SCOPES = "read_products,read_orders,write_price_rules";
+
 export function buildShopifyAuthUrl(
   shop: string,
   state: string,
@@ -7,7 +9,7 @@ export function buildShopifyAuthUrl(
 ): string {
   const params = new URLSearchParams({
     client_id: clientId,
-    scope: "read_products,read_orders,write_discounts",
+    scope: SHOPIFY_SCOPES,
     redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/shopify/callback`,
     state,
   });
