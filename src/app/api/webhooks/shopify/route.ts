@@ -108,7 +108,8 @@ export async function POST(req: Request) {
     });
 
   if (rows.length > 0) {
-    await supabase.from("orders").upsert(rows, { onConflict: "shopify_order_id" });
+    await supabase.from("orders").delete().eq("shopify_order_id", String(order.id));
+    await supabase.from("orders").insert(rows);
   }
 
   return NextResponse.json({ received: true });
