@@ -54,7 +54,10 @@ export async function generateShopifyCoupon(
     .eq("id", productId)
     .single();
 
-  if (productError || !product) return { ok: false, error: "Product could not be found." };
+  if (productError || !product) {
+    console.error("generateShopifyCoupon: product query failed", { productId, productError: JSON.stringify(productError) });
+    return { ok: false, error: `Product could not be found.` };
+  }
 
   const typedProduct = product as ProductForCoupon;
   const ownerId = typedProduct.clerk_user_id ?? typedProduct.org_id;
