@@ -82,13 +82,10 @@ export function CreatorSidebarClient({
         <nav className="flex-1 overflow-hidden p-3 text-ink/75">
           <Link
             href="/creator"
-            className="mb-5 flex h-11 items-center rounded-lg px-2 text-lg font-semibold text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
+            className="mb-5 flex h-11 items-center rounded-lg px-2 text-lg font-semibold tracking-[-0.03em] text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
             aria-label="Instant Creator hub"
           >
-            <span className="mr-2 text-sm font-bold tracking-[-0.05em]">
-              I<span className="text-accent-red">/</span>C
-            </span>
-            Creator Hub
+            Instant<span className="text-accent-red">/</span>Creator
           </Link>
 
           <div className="space-y-0.5">
@@ -122,7 +119,6 @@ export function CreatorSidebarClient({
         </nav>
 
         <div className="border-t border-neutral-300/80 p-3">
-          <p className="mb-3 text-sm text-mute">Profile</p>
           <div className="flex items-center gap-3">
             <UserButton />
             <div className="min-w-0 flex-1">
