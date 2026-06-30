@@ -3,10 +3,15 @@ import { CreatorSidebar } from "@/components/creator/CreatorSidebar";
 
 function SidebarSkeleton() {
   return (
-    <aside className="flex h-screen w-[220px] flex-col border-r border-hairline bg-surface-deep">
-      <div className="h-14 border-b border-hairline" />
-      <div className="flex-1 animate-pulse p-3" />
-      <div className="h-16 border-t border-hairline" />
+    <aside className="grid h-screen w-[304px] grid-cols-[64px_1fr] bg-[#e5e5e5]">
+      <div className="animate-pulse p-2">
+        <div className="mx-auto mt-2 h-11 w-11 rounded-lg bg-black/5" />
+      </div>
+      <div className="py-2 pr-2">
+        <div className="h-full rounded-xl bg-[#F5F5F5] p-3">
+          <div className="h-8 rounded-lg bg-black/5" />
+        </div>
+      </div>
     </aside>
   );
 }

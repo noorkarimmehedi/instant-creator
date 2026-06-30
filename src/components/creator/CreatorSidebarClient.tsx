@@ -68,58 +68,94 @@ export function CreatorSidebarClient({
   verified: boolean;
 }) {
   const pathname = usePathname();
+  const allNav = [...mainNav, ...settingsNav];
   const navLinkClass = (active: boolean) => `
-    flex items-center gap-2 rounded-[8px] border px-2.5 py-1.5 text-sm transition-all duration-200
+    flex h-8 items-center justify-between rounded-lg px-2 text-sm leading-none transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-black/50
     ${
       active
-        ? "border-hairline-strong bg-surface-card text-ink font-medium"
-        : "border-transparent text-mute hover:border-hairline-strong hover:bg-surface-card hover:text-ink"
+        ? "bg-blue-100/50 text-accent-blue font-medium hover:bg-blue-100/80"
+        : "text-ink/75 hover:bg-black/5 hover:text-ink"
     }
   `;
 
   return (
-    <aside className="flex h-screen w-[220px] flex-col border-r border-hairline bg-surface-deep">
-      <div className="flex h-14 items-center gap-2.5 border-b border-hairline px-4">
-        <span className="text-[15px] font-medium tracking-tight text-ink">
-          Instant<span className="font-bold text-accent-red">/</span>Creator
-        </span>
+    <aside className="grid h-screen w-[304px] grid-cols-[64px_1fr] bg-[#e5e5e5]">
+      <div className="flex flex-col items-center justify-between p-2">
+        <div className="flex flex-col items-center gap-3">
+          <Link
+            href="/creator"
+            className="flex h-14 w-11 items-center justify-center rounded-lg text-xs font-bold tracking-[-0.05em] text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
+            aria-label="Instant Creator hub"
+          >
+            I<span className="text-accent-red">/</span>C
+          </Link>
+          {allNav.map((item) => {
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex h-11 w-11 items-center justify-center rounded-lg text-ink outline-none transition-colors focus-visible:ring-2 focus-visible:ring-black/50 ${
+                  active ? "bg-white" : "hover:bg-black/5"
+                }`}
+                aria-label={item.label}
+              >
+                <item.icon className="h-5 w-5 shrink-0" />
+              </Link>
+            );
+          })}
+        </div>
+        <div className="flex flex-col items-center gap-3 py-3">
+          <ThemeToggle />
+          <UserButton />
+        </div>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
-        <p className="px-1 mb-2 text-sm font-medium text-ink">Creator Hub</p>
-        {mainNav.map((item) => {
-          const active = pathname === item.href;
-          return (
-            <Link key={item.href} href={item.href} className={navLinkClass(active)}>
-              <item.icon className="h-4 w-4 shrink-0" />
-              {item.label}
-            </Link>
-          );
-        })}
+      <div className="overflow-hidden py-2 pr-2">
+        <div className="flex h-full flex-col overflow-hidden rounded-xl bg-[#F5F5F5]">
+          <nav className="flex-1 overflow-hidden p-3 text-ink/75">
+            <div className="mb-5 px-2 py-2 text-lg font-semibold text-ink">Creator Hub</div>
 
-        <div className="my-4 h-px bg-hairline" />
+            <div className="space-y-0.5">
+              {mainNav.map((item) => {
+                const active = pathname === item.href;
+                return (
+                  <Link key={item.href} href={item.href} className={navLinkClass(active)}>
+                    <span className="flex items-center gap-2.5">
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
 
-        <p className="px-1 mb-2 text-sm font-medium text-ink">Settings</p>
-        {settingsNav.map((item) => {
-          const active = pathname === item.href;
-          return (
-            <Link key={item.href} href={item.href} className={navLinkClass(active)}>
-              <item.icon className="h-4 w-4 shrink-0" />
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+            <div className="mt-8 space-y-0.5">
+              <p className="mb-2 px-2 text-sm text-mute">Configuration</p>
+              {settingsNav.map((item) => {
+                const active = pathname === item.href;
+                return (
+                  <Link key={item.href} href={item.href} className={navLinkClass(active)}>
+                    <span className="flex items-center gap-2.5">
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
 
-      <div className="border-t border-hairline px-4 py-4 flex items-center gap-3">
-        <UserButton />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm text-ink">{displayName}</p>
-          <p className="text-xs text-mute">
-            {verified ? "Verified Creator" : "Creator"}
-          </p>
+          <div className="border-t border-neutral-300/80 p-3">
+            <p className="text-sm text-mute">Profile</p>
+            <div className="mt-3 min-w-0">
+              <p className="truncate text-sm font-medium text-ink">{displayName}</p>
+              <p className="text-xs text-mute">
+                {verified ? "Verified Creator" : "Creator"}
+              </p>
+            </div>
+          </div>
         </div>
-        <ThemeToggle />
       </div>
     </aside>
   );
