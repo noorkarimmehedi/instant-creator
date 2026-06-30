@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 type NavIcon = React.ComponentType<{ className?: string; strokeWidth?: number }>;
 
@@ -131,7 +130,7 @@ export function Sidebar({ brandName, plan }: { brandName: string; plan: string }
   `;
 
   return (
-    <aside className="h-screen w-[256px] bg-[#e5e5e5] p-[18px]">
+    <aside className="h-screen w-[240px] bg-[#e5e5e5] p-2">
       <div className="flex h-full flex-col overflow-hidden rounded-xl bg-[#F5F5F5]">
         <nav className="flex-1 overflow-hidden p-3 text-ink/75">
           <Link
@@ -176,14 +175,9 @@ export function Sidebar({ brandName, plan }: { brandName: string; plan: string }
         </nav>
 
         <div className="border-t border-neutral-300/80 p-3">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <p className="text-sm text-mute">Workspace</p>
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-              <UserButton />
-            </div>
-          </div>
+          <p className="mb-3 text-sm text-mute">Workspace</p>
           <div className="flex items-center gap-3">
+            <UserButton />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-ink">{brandName}</p>
               <p className="text-xs text-mute capitalize">{plan}</p>

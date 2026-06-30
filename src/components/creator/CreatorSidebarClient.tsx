@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 function HomeIcon({ className }: { className?: string }) {
   return (
@@ -78,7 +77,7 @@ export function CreatorSidebarClient({
   `;
 
   return (
-    <aside className="h-screen w-[256px] bg-[#e5e5e5] p-[18px]">
+    <aside className="h-screen w-[240px] bg-[#e5e5e5] p-2">
       <div className="flex h-full flex-col overflow-hidden rounded-xl bg-[#F5F5F5]">
         <nav className="flex-1 overflow-hidden p-3 text-ink/75">
           <Link
@@ -123,18 +122,15 @@ export function CreatorSidebarClient({
         </nav>
 
         <div className="border-t border-neutral-300/80 p-3">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <p className="text-sm text-mute">Profile</p>
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-              <UserButton />
+          <p className="mb-3 text-sm text-mute">Profile</p>
+          <div className="flex items-center gap-3">
+            <UserButton />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-ink">{displayName}</p>
+              <p className="text-xs text-mute">
+                {verified ? "Verified Creator" : "Creator"}
+              </p>
             </div>
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-ink">{displayName}</p>
-            <p className="text-xs text-mute">
-              {verified ? "Verified Creator" : "Creator"}
-            </p>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { CreatorSidebar } from "@/components/creator/CreatorSidebar";
 
 function SidebarSkeleton() {
   return (
-    <aside className="h-screen w-[256px] bg-[#e5e5e5] p-[18px]">
+    <aside className="h-screen w-[240px] bg-[#e5e5e5] p-2">
       <div className="h-full rounded-xl bg-[#F5F5F5] p-3">
         <div className="h-11 rounded-lg bg-black/5" />
       </div>
