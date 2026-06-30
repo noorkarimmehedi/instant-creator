@@ -27,13 +27,6 @@ export function PathaoConnectForm() {
 
   return (
     <form action={formAction} className="space-y-4">
-      <div>
-        <label className="text-xs text-mute uppercase tracking-wide block mb-1">Environment</label>
-        <select name="environment" defaultValue="live" className={inputClass}>
-          <option value="live">Live</option>
-          <option value="sandbox">Sandbox (testing)</option>
-        </select>
-      </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className="text-xs text-mute uppercase tracking-wide block mb-1">Client ID</label>
