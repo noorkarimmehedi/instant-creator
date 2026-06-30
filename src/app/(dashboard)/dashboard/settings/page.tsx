@@ -5,7 +5,8 @@ import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
 import { Badge } from "@/components/ui/Badge";
 import { PressButton } from "@/components/ui/PressButton";
-import { disconnectShopify, updateProfile } from "./actions";
+import { connectCourier, disconnectCourier, disconnectShopify, updateProfile } from "./actions";
+import { getBalance } from "@/lib/courier/steadfast";
 
 export default async function SettingsPage() {
   const { userId } = await auth();
@@ -39,6 +40,29 @@ export default async function SettingsPage() {
   const brandEmail = brand?.email ?? email;
   const isConnected = !!brand?.shopify_token;
   const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://your-instantcreator-domain.com"}/api/shopify/callback`;
+
+  const { data: steadfast } = await supabase
+    .from("courier_integrations")
+    .select("provider, credentials")
+    .eq("brand_clerk_user_id", userId)
+    .eq("provider", "steadfast")
+    .single();
+
+  const courierConnected = !!steadfast;
+  const steadfastApiKey = (steadfast?.credentials as { api_key?: string } | null)?.api_key ?? "";
+  const maskedKey = steadfastApiKey
+    ? `${steadfastApiKey.slice(0, 4)}••••${steadfastApiKey.slice(-2)}`
+    : "";
+
+  let courierBalance: number | null = null;
+  if (steadfast) {
+    const creds = steadfast.credentials as { api_key: string; secret_key: string };
+    try {
+      courierBalance = await getBalance({ apiKey: creds.api_key, secretKey: creds.secret_key });
+    } catch {
+      courierBalance = null;
+    }
+  }
 
   return (
     <>
@@ -160,6 +184,91 @@ export default async function SettingsPage() {
                 </div>
                 <div className="flex justify-end">
                   <PressButton type="submit" tone="brand">Connect Shopify</PressButton>
+                </div>
+              </form>
+            </div>
+          )}
+        </SwissCard>
+
+        {/* Courier Integration */}
+        <SwissCard highlighted={isConnected && !courierConnected}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-medium text-ink">Courier Integration</h2>
+            {courierConnected ? <Badge dot>Connected</Badge> : <Badge>Not Connected</Badge>}
+          </div>
+
+          <div className="mb-4 flex gap-2">
+            <span className="inline-flex items-center rounded-md border border-accent-blue/40 bg-accent-blue/5 px-3 py-1 text-xs font-medium text-ink">
+              Steadfast
+            </span>
+            <span className="inline-flex items-center rounded-md border border-hairline px-3 py-1 text-xs text-stone">
+              Pathao — coming soon
+            </span>
+          </div>
+
+          {courierConnected ? (
+            <div className="space-y-4">
+              <p className="text-sm text-charcoal">
+                Steadfast connected with API key <span className="text-ink font-medium">{maskedKey}</span>
+              </p>
+              <div className="rounded-md border border-hairline bg-surface-elevated p-4 text-sm text-charcoal">
+                Current Steadfast balance:{" "}
+                <span className="text-ink font-medium">
+                  {courierBalance === null
+                    ? "Unavailable"
+                    : courierBalance.toLocaleString("en-US", { style: "currency", currency: "BDT" })}
+                </span>
+              </div>
+              <form action={disconnectCourier} className="flex justify-end">
+                <input type="hidden" name="provider" value="steadfast" />
+                <button
+                  type="submit"
+                  className="rounded-[8px] border border-accent-red/30 px-4 py-2 text-sm font-medium text-accent-red transition-colors hover:bg-accent-red/10"
+                >
+                  Disconnect Steadfast
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-sm text-charcoal">
+                Connect your Steadfast Courier account to send delivered orders to the courier and track
+                delivery status in real time.
+              </p>
+              <div className="rounded-md border border-hairline bg-surface-elevated p-4 text-sm text-charcoal">
+                <p className="font-medium text-ink">Where to find your keys</p>
+                <ol className="mt-3 list-decimal space-y-2 pl-5">
+                  <li>Log in to the Steadfast merchant portal at portal.packzy.com.</li>
+                  <li>Open the API / Developer settings.</li>
+                  <li>Copy your API Key and Secret Key and paste them below.</li>
+                </ol>
+              </div>
+              <form action={connectCourier} className="space-y-4">
+                <input type="hidden" name="provider" value="steadfast" />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs text-mute uppercase tracking-wide block mb-1">API Key</label>
+                    <input
+                      name="api_key"
+                      type="text"
+                      placeholder="Steadfast API key"
+                      className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-blue transition-colors"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-mute uppercase tracking-wide block mb-1">Secret Key</label>
+                    <input
+                      name="secret_key"
+                      type="password"
+                      placeholder="Steadfast secret key"
+                      className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-blue transition-colors"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <PressButton type="submit" tone="brand">Connect Steadfast</PressButton>
                 </div>
               </form>
             </div>

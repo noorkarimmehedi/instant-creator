@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
+import { CourierStatusBadge } from "@/components/CourierStatusBadge";
 
 type Order = {
   id: string;
@@ -13,6 +14,8 @@ type Order = {
   commission_amount: number;
   currency: string;
   status: string;
+  courier_status: string | null;
+  return_status: string | null;
   shopify_created_at: string | null;
   created_at: string;
   products: { name: string } | null;
@@ -79,6 +82,7 @@ export default async function CreatorOrdersPage() {
                     <th className="pb-3 pr-4 text-right">Order Total</th>
                     <th className="pb-3 pr-4 text-right">Your Commission</th>
                     <th className="pb-3 pr-4">Status</th>
+                    <th className="pb-3 pr-4">Delivery</th>
                     <th className="pb-3">Date</th>
                   </tr>
                 </thead>
@@ -121,6 +125,12 @@ export default async function CreatorOrdersPage() {
                         >
                           {order.status}
                         </span>
+                      </td>
+                      <td className="py-3 pr-4">
+                        <CourierStatusBadge
+                          status={order.courier_status}
+                          returnStatus={order.return_status}
+                        />
                       </td>
                       <td className="py-3 text-mute text-xs">
                         {order.shopify_created_at

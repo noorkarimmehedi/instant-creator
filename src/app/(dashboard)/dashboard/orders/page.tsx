@@ -1,8 +1,13 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
+import { CourierStatusBadge } from "@/components/CourierStatusBadge";
+import { FINAL_STATUSES } from "@/lib/courier/steadfast";
+import { DispatchDialog } from "./DispatchDialog";
+import { requestReturn, runCourierSync, syncCourierStatuses } from "./actions";
 
 type Order = {
   id: string;
@@ -14,10 +19,18 @@ type Order = {
   currency: string;
   status: string;
   customer_email: string | null;
+  customer_name: string | null;
+  phone: string | null;
+  address: string | null;
   product_id: string | null;
   influencer_clerk_user_id: string;
   shopify_created_at: string | null;
   created_at: string;
+  sent_to_courier: boolean | null;
+  consignment_id: string | null;
+  tracking_code: string | null;
+  courier_status: string | null;
+  return_status: string | null;
 };
 
 export default async function BrandOrdersPage() {
@@ -25,6 +38,26 @@ export default async function BrandOrdersPage() {
   if (!userId) redirect("/sign-in");
 
   const supabase = createSupabaseAdmin();
+
+  const { data: courier } = await supabase
+    .from("courier_integrations")
+    .select("provider")
+    .eq("brand_clerk_user_id", userId)
+    .eq("provider", "steadfast")
+    .eq("is_active", true)
+    .single();
+  const courierConnected = !!courier;
+
+  // Refresh in-flight consignment statuses on load so the page reflects the latest
+  // delivery state. Wrapped so a courier API outage never breaks the orders view.
+  if (courierConnected) {
+    try {
+      await runCourierSync();
+    } catch {
+      // ignore — render whatever is already in the DB
+    }
+  }
+
   const { data } = await supabase
     .from("orders")
     .select("*")
@@ -58,6 +91,32 @@ export default async function BrandOrdersPage() {
       <Topbar title="Orders" />
 
       <div className="p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-charcoal">
+            {courierConnected ? (
+              "Steadfast connected — send delivered orders to the courier and track status here."
+            ) : (
+              <>
+                Connect a courier in{" "}
+                <Link href="/dashboard/settings" className="text-accent-blue underline">
+                  Settings
+                </Link>{" "}
+                to ship orders and track delivery.
+              </>
+            )}
+          </p>
+          {courierConnected && (
+            <form action={syncCourierStatuses}>
+              <button
+                type="submit"
+                className="rounded-[8px] border border-hairline-strong px-3 py-1.5 text-xs font-medium text-charcoal transition-colors hover:bg-surface-elevated"
+              >
+                ↻ Refresh statuses
+              </button>
+            </form>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <SwissCard>
             <p className="text-xs text-mute uppercase tracking-wide">Total Orders</p>
@@ -96,6 +155,7 @@ export default async function BrandOrdersPage() {
                     <th className="pb-3 pr-4 text-right">Total</th>
                     <th className="pb-3 pr-4 text-right">Commission</th>
                     <th className="pb-3 pr-4">Status</th>
+                    {courierConnected && <th className="pb-3 pr-4">Courier</th>}
                     <th className="pb-3">Date</th>
                   </tr>
                 </thead>
@@ -142,6 +202,42 @@ export default async function BrandOrdersPage() {
                           {order.status}
                         </span>
                       </td>
+                      {courierConnected && (
+                        <td className="py-3 pr-4">
+                          {order.sent_to_courier ? (
+                            <div className="space-y-1">
+                              <CourierStatusBadge
+                                status={order.courier_status}
+                                returnStatus={order.return_status}
+                              />
+                              {order.tracking_code && (
+                                <p className="text-[11px] text-stone">{order.tracking_code}</p>
+                              )}
+                              {!order.return_status &&
+                                !FINAL_STATUSES.includes(order.courier_status ?? "") && (
+                                  <form action={requestReturn}>
+                                    <input type="hidden" name="orderId" value={order.id} />
+                                    <button
+                                      type="submit"
+                                      className="text-[11px] text-accent-red hover:underline"
+                                    >
+                                      Request return
+                                    </button>
+                                  </form>
+                                )}
+                            </div>
+                          ) : (
+                            <DispatchDialog
+                              orderId={order.id}
+                              orderNumber={order.shopify_order_number ?? order.id.slice(0, 8)}
+                              defaultName={order.customer_name ?? ""}
+                              defaultPhone={order.phone ?? ""}
+                              defaultAddress={order.address ?? ""}
+                              defaultCod={Math.round(Number(order.order_total))}
+                            />
+                          )}
+                        </td>
+                      )}
                       <td className="py-3 text-mute text-xs">
                         {order.shopify_created_at
                           ? new Date(order.shopify_created_at).toLocaleDateString()

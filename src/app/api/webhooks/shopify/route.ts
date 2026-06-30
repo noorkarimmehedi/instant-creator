@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
+import { normalizeBdPhone } from "@/lib/courier/steadfast";
 
 type ShopifyDiscountCode = {
   code: string;
@@ -8,16 +9,47 @@ type ShopifyDiscountCode = {
   type: string;
 };
 
+type ShopifyAddress = {
+  name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  phone?: string | null;
+  address1?: string | null;
+  address2?: string | null;
+  city?: string | null;
+  zip?: string | null;
+};
+
 type ShopifyOrder = {
   id: number;
   order_number: number;
   name?: string;
   email: string | null;
+  phone?: string | null;
   total_price: string;
   currency: string;
   discount_codes: ShopifyDiscountCode[];
   created_at: string;
+  customer?: { first_name?: string | null; last_name?: string | null; phone?: string | null } | null;
+  shipping_address?: ShopifyAddress | null;
+  billing_address?: ShopifyAddress | null;
 };
+
+function recipientName(order: ShopifyOrder): string | null {
+  const addr = order.shipping_address ?? order.billing_address;
+  if (addr?.name) return addr.name;
+  const fromAddr = [addr?.first_name, addr?.last_name].filter(Boolean).join(" ");
+  if (fromAddr) return fromAddr;
+  const fromCustomer = [order.customer?.first_name, order.customer?.last_name].filter(Boolean).join(" ");
+  return fromCustomer || null;
+}
+
+function recipientAddress(order: ShopifyOrder): string | null {
+  const addr = order.shipping_address ?? order.billing_address;
+  if (!addr) return null;
+  const parts = [addr.address1, addr.address2, addr.city, addr.zip].filter(Boolean);
+  return parts.length > 0 ? parts.join(", ") : null;
+}
 
 function verifyHmac(body: string, hmacHeader: string, secret: string): boolean {
   const digest = crypto
@@ -96,6 +128,12 @@ export async function POST(req: Request) {
 
   const orderTotal = parseFloat(order.total_price) || 0;
 
+  const customerName = recipientName(order);
+  const customerPhone = normalizeBdPhone(
+    order.shipping_address?.phone ?? order.customer?.phone ?? order.billing_address?.phone ?? order.phone
+  );
+  const customerAddress = recipientAddress(order);
+
   const rows = coupons
     .flatMap((coupon) => {
       const product = productMap.get(coupon.product_id);
@@ -112,6 +150,9 @@ export async function POST(req: Request) {
         brand_clerk_user_id: product.clerk_user_id,
         influencer_clerk_user_id: coupon.influencer_clerk_user_id,
         customer_email: order.email ?? null,
+        customer_name: customerName,
+        phone: customerPhone || null,
+        address: customerAddress,
         discount_code: coupon.code,
         order_total: orderTotal,
         commission_percentage: commissionPct,
