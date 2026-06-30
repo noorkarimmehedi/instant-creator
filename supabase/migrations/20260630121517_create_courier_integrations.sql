@@ -15,12 +15,26 @@ comment on table public.courier_integrations is 'Per-brand courier provider cred
 
 alter table public.courier_integrations enable row level security;
 
--- In this project the service_role is RLS-enforced (it does not bypass RLS),
--- so it needs an explicit policy — mirroring service_role_all_orders. anon and
--- authenticated get no access, keeping the stored API secrets server-only.
+-- If this project enforces RLS on service_role (it does not bypass RLS), the
+-- service role needs an explicit policy. anon/authenticated get no access, so the
+-- stored API secrets stay server-only.
+drop policy if exists "service_role_all_courier_integrations" on public.courier_integrations;
 create policy "service_role_all_courier_integrations"
 on public.courier_integrations
 for all
 to service_role
 using (true)
 with check (true);
+
+-- Courier / recipient columns the integration reads and writes on orders.
+alter table public.orders add column if not exists sent_to_courier boolean default false;
+alter table public.orders add column if not exists consignment_id text;
+alter table public.orders add column if not exists tracking_code text;
+alter table public.orders add column if not exists courier_status text;
+alter table public.orders add column if not exists courier_name text;
+alter table public.orders add column if not exists return_status text;
+alter table public.orders add column if not exists return_reason text;
+alter table public.orders add column if not exists return_requested_at timestamptz;
+alter table public.orders add column if not exists customer_name text;
+alter table public.orders add column if not exists phone text;
+alter table public.orders add column if not exists address text;
