@@ -78,7 +78,7 @@ export function CreatorSidebarClient({
 
   return (
     <aside className="h-screen w-[240px] bg-[#e5e5e5] p-0.5">
-      <div className="flex h-full flex-col overflow-hidden rounded-xl bg-[#F5F5F5]">
+      <div className="flex h-full flex-col overflow-hidden rounded bg-[#F5F5F5]">
         <nav className="flex-1 overflow-hidden p-3 text-ink/75">
           <Link
             href="/creator"
