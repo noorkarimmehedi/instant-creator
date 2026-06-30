@@ -107,7 +107,7 @@ function SettingsIcon({ className }: { className?: string; strokeWidth?: number 
 }
 
 const mainNav: { href: string; label: string; icon: NavIcon }[] = [
-  { href: "/dashboard", label: "Dashboard", icon: HomeIcon },
+  { href: "/dashboard", label: "Home", icon: HomeIcon },
   { href: "/dashboard/products", label: "Products", icon: ProductIcon },
   { href: "/dashboard/influencers", label: "Influencers", icon: InfluencersIcon },
   { href: "/dashboard/orders", label: "Orders", icon: OrdersIcon },
@@ -130,21 +130,19 @@ export function Sidebar({ brandName, plan }: { brandName: string; plan: string }
   `;
 
   return (
-    <aside className="h-screen w-[240px] bg-[#e5e5e5] p-2">
+    <aside className="h-screen w-[240px] bg-[#e5e5e5] p-0.5">
       <div className="flex h-full flex-col overflow-hidden rounded-xl bg-[#F5F5F5]">
         <nav className="flex-1 overflow-hidden p-3 text-ink/75">
           <Link
             href="/dashboard"
-            className="mb-5 flex h-11 items-center rounded-lg px-2 text-lg font-semibold text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
+            className="mb-5 flex h-11 items-center rounded-lg px-2 text-lg font-semibold tracking-[-0.03em] text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
             aria-label="Instant Creator dashboard"
           >
-            <span className="mr-2 text-sm font-bold tracking-[-0.05em]">
-              I<span className="text-accent-red">/</span>C
-            </span>
-            Dashboard
+            Instant<span className="text-accent-red">/</span>Creator
           </Link>
 
           <div className="space-y-0.5">
+            <p className="mb-2 px-2 text-sm text-mute">Main Menu</p>
             {mainNav.map((item) => {
               const active = pathname === item.href;
               return (
@@ -175,7 +173,6 @@ export function Sidebar({ brandName, plan }: { brandName: string; plan: string }
         </nav>
 
         <div className="border-t border-neutral-300/80 p-3">
-          <p className="mb-3 text-sm text-mute">Workspace</p>
           <div className="flex items-center gap-3">
             <UserButton />
             <div className="min-w-0 flex-1">
