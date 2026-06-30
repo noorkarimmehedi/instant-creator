@@ -38,12 +38,14 @@ export default async function BrandOrdersPage() {
 
   const supabase = createSupabaseAdmin();
 
-  const { data: courier } = await supabase
+  const { data: courierRows } = await supabase
     .from("courier_integrations")
-    .select("provider")
-    .eq("brand_clerk_user_id", userId)
-    .eq("is_active", true)
-    .single();
+    .select("provider, is_active")
+    .eq("brand_clerk_user_id", userId);
+
+  // Auto-detect the courier to dispatch with: the active one, or the only one configured.
+  const rows = courierRows ?? [];
+  const courier = rows.find((c) => c.is_active) ?? (rows.length === 1 ? rows[0] : undefined);
   const courierConnected = !!courier;
   const activeProvider = (courier?.provider ?? "steadfast") as "steadfast" | "pathao";
   const providerLabel = activeProvider === "pathao" ? "Pathao" : "Steadfast";

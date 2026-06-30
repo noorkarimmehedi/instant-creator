@@ -34,13 +34,17 @@ async function getActiveCourier(userId: string): Promise<ActiveCourier | null> {
   const supabase = createSupabaseAdmin();
   const { data } = await supabase
     .from("courier_integrations")
-    .select("provider, credentials")
-    .eq("brand_clerk_user_id", userId)
-    .eq("is_active", true)
-    .single();
+    .select("provider, credentials, is_active")
+    .eq("brand_clerk_user_id", userId);
 
-  if (!data) return null;
-  return { provider: data.provider as CourierProvider, credentials: data.credentials };
+  if (!data || data.length === 0) return null;
+
+  // Auto-detect: prefer the courier marked active; if none is flagged but only one
+  // courier is configured, just use it.
+  const chosen = data.find((d) => d.is_active) ?? (data.length === 1 ? data[0] : null);
+  if (!chosen) return null;
+
+  return { provider: chosen.provider as CourierProvider, credentials: chosen.credentials };
 }
 
 function isFinal(provider: CourierProvider, status: string | null): boolean {
