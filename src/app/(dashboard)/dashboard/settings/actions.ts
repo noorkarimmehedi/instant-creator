@@ -47,22 +47,32 @@ export async function disconnectShopify() {
   revalidatePath("/dashboard/settings");
 }
 
-export async function connectCourier(formData: FormData) {
+export type CourierConnectState = { error: string | null };
+
+// Used with useActionState so credential/validation failures render inline in the
+// form instead of bubbling up and crashing the settings page.
+export async function connectCourier(
+  _prev: CourierConnectState,
+  formData: FormData
+): Promise<CourierConnectState> {
   const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) return { error: "You must be signed in." };
 
   const provider = String(formData.get("provider") ?? "steadfast");
-  if (provider !== "steadfast") throw new Error("Unsupported courier provider");
+  if (provider !== "steadfast") return { error: "Unsupported courier provider." };
 
   const apiKey = String(formData.get("api_key") ?? "").trim();
   const secretKey = String(formData.get("secret_key") ?? "").trim();
-  if (!apiKey || !secretKey) throw new Error("API key and secret key are required");
+  if (!apiKey || !secretKey) return { error: "API key and secret key are both required." };
 
   // Validate the credentials against Steadfast before storing them.
   try {
     await getBalance({ apiKey, secretKey });
   } catch {
-    throw new Error("Could not verify the Steadfast credentials. Double-check the API key and secret key.");
+    return {
+      error:
+        "Steadfast rejected these credentials. Double-check the API key and secret key from your Steadfast portal.",
+    };
   }
 
   const supabase = createSupabaseAdmin();
@@ -77,9 +87,10 @@ export async function connectCourier(formData: FormData) {
     { onConflict: "brand_clerk_user_id,provider" }
   );
 
-  if (error) throw new Error("Failed to save courier integration");
+  if (error) return { error: "Could not save the courier integration. Please try again." };
 
   revalidatePath("/dashboard/settings");
+  return { error: null };
 }
 
 export async function disconnectCourier(formData: FormData) {

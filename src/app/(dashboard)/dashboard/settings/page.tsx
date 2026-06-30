@@ -5,8 +5,9 @@ import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
 import { Badge } from "@/components/ui/Badge";
 import { PressButton } from "@/components/ui/PressButton";
-import { connectCourier, disconnectCourier, disconnectShopify, updateProfile } from "./actions";
+import { disconnectCourier, disconnectShopify, updateProfile } from "./actions";
 import { getBalance } from "@/lib/courier/steadfast";
+import { CourierConnectForm } from "./CourierConnectForm";
 
 export default async function SettingsPage() {
   const { userId } = await auth();
@@ -243,34 +244,7 @@ export default async function SettingsPage() {
                   <li>Copy your API Key and Secret Key and paste them below.</li>
                 </ol>
               </div>
-              <form action={connectCourier} className="space-y-4">
-                <input type="hidden" name="provider" value="steadfast" />
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className="text-xs text-mute uppercase tracking-wide block mb-1">API Key</label>
-                    <input
-                      name="api_key"
-                      type="text"
-                      placeholder="Steadfast API key"
-                      className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-blue transition-colors"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-mute uppercase tracking-wide block mb-1">Secret Key</label>
-                    <input
-                      name="secret_key"
-                      type="password"
-                      placeholder="Steadfast secret key"
-                      className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-blue transition-colors"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end">
-                  <PressButton type="submit" tone="brand">Connect Steadfast</PressButton>
-                </div>
-              </form>
+              <CourierConnectForm />
             </div>
           )}
         </SwissCard>
