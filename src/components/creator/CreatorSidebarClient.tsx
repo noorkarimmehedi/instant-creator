@@ -49,7 +49,7 @@ function SettingsIcon({ className }: { className?: string }) {
 }
 
 const mainNav = [
-  { href: "/creator", label: "Dashboard", icon: HomeIcon },
+  { href: "/creator", label: "Home", icon: HomeIcon },
   { href: "/creator/products", label: "Products", icon: MarketplaceIcon },
   { href: "/creator/orders", label: "Orders", icon: OrdersIcon },
   { href: "/creator/earnings", label: "Earnings", icon: EarningsIcon },
