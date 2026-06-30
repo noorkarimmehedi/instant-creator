@@ -84,7 +84,7 @@ export function AddProductForm() {
         </select>
       </div>
       <p className="text-xs text-charcoal">
-        Firecrawl extracts the title, price, and images. The commission is what creators earn; the coupon discount is what customers get in Shopify.
+        AI extracts the title, price, and images. The commission is what creators earn; the coupon discount is what customers get in Shopify.
       </p>
       {state && !state.ok ? (
         <p className="text-xs text-accent-red">{state.error}</p>
