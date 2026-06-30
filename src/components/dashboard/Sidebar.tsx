@@ -131,65 +131,62 @@ export function Sidebar({ brandName, plan }: { brandName: string; plan: string }
   `;
 
   return (
-    <aside className="grid h-screen w-[272px] grid-cols-[56px_1fr] bg-[#e5e5e5]">
-      <div className="flex flex-col items-center justify-between px-2 py-3.5">
-        <div className="flex flex-col items-center">
+    <aside className="h-screen w-[256px] bg-[#e5e5e5] p-[18px]">
+      <div className="flex h-full flex-col overflow-hidden rounded-xl bg-[#F5F5F5]">
+        <nav className="flex-1 overflow-hidden p-3 text-ink/75">
           <Link
             href="/dashboard"
-            className="flex h-11 w-10 items-center justify-center rounded-lg text-sm font-bold tracking-[-0.05em] text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
+            className="mb-5 flex h-11 items-center rounded-lg px-2 text-lg font-semibold text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
             aria-label="Instant Creator dashboard"
           >
-            I<span className="text-accent-red">/</span>C
+            <span className="mr-2 text-sm font-bold tracking-[-0.05em]">
+              I<span className="text-accent-red">/</span>C
+            </span>
+            Dashboard
           </Link>
-        </div>
-        <div className="flex flex-col items-center gap-3 py-3">
-          <ThemeToggle />
-          <UserButton />
-        </div>
-      </div>
 
-      <div className="overflow-hidden py-[18px] pr-4">
-        <div className="flex h-full flex-col overflow-hidden rounded-xl bg-[#F5F5F5]">
-          <nav className="flex-1 overflow-hidden p-3 text-ink/75">
-            <div className="mb-5 px-2 py-2 text-lg font-semibold text-ink">Dashboard</div>
+          <div className="space-y-0.5">
+            {mainNav.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link key={item.href} href={item.href} className={navLinkClass(active)}>
+                  <span className="flex items-center gap-2.5">
+                    <item.icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
 
-            <div className="space-y-0.5">
-              {mainNav.map((item) => {
-                const active = pathname === item.href;
-                return (
-                  <Link key={item.href} href={item.href} className={navLinkClass(active)}>
-                    <span className="flex items-center gap-2.5">
-                      <item.icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
-                      {item.label}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
+          <div className="mt-8 space-y-0.5">
+            <p className="mb-2 px-2 text-sm text-mute">Configuration</p>
+            {settingsNav.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link key={item.href} href={item.href} className={navLinkClass(active)}>
+                  <span className="flex items-center gap-2.5">
+                    <item.icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
 
-            <div className="mt-8 space-y-0.5">
-              <p className="mb-2 px-2 text-sm text-mute">Configuration</p>
-              {settingsNav.map((item) => {
-                const active = pathname === item.href;
-                return (
-                  <Link key={item.href} href={item.href} className={navLinkClass(active)}>
-                    <span className="flex items-center gap-2.5">
-                      <item.icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
-                      {item.label}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </nav>
-
-          <div className="border-t border-neutral-300/80 p-3">
+        <div className="border-t border-neutral-300/80 p-3">
+          <div className="mb-3 flex items-center justify-between gap-3">
             <p className="text-sm text-mute">Workspace</p>
-            <div className="mt-3 flex items-center gap-3">
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-ink">{brandName}</p>
-                <p className="text-xs text-mute capitalize">{plan}</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <UserButton />
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-ink">{brandName}</p>
+              <p className="text-xs text-mute capitalize">{plan}</p>
             </div>
           </div>
         </div>
