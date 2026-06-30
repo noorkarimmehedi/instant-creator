@@ -68,6 +68,21 @@ export function AddProductForm() {
           </div>
         </div>
       </div>
+      <div>
+        <label className="text-xs text-mute uppercase tracking-wide">
+          Target gender
+        </label>
+        <select
+          name="target_gender"
+          defaultValue="all"
+          className="mt-1 w-full rounded-md border border-hairline-strong bg-surface-elevated px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-accent-blue transition-colors"
+        >
+          <option value="all">All genders</option>
+          <option value="women">Women</option>
+          <option value="men">Men</option>
+          <option value="kids">Kids</option>
+        </select>
+      </div>
       <p className="text-xs text-charcoal">
         Firecrawl extracts the title, price, and images. The commission is what creators earn; the coupon discount is what customers get in Shopify.
       </p>

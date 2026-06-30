@@ -14,6 +14,7 @@ type Product = {
   image_url: string | null;
   commission_percentage: number | string | null;
   coupon_discount_percentage: number | string | null;
+  target_gender: string | null;
 };
 
 export function ProductCard({ product }: { product: Product }) {
@@ -85,6 +86,19 @@ export function ProductCard({ product }: { product: Product }) {
               </div>
             </label>
           </div>
+          <label className="block text-xs text-charcoal">
+            Target gender
+            <select
+              name="target_gender"
+              defaultValue={product.target_gender ?? "all"}
+              className="mt-1 w-full rounded-md border border-hairline-strong bg-canvas px-2 py-1.5 text-xs text-ink focus:outline-none focus:border-accent-blue"
+            >
+              <option value="all">All genders</option>
+              <option value="women">Women</option>
+              <option value="men">Men</option>
+              <option value="kids">Kids</option>
+            </select>
+          </label>
           <div className="flex items-center justify-between gap-2">
             <span className={`text-xs ${state?.ok ? "text-accent-green" : "text-accent-red"}`}>
               {state ? (state.ok ? "Saved" : state.error) : ""}

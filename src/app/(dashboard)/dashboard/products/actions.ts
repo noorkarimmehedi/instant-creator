@@ -21,6 +21,7 @@ export async function addProductFromUrl(
 
   const commissionPercentage = readPercentage(formData, "commission_percentage");
   const couponDiscountPercentage = readPercentage(formData, "coupon_discount_percentage");
+  const targetGender = readTargetGender(formData);
   if (commissionPercentage === null || couponDiscountPercentage === null) {
     return { ok: false, error: "Commission and coupon discount must be between 0 and 100%." };
   }
@@ -83,6 +84,7 @@ export async function addProductFromUrl(
     images,
     commission_percentage: commissionPercentage,
     coupon_discount_percentage: couponDiscountPercentage,
+    target_gender: targetGender,
   });
 
   if (error) return { ok: false, error: `Failed to save the product: ${error.message}` };
@@ -103,6 +105,7 @@ export async function updateProductTerms(
 
   const commissionPercentage = readPercentage(formData, "commission_percentage");
   const couponDiscountPercentage = readPercentage(formData, "coupon_discount_percentage");
+  const targetGender = readTargetGender(formData);
   if (commissionPercentage === null || couponDiscountPercentage === null) {
     return { ok: false, error: "Commission and coupon discount must be between 0 and 100%." };
   }
@@ -113,6 +116,7 @@ export async function updateProductTerms(
     .update({
       commission_percentage: commissionPercentage,
       coupon_discount_percentage: couponDiscountPercentage,
+      target_gender: targetGender,
     })
     .eq("id", productId)
     .eq("clerk_user_id", userId);
@@ -175,6 +179,11 @@ export async function deleteProduct(
 
 function readPercentage(formData: FormData, key: string) {
   return readPercentageValue(formData.get(key));
+}
+
+function readTargetGender(formData: FormData) {
+  const value = String(formData.get("target_gender") ?? "all");
+  return ["all", "women", "men", "kids"].includes(value) ? value : "all";
 }
 
 function isMissingTableError(error: SupabaseError) {
