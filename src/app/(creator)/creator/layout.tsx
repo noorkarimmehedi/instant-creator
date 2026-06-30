@@ -3,11 +3,11 @@ import { CreatorSidebar } from "@/components/creator/CreatorSidebar";
 
 function SidebarSkeleton() {
   return (
-    <aside className="grid h-screen w-[304px] grid-cols-[64px_1fr] bg-[#e5e5e5]">
-      <div className="animate-pulse p-2">
-        <div className="mx-auto mt-2 h-11 w-11 rounded-lg bg-black/5" />
+    <aside className="grid h-screen w-[272px] grid-cols-[56px_1fr] bg-[#e5e5e5]">
+      <div className="animate-pulse px-2 py-3.5">
+        <div className="mx-auto h-11 w-10 rounded-lg bg-black/5" />
       </div>
-      <div className="py-2 pr-2">
+      <div className="py-[18px] pr-4">
         <div className="h-full rounded-xl bg-[#F5F5F5] p-3">
           <div className="h-8 rounded-lg bg-black/5" />
         </div>

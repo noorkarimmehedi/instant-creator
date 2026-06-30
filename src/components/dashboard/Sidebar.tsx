@@ -121,7 +121,6 @@ const settingsNav: { href: string; label: string; icon: NavIcon }[] = [
 
 export function Sidebar({ brandName, plan }: { brandName: string; plan: string }) {
   const pathname = usePathname();
-  const allNav = [...mainNav, ...settingsNav];
   const navLinkClass = (active: boolean) => `
     flex h-8 items-center justify-between rounded-lg px-2 text-sm leading-none transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-black/50
     ${
@@ -132,31 +131,16 @@ export function Sidebar({ brandName, plan }: { brandName: string; plan: string }
   `;
 
   return (
-    <aside className="grid h-screen w-[304px] grid-cols-[64px_1fr] bg-[#e5e5e5]">
-      <div className="flex flex-col items-center justify-between p-2">
-        <div className="flex flex-col items-center gap-3">
+    <aside className="grid h-screen w-[272px] grid-cols-[56px_1fr] bg-[#e5e5e5]">
+      <div className="flex flex-col items-center justify-between px-2 py-3.5">
+        <div className="flex flex-col items-center">
           <Link
             href="/dashboard"
-            className="flex h-14 w-11 items-center justify-center rounded-lg text-xs font-bold tracking-[-0.05em] text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
+            className="flex h-11 w-10 items-center justify-center rounded-lg text-sm font-bold tracking-[-0.05em] text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
             aria-label="Instant Creator dashboard"
           >
             I<span className="text-accent-red">/</span>C
           </Link>
-          {allNav.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex h-11 w-11 items-center justify-center rounded-lg text-ink outline-none transition-colors focus-visible:ring-2 focus-visible:ring-black/50 ${
-                  active ? "bg-white" : "hover:bg-black/5"
-                }`}
-                aria-label={item.label}
-              >
-                <item.icon className="h-5 w-5 shrink-0" strokeWidth={1.5} />
-              </Link>
-            );
-          })}
         </div>
         <div className="flex flex-col items-center gap-3 py-3">
           <ThemeToggle />
@@ -164,7 +148,7 @@ export function Sidebar({ brandName, plan }: { brandName: string; plan: string }
         </div>
       </div>
 
-      <div className="overflow-hidden py-2 pr-2">
+      <div className="overflow-hidden py-[18px] pr-4">
         <div className="flex h-full flex-col overflow-hidden rounded-xl bg-[#F5F5F5]">
           <nav className="flex-1 overflow-hidden p-3 text-ink/75">
             <div className="mb-5 px-2 py-2 text-lg font-semibold text-ink">Dashboard</div>
