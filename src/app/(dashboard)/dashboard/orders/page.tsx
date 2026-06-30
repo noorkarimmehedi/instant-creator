@@ -4,8 +4,7 @@ import Link from "next/link";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
-import { CourierStatusBadge } from "@/components/CourierStatusBadge";
-import { FINAL_STATUSES } from "@/lib/courier/steadfast";
+import { CourierStatusBadge, isFinalCourierStatus } from "@/components/CourierStatusBadge";
 import { DispatchDialog } from "./DispatchDialog";
 import { requestReturn, runCourierSync, syncCourierStatuses } from "./actions";
 
@@ -43,10 +42,11 @@ export default async function BrandOrdersPage() {
     .from("courier_integrations")
     .select("provider")
     .eq("brand_clerk_user_id", userId)
-    .eq("provider", "steadfast")
     .eq("is_active", true)
     .single();
   const courierConnected = !!courier;
+  const activeProvider = (courier?.provider ?? "steadfast") as "steadfast" | "pathao";
+  const providerLabel = activeProvider === "pathao" ? "Pathao" : "Steadfast";
 
   // Refresh in-flight consignment statuses on load so the page reflects the latest
   // delivery state. Wrapped so a courier API outage never breaks the orders view.
@@ -94,7 +94,7 @@ export default async function BrandOrdersPage() {
         <div className="flex items-center justify-between">
           <p className="text-sm text-charcoal">
             {courierConnected ? (
-              "Steadfast connected — send delivered orders to the courier and track status here."
+              `${providerLabel} connected — send orders to the courier and track status here.`
             ) : (
               <>
                 Connect a courier in{" "}
@@ -213,8 +213,9 @@ export default async function BrandOrdersPage() {
                               {order.tracking_code && (
                                 <p className="text-[11px] text-stone">{order.tracking_code}</p>
                               )}
-                              {!order.return_status &&
-                                !FINAL_STATUSES.includes(order.courier_status ?? "") && (
+                              {activeProvider === "steadfast" &&
+                                !order.return_status &&
+                                !isFinalCourierStatus(order.courier_status) && (
                                   <form action={requestReturn}>
                                     <input type="hidden" name="orderId" value={order.id} />
                                     <button
@@ -230,6 +231,7 @@ export default async function BrandOrdersPage() {
                             <DispatchDialog
                               orderId={order.id}
                               orderNumber={order.shopify_order_number ?? order.id.slice(0, 8)}
+                              providerLabel={providerLabel}
                               defaultName={order.customer_name ?? ""}
                               defaultPhone={order.phone ?? ""}
                               defaultAddress={order.address ?? ""}

@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { getBalance } from "@/lib/courier/steadfast";
+import { issueToken, getStores, pathaoBaseUrl, type PathaoEnvironment } from "@/lib/courier/pathao";
 
 export async function updateProfile(formData: FormData) {
   const { userId } = await auth();
@@ -89,8 +90,112 @@ export async function connectCourier(
 
   if (error) return { error: "Could not save the courier integration. Please try again." };
 
+  // Only one courier can be active for dispatch at a time.
+  await supabase
+    .from("courier_integrations")
+    .update({ is_active: false })
+    .eq("brand_clerk_user_id", userId)
+    .neq("provider", provider);
+
   revalidatePath("/dashboard/settings");
   return { error: null };
+}
+
+export async function connectPathao(
+  _prev: CourierConnectState,
+  formData: FormData
+): Promise<CourierConnectState> {
+  const { userId } = await auth();
+  if (!userId) return { error: "You must be signed in." };
+
+  const environment = (String(formData.get("environment") ?? "live") as PathaoEnvironment);
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  const clientSecret = String(formData.get("client_secret") ?? "").trim();
+  const username = String(formData.get("username") ?? "").trim();
+  const password = String(formData.get("password") ?? "").trim();
+
+  if (!clientId || !clientSecret || !username || !password) {
+    return { error: "Client ID, client secret, username, and password are all required." };
+  }
+
+  const baseUrl = pathaoBaseUrl(environment);
+
+  let token;
+  try {
+    token = await issueToken({ baseUrl, clientId, clientSecret, username, password });
+  } catch {
+    return {
+      error: "Pathao rejected these credentials. Check the client ID, secret, username, and password.",
+    };
+  }
+
+  // A Pathao order needs a pickup store. Use the merchant's default (or first) store.
+  let store;
+  try {
+    const stores = await getStores({ baseUrl, accessToken: token.access_token });
+    store = stores.find((s) => s.is_default_store) ?? stores[0];
+  } catch {
+    return { error: "Connected, but could not fetch your Pathao stores. Try again." };
+  }
+  if (!store) {
+    return { error: "No Pathao store found. Create a store in your Pathao merchant panel first." };
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase.from("courier_integrations").upsert(
+    {
+      brand_clerk_user_id: userId,
+      provider: "pathao",
+      credentials: {
+        environment,
+        client_id: clientId,
+        client_secret: clientSecret,
+        username,
+        password,
+        access_token: token.access_token,
+        refresh_token: token.refresh_token,
+        token_expires_at: new Date(Date.now() + token.expires_in * 1000).toISOString(),
+        store_id: store.store_id,
+        store_name: store.store_name,
+      },
+      is_active: true,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "brand_clerk_user_id,provider" }
+  );
+
+  if (error) return { error: "Could not save the Pathao integration. Please try again." };
+
+  await supabase
+    .from("courier_integrations")
+    .update({ is_active: false })
+    .eq("brand_clerk_user_id", userId)
+    .neq("provider", "pathao");
+
+  revalidatePath("/dashboard/settings");
+  return { error: null };
+}
+
+export async function makeCourierActive(formData: FormData) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const provider = String(formData.get("provider") ?? "");
+  if (provider !== "steadfast" && provider !== "pathao") throw new Error("Unknown provider");
+
+  const supabase = createSupabaseAdmin();
+  await supabase
+    .from("courier_integrations")
+    .update({ is_active: true })
+    .eq("brand_clerk_user_id", userId)
+    .eq("provider", provider);
+  await supabase
+    .from("courier_integrations")
+    .update({ is_active: false })
+    .eq("brand_clerk_user_id", userId)
+    .neq("provider", provider);
+
+  revalidatePath("/dashboard/settings");
 }
 
 export async function disconnectCourier(formData: FormData) {

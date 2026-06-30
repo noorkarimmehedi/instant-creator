@@ -1,22 +1,37 @@
-// Maps Steadfast delivery statuses (and our return state) to a coloured pill.
-const TONE: Record<string, string> = {
-  delivered: "bg-accent-green/10 text-accent-green",
-  partial_delivered: "bg-accent-green/10 text-accent-green",
-  cancelled: "bg-accent-red/10 text-accent-red",
-  returned: "bg-accent-red/10 text-accent-red",
-  hold: "bg-accent-orange/10 text-accent-orange",
-  in_review: "bg-surface-elevated text-mute",
-  pending: "bg-surface-elevated text-mute",
-};
+// Maps Steadfast delivery statuses and Pathao order_status_slugs to a coloured pill.
+// Both providers are normalised to lowercase and matched with a small heuristic so we
+// don't have to enumerate every Pathao slug.
 
-const LABEL: Record<string, string> = {
-  delivered_approval_pending: "delivered (pending)",
-  partial_delivered_approval_pending: "partial (pending)",
-  cancelled_approval_pending: "cancelled (pending)",
-  unknown_approval_pending: "pending review",
-  partial_delivered: "partial delivered",
-  in_review: "in review",
-};
+const GREEN = "bg-accent-green/10 text-accent-green";
+const RED = "bg-accent-red/10 text-accent-red";
+const ORANGE = "bg-accent-orange/10 text-accent-orange";
+const MUTE = "bg-surface-elevated text-mute";
+const BLUE = "bg-accent-blue/10 text-accent-blue";
+
+// Statuses that mean the consignment is settled (across both providers).
+const FINAL = [
+  "delivered",
+  "partial_delivered",
+  "partial_delivery",
+  "cancelled",
+  "returned",
+  "paid",
+  "paid_return",
+];
+
+export function isFinalCourierStatus(status: string | null): boolean {
+  return FINAL.includes((status ?? "").toLowerCase());
+}
+
+function tone(status: string): string {
+  const s = status.toLowerCase();
+  if (s.includes("return")) return RED;
+  if (s.includes("cancel") || s.includes("fail")) return RED;
+  if (s.includes("deliver") || s === "paid") return GREEN;
+  if (s.includes("hold")) return ORANGE;
+  if (s === "pending" || s.includes("review")) return MUTE;
+  return BLUE;
+}
 
 export function CourierStatusBadge({
   status,
@@ -27,7 +42,7 @@ export function CourierStatusBadge({
 }) {
   if (returnStatus) {
     return (
-      <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${TONE.returned}`}>
+      <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${RED}`}>
         returned
       </span>
     );
@@ -37,11 +52,10 @@ export function CourierStatusBadge({
     return <span className="text-xs text-stone">Not sent</span>;
   }
 
-  const tone = TONE[status] ?? "bg-accent-blue/10 text-accent-blue";
-  const label = LABEL[status] ?? status.replace(/_/g, " ");
+  const label = status.replace(/_/g, " ").toLowerCase();
 
   return (
-    <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${tone}`}>
+    <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${tone(status)}`}>
       {label}
     </span>
   );

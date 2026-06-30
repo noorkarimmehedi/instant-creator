@@ -5,9 +5,10 @@ import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
 import { Badge } from "@/components/ui/Badge";
 import { PressButton } from "@/components/ui/PressButton";
-import { disconnectCourier, disconnectShopify, updateProfile } from "./actions";
+import { disconnectCourier, disconnectShopify, makeCourierActive, updateProfile } from "./actions";
 import { getBalance } from "@/lib/courier/steadfast";
 import { CourierConnectForm } from "./CourierConnectForm";
+import { PathaoConnectForm } from "./PathaoConnectForm";
 
 export default async function SettingsPage() {
   const { userId } = await auth();
@@ -42,14 +43,14 @@ export default async function SettingsPage() {
   const isConnected = !!brand?.shopify_token;
   const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://your-instantcreator-domain.com"}/api/shopify/callback`;
 
-  const { data: steadfast } = await supabase
+  const { data: couriers } = await supabase
     .from("courier_integrations")
-    .select("provider, credentials")
-    .eq("brand_clerk_user_id", userId)
-    .eq("provider", "steadfast")
-    .single();
+    .select("provider, credentials, is_active")
+    .eq("brand_clerk_user_id", userId);
 
-  const courierConnected = !!steadfast;
+  const steadfast = (couriers ?? []).find((c) => c.provider === "steadfast");
+  const pathao = (couriers ?? []).find((c) => c.provider === "pathao");
+
   const steadfastApiKey = (steadfast?.credentials as { api_key?: string } | null)?.api_key ?? "";
   const maskedKey = steadfastApiKey
     ? `${steadfastApiKey.slice(0, 4)}••••${steadfastApiKey.slice(-2)}`
@@ -64,6 +65,10 @@ export default async function SettingsPage() {
       courierBalance = null;
     }
   }
+
+  const pathaoCreds = pathao?.credentials as
+    | { store_name?: string; environment?: string }
+    | undefined;
 
   return (
     <>
@@ -192,61 +197,119 @@ export default async function SettingsPage() {
         </SwissCard>
 
         {/* Courier Integration */}
-        <SwissCard highlighted={isConnected && !courierConnected}>
-          <div className="flex items-center justify-between mb-4">
+        <SwissCard highlighted={isConnected && !steadfast && !pathao}>
+          <div className="flex items-center justify-between mb-1">
             <h2 className="text-lg font-medium text-ink">Courier Integration</h2>
-            {courierConnected ? <Badge dot>Connected</Badge> : <Badge>Not Connected</Badge>}
+            {steadfast || pathao ? <Badge dot>Connected</Badge> : <Badge>Not Connected</Badge>}
+          </div>
+          <p className="text-sm text-charcoal mb-6">
+            Connect a courier to send orders for delivery and track their status. One courier is active
+            for dispatch at a time.
+          </p>
+
+          {/* Steadfast */}
+          <div className="border-t border-hairline pt-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-ink">Steadfast</h3>
+              {steadfast ? (
+                steadfast.is_active ? <Badge dot>Active</Badge> : <Badge>Connected</Badge>
+              ) : (
+                <Badge>Not Connected</Badge>
+              )}
+            </div>
+
+            {steadfast ? (
+              <div className="space-y-3">
+                <p className="text-sm text-charcoal">
+                  API key <span className="text-ink font-medium">{maskedKey}</span> · Balance{" "}
+                  <span className="text-ink font-medium">
+                    {courierBalance === null
+                      ? "unavailable"
+                      : courierBalance.toLocaleString("en-US", { style: "currency", currency: "BDT" })}
+                  </span>
+                </p>
+                <div className="flex justify-end gap-2">
+                  {!steadfast.is_active && (
+                    <form action={makeCourierActive}>
+                      <input type="hidden" name="provider" value="steadfast" />
+                      <button
+                        type="submit"
+                        className="rounded-[8px] border border-accent-blue/40 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-accent-blue/10"
+                      >
+                        Make active
+                      </button>
+                    </form>
+                  )}
+                  <form action={disconnectCourier}>
+                    <input type="hidden" name="provider" value="steadfast" />
+                    <button
+                      type="submit"
+                      className="rounded-[8px] border border-accent-red/30 px-4 py-2 text-sm font-medium text-accent-red transition-colors hover:bg-accent-red/10"
+                    >
+                      Disconnect
+                    </button>
+                  </form>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm text-charcoal">
+                  Enter your Steadfast API Key and Secret Key from portal.packzy.com.
+                </p>
+                <CourierConnectForm />
+              </div>
+            )}
           </div>
 
-          <div className="mb-4 flex gap-2">
-            <span className="inline-flex items-center rounded-md border border-accent-blue/40 bg-accent-blue/5 px-3 py-1 text-xs font-medium text-ink">
-              Steadfast
-            </span>
-            <span className="inline-flex items-center rounded-md border border-hairline px-3 py-1 text-xs text-stone">
-              Pathao — coming soon
-            </span>
-          </div>
+          {/* Pathao */}
+          <div className="border-t border-hairline mt-6 pt-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-ink">Pathao</h3>
+              {pathao ? (
+                pathao.is_active ? <Badge dot>Active</Badge> : <Badge>Connected</Badge>
+              ) : (
+                <Badge>Not Connected</Badge>
+              )}
+            </div>
 
-          {courierConnected ? (
-            <div className="space-y-4">
-              <p className="text-sm text-charcoal">
-                Steadfast connected with API key <span className="text-ink font-medium">{maskedKey}</span>
-              </p>
-              <div className="rounded-md border border-hairline bg-surface-elevated p-4 text-sm text-charcoal">
-                Current Steadfast balance:{" "}
-                <span className="text-ink font-medium">
-                  {courierBalance === null
-                    ? "Unavailable"
-                    : courierBalance.toLocaleString("en-US", { style: "currency", currency: "BDT" })}
-                </span>
+            {pathao ? (
+              <div className="space-y-3">
+                <p className="text-sm text-charcoal">
+                  Store <span className="text-ink font-medium">{pathaoCreds?.store_name ?? "—"}</span> ·{" "}
+                  <span className="capitalize">{pathaoCreds?.environment ?? "live"}</span>
+                </p>
+                <div className="flex justify-end gap-2">
+                  {!pathao.is_active && (
+                    <form action={makeCourierActive}>
+                      <input type="hidden" name="provider" value="pathao" />
+                      <button
+                        type="submit"
+                        className="rounded-[8px] border border-accent-blue/40 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-accent-blue/10"
+                      >
+                        Make active
+                      </button>
+                    </form>
+                  )}
+                  <form action={disconnectCourier}>
+                    <input type="hidden" name="provider" value="pathao" />
+                    <button
+                      type="submit"
+                      className="rounded-[8px] border border-accent-red/30 px-4 py-2 text-sm font-medium text-accent-red transition-colors hover:bg-accent-red/10"
+                    >
+                      Disconnect
+                    </button>
+                  </form>
+                </div>
               </div>
-              <form action={disconnectCourier} className="flex justify-end">
-                <input type="hidden" name="provider" value="steadfast" />
-                <button
-                  type="submit"
-                  className="rounded-[8px] border border-accent-red/30 px-4 py-2 text-sm font-medium text-accent-red transition-colors hover:bg-accent-red/10"
-                >
-                  Disconnect Steadfast
-                </button>
-              </form>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-charcoal">
-                Connect your Steadfast Courier account to send delivered orders to the courier and track
-                delivery status in real time.
-              </p>
-              <div className="rounded-md border border-hairline bg-surface-elevated p-4 text-sm text-charcoal">
-                <p className="font-medium text-ink">Where to find your keys</p>
-                <ol className="mt-3 list-decimal space-y-2 pl-5">
-                  <li>Log in to the Steadfast merchant portal at portal.packzy.com.</li>
-                  <li>Open the API / Developer settings.</li>
-                  <li>Copy your API Key and Secret Key and paste them below.</li>
-                </ol>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm text-charcoal">
+                  Enter your Pathao merchant API credentials (client ID, secret, username, password).
+                </p>
+                <PathaoConnectForm />
               </div>
-              <CourierConnectForm />
-            </div>
-          )}
+            )}
+          </div>
         </SwissCard>
 
         {/* RTO Threshold */}

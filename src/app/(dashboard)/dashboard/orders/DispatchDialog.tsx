@@ -7,13 +7,14 @@ import { dispatchToCourier } from "./actions";
 type Props = {
   orderId: string;
   orderNumber: string;
+  providerLabel: string;
   defaultName: string;
   defaultPhone: string;
   defaultAddress: string;
   defaultCod: number;
 };
 
-function SubmitButton() {
+function SubmitButton({ providerLabel }: { providerLabel: string }) {
   const { pending } = useFormStatus();
   return (
     <button
@@ -21,7 +22,7 @@ function SubmitButton() {
       disabled={pending}
       className="inline-flex h-9 items-center justify-center rounded-[8px] border border-[#111] bg-[linear-gradient(180deg,#2F2F2F,#181818)] px-4 text-sm font-medium text-white transition-opacity hover:opacity-95 disabled:opacity-60"
     >
-      {pending ? "Sending…" : "Send to Steadfast"}
+      {pending ? "Sending…" : `Send to ${providerLabel}`}
     </button>
   );
 }
@@ -32,6 +33,7 @@ const inputClass =
 export function DispatchDialog({
   orderId,
   orderNumber,
+  providerLabel,
   defaultName,
   defaultPhone,
   defaultAddress,
@@ -58,7 +60,7 @@ export function DispatchDialog({
             className="w-full max-w-md rounded-lg border border-hairline-strong bg-surface p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-base font-medium text-ink">Send order #{orderNumber} to Steadfast</h3>
+            <h3 className="text-base font-medium text-ink">Send order #{orderNumber} to {providerLabel}</h3>
             <p className="mt-1 text-xs text-mute">Review and edit the delivery details before sending.</p>
 
             <form action={dispatchToCourier} className="mt-4 space-y-3">
@@ -106,7 +108,7 @@ export function DispatchDialog({
                 >
                   Cancel
                 </button>
-                <SubmitButton />
+                <SubmitButton providerLabel={providerLabel} />
               </div>
             </form>
           </div>
