@@ -54,7 +54,7 @@ export function ApprovePayoutDialog({ influencerId, name, pending, bank }: Props
           onClick={() => setOpen(false)}
         >
           <div
-            className="w-full max-w-md rounded-lg border border-hairline-strong bg-surface p-6 shadow-xl"
+            className="w-full max-w-md rounded-lg border border-hairline-strong bg-surface-card p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-base font-medium text-ink">Approve payout to {name}</h3>
