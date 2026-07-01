@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useFormStatus } from "react-dom";
+import { createPortal, useFormStatus } from "react-dom";
 import { approvePayout } from "./actions";
 
 type BankAccount = {
@@ -48,65 +48,67 @@ export function ApprovePayoutDialog({ influencerId, name, pending, bank }: Props
         Approve payout
       </button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-          onClick={() => setOpen(false)}
-        >
+      {open &&
+        createPortal(
           <div
-            className="w-full max-w-md rounded-lg border border-hairline-strong bg-surface-card p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+            onClick={() => setOpen(false)}
           >
-            <h3 className="text-base font-medium text-ink">Approve payout to {name}</h3>
-            <p className="mt-1 text-xs text-mute">
-              Record a payout you have disbursed. Enter the amount you actually paid.
-            </p>
+            <div
+              className="w-full max-w-md rounded-lg border border-hairline-strong bg-surface-card p-6 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-base font-medium text-ink">Approve payout to {name}</h3>
+              <p className="mt-1 text-xs text-mute">
+                Record a payout you have disbursed. Enter the amount you actually paid.
+              </p>
 
-            <div className="mt-4 rounded-md border border-hairline bg-surface-elevated p-3 text-sm">
-              <p className="text-xs text-mute uppercase tracking-wide mb-1">Bank account</p>
-              {hasBank ? (
-                <div className="text-ink">
-                  <p className="font-medium">{bank?.account_holder ?? "—"}</p>
-                  <p className="text-charcoal">{bank?.bank_name ?? "—"}</p>
-                  <p className="text-charcoal">A/C {bank?.account_number}</p>
+              <div className="mt-4 rounded-md border border-hairline bg-surface-elevated p-3 text-sm">
+                <p className="text-xs text-mute uppercase tracking-wide mb-1">Bank account</p>
+                {hasBank ? (
+                  <div className="text-ink">
+                    <p className="font-medium">{bank?.account_holder ?? "—"}</p>
+                    <p className="text-charcoal">{bank?.bank_name ?? "—"}</p>
+                    <p className="text-charcoal">A/C {bank?.account_number}</p>
+                  </div>
+                ) : (
+                  <p className="text-accent-orange">No bank details on file for this creator.</p>
+                )}
+              </div>
+
+              <form action={approvePayout} className="mt-4 space-y-3">
+                <input type="hidden" name="influencerId" value={influencerId} />
+                <div>
+                  <label className="text-xs text-mute uppercase tracking-wide block mb-1">Paid amount (BDT)</label>
+                  <input
+                    name="amount"
+                    type="number"
+                    min={1}
+                    step="0.01"
+                    defaultValue={pending}
+                    className={inputClass}
+                    required
+                  />
                 </div>
-              ) : (
-                <p className="text-accent-orange">No bank details on file for this creator.</p>
-              )}
+                <div>
+                  <label className="text-xs text-mute uppercase tracking-wide block mb-1">Note (optional)</label>
+                  <input name="note" type="text" placeholder="Transaction reference, date, etc." className={inputClass} />
+                </div>
+                <div className="flex justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="rounded-[8px] border border-hairline-strong px-4 py-2 text-sm text-charcoal transition-colors hover:bg-surface-elevated"
+                  >
+                    Cancel
+                  </button>
+                  <SubmitButton />
+                </div>
+              </form>
             </div>
-
-            <form action={approvePayout} className="mt-4 space-y-3">
-              <input type="hidden" name="influencerId" value={influencerId} />
-              <div>
-                <label className="text-xs text-mute uppercase tracking-wide block mb-1">Paid amount (BDT)</label>
-                <input
-                  name="amount"
-                  type="number"
-                  min={1}
-                  step="0.01"
-                  defaultValue={pending}
-                  className={inputClass}
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-xs text-mute uppercase tracking-wide block mb-1">Note (optional)</label>
-                <input name="note" type="text" placeholder="Transaction reference, date, etc." className={inputClass} />
-              </div>
-              <div className="flex justify-end gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="rounded-[8px] border border-hairline-strong px-4 py-2 text-sm text-charcoal transition-colors hover:bg-surface-elevated"
-                >
-                  Cancel
-                </button>
-                <SubmitButton />
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 }
