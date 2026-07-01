@@ -13,7 +13,6 @@ type BankAccount = {
 
 type Order = {
   commission_amount: number | string | null;
-  status: string | null;
   influencer_clerk_user_id: string;
 };
 
@@ -39,10 +38,6 @@ type Payout = {
   paid: number;
 };
 
-function isPaidStatus(status: string) {
-  return status.includes("paid");
-}
-
 export default async function PayoutsPage() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
@@ -50,7 +45,7 @@ export default async function PayoutsPage() {
   const supabase = createSupabaseAdmin();
   const { data } = await supabase
     .from("orders")
-    .select("commission_amount, status, influencer_clerk_user_id")
+    .select("commission_amount, influencer_clerk_user_id")
     .eq("brand_clerk_user_id", userId);
   const orders = (data ?? []) as Order[];
 
@@ -217,13 +212,9 @@ function buildPayouts(
       eligible: 0,
     };
     const amount = Number(order.commission_amount ?? 0);
-    const status = String(order.status ?? "").toLowerCase();
 
     existing.orders += 1;
-    // Commission is only payable once the order has been collected/paid.
-    if (isPaidStatus(status)) {
-      existing.eligible += Number.isFinite(amount) ? amount : 0;
-    }
+    existing.eligible += Number.isFinite(amount) ? amount : 0;
 
     eligibleByInfluencer.set(order.influencer_clerk_user_id, existing);
   }

@@ -45,11 +45,15 @@ export default async function CreatorEarningsPage() {
   const bank = (influencerRow as Influencer | null)?.bank_account ?? null;
   const hasBank = Boolean(bank?.account_number);
 
+  const { data: payoutRows } = await supabase
+    .from("payouts")
+    .select("amount")
+    .eq("influencer_clerk_user_id", userId);
+  const paidRows = (payoutRows ?? []) as { amount: number | string | null }[];
+
   const totalEarned = orders.reduce((sum, o) => sum + Number(o.commission_amount ?? 0), 0);
-  const paid = orders
-    .filter((o) => String(o.status ?? "").toLowerCase().includes("paid"))
-    .reduce((sum, o) => sum + Number(o.commission_amount ?? 0), 0);
-  const pending = totalEarned - paid;
+  const paid = paidRows.reduce((sum, r) => sum + Number(r.amount ?? 0), 0);
+  const pending = Math.max(0, totalEarned - paid);
 
   return (
     <>
