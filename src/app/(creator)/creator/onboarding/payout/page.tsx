@@ -17,10 +17,7 @@ export default async function PayoutPage() {
         <p className="text-sm text-mute mb-6">
           Step 3 of 3 — How should we pay you?
         </p>
-        <PayoutForm
-          bkash={influencer.bkash_number}
-          bank={null}
-        />
+        <PayoutForm bank={influencer.bank_account} />
       </div>
     </>
   );

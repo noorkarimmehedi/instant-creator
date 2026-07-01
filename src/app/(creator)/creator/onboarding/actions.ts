@@ -79,25 +79,18 @@ export async function savePayout(formData: FormData) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const method = String(formData.get("method") ?? "bkash");
-  const bkash_number = String(formData.get("bkash_number") ?? "").trim();
   const bank_name = String(formData.get("bank_name") ?? "").trim();
   const account_number = String(formData.get("account_number") ?? "").trim();
   const account_holder = String(formData.get("account_holder") ?? "").trim();
 
+  if (!bank_name || !account_number || !account_holder) {
+    throw new Error("All bank details are required");
+  }
+
   const updates: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
+    bank_account: { bank_name, account_number, account_holder },
   };
-
-  if (method === "bkash") {
-    if (!bkash_number) throw new Error("bKash number is required");
-    updates.bkash_number = bkash_number;
-  } else {
-    if (!bank_name || !account_number || !account_holder) {
-      throw new Error("All bank details are required");
-    }
-    updates.bank_account = { bank_name, account_number, account_holder };
-  }
 
   const influencer = await getInfluencer(userId);
   updates.onboarding_step = Math.max(influencer?.onboarding_step ?? 0, 3);

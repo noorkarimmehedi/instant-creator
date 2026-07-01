@@ -8,7 +8,7 @@ export type Influencer = {
   avatar_url: string | null;
   social_links: Record<string, string>;
   follower_counts: Record<string, number>;
-  bkash_number: string | null;
+  bank_account: { bank_name?: string; account_number?: string; account_holder?: string } | null;
   verified: boolean;
   onboarding_step: number;
 };
@@ -18,7 +18,7 @@ const fetchInfluencer = async (userId: string): Promise<Influencer> => {
   const { data } = await supabase
     .from("influencers")
     .select(
-      "display_name, bio, niche, avatar_url, social_links, follower_counts, bkash_number, verified, onboarding_step"
+      "display_name, bio, niche, avatar_url, social_links, follower_counts, bank_account, verified, onboarding_step"
     )
     .eq("clerk_user_id", userId)
     .single();
@@ -30,7 +30,7 @@ const fetchInfluencer = async (userId: string): Promise<Influencer> => {
       avatar_url: null,
       social_links: {},
       follower_counts: {},
-      bkash_number: null,
+      bank_account: null,
       verified: false,
       onboarding_step: 0,
     }

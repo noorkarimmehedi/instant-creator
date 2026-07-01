@@ -18,7 +18,11 @@ type Order = {
 };
 
 type Influencer = {
-  bkash_number: string | null;
+  bank_account: {
+    bank_name?: string;
+    account_number?: string;
+    account_holder?: string;
+  } | null;
 };
 
 export default async function CreatorEarningsPage() {
@@ -35,10 +39,11 @@ export default async function CreatorEarningsPage() {
 
   const { data: influencerRow } = await supabase
     .from("influencers")
-    .select("bkash_number")
+    .select("bank_account")
     .eq("clerk_user_id", userId)
     .maybeSingle();
-  const bkash = (influencerRow as Influencer | null)?.bkash_number ?? null;
+  const bank = (influencerRow as Influencer | null)?.bank_account ?? null;
+  const hasBank = Boolean(bank?.account_number);
 
   const totalEarned = orders.reduce((sum, o) => sum + Number(o.commission_amount ?? 0), 0);
   const paid = orders
@@ -70,11 +75,13 @@ export default async function CreatorEarningsPage() {
             <div>
               <p className="text-sm font-medium text-ink">Payout method</p>
               <p className="mt-1 text-sm text-mute">
-                {bkash ? `bKash · ${bkash}` : "No payout method on file"}
+                {hasBank
+                  ? `${bank?.bank_name ?? "Bank"} · A/C ${bank?.account_number}`
+                  : "No payout method on file"}
               </p>
             </div>
             <a href="/creator/settings" className="text-sm text-accent-blue hover:underline">
-              {bkash ? "Update" : "Add"}
+              {hasBank ? "Update" : "Add"}
             </a>
           </div>
         </SwissCard>

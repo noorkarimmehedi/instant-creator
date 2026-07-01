@@ -5,7 +5,7 @@ import Link from "next/link";
 const steps = [
   { label: "Complete your profile", description: "Add your bio, niche, and avatar", href: "/creator/settings" },
   { label: "Link social accounts", description: "Connect Instagram, Facebook, TikTok, or YouTube", href: "/creator/settings" },
-  { label: "Add payout method", description: "Add your bKash number or bank account", href: "/creator/settings" },
+  { label: "Add payout method", description: "Add your bank account details", href: "/creator/settings" },
   { label: "Browse products", description: "Find products to promote and apply", href: "/creator/products" },
 ];
 

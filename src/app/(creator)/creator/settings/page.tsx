@@ -134,10 +134,7 @@ export default async function CreatorSettingsPage() {
         </SwissCard>
 
         {/* Payout */}
-        <PayoutSection
-          bkash={influencer.bkash_number}
-          bank={bankAccount}
-        />
+        <PayoutSection bank={bankAccount} />
       </div>
     </>
   );

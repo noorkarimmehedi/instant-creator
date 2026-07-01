@@ -3,6 +3,13 @@ import { redirect } from "next/navigation";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
+import { ApprovePayoutDialog } from "./ApprovePayoutDialog";
+
+type BankAccount = {
+  bank_name?: string;
+  account_number?: string;
+  account_holder?: string;
+} | null;
 
 type Order = {
   commission_amount: number | string | null;
@@ -13,13 +20,20 @@ type Order = {
 type Influencer = {
   clerk_user_id: string;
   display_name: string | null;
-  bkash_number: string | null;
+  bank_account: BankAccount;
+};
+
+type PayoutRow = {
+  influencer_clerk_user_id: string;
+  amount: number | string | null;
+  note: string | null;
+  created_at: string;
 };
 
 type Payout = {
   id: string;
   name: string;
-  bkash: string | null;
+  bank: BankAccount;
   orders: number;
   pending: number;
   paid: number;
@@ -42,13 +56,29 @@ export default async function PayoutsPage() {
 
   const influencerIds = Array.from(new Set(orders.map((o) => o.influencer_clerk_user_id).filter(Boolean)));
   const { data: influencerRows } = influencerIds.length > 0
-    ? await supabase.from("influencers").select("clerk_user_id, display_name, bkash_number").in("clerk_user_id", influencerIds)
+    ? await supabase.from("influencers").select("clerk_user_id, display_name, bank_account").in("clerk_user_id", influencerIds)
     : { data: [] };
   const influencerMap = new Map(
     ((influencerRows ?? []) as Influencer[]).map((i) => [i.clerk_user_id, i])
   );
 
-  const payouts = buildPayouts(orders, influencerMap);
+  const { data: payoutRows } = await supabase
+    .from("payouts")
+    .select("influencer_clerk_user_id, amount, note, created_at")
+    .eq("brand_clerk_user_id", userId)
+    .order("created_at", { ascending: false });
+  const payoutHistory = (payoutRows ?? []) as PayoutRow[];
+
+  const paidByInfluencer = new Map<string, number>();
+  for (const row of payoutHistory) {
+    const amount = Number(row.amount ?? 0);
+    paidByInfluencer.set(
+      row.influencer_clerk_user_id,
+      (paidByInfluencer.get(row.influencer_clerk_user_id) ?? 0) + (Number.isFinite(amount) ? amount : 0)
+    );
+  }
+
+  const payouts = buildPayouts(orders, influencerMap, paidByInfluencer);
   const totalPending = payouts.reduce((sum, p) => sum + p.pending, 0);
   const totalPaid = payouts.reduce((sum, p) => sum + p.paid, 0);
 
@@ -84,10 +114,11 @@ export default async function PayoutsPage() {
                 <thead>
                   <tr className="border-b border-hairline text-left text-xs text-mute uppercase tracking-wide">
                     <th className="pb-3 pr-4">Influencer</th>
-                    <th className="pb-3 pr-4">bKash</th>
+                    <th className="pb-3 pr-4">Bank Account</th>
                     <th className="pb-3 pr-4 text-right">Orders</th>
                     <th className="pb-3 pr-4 text-right">Pending</th>
-                    <th className="pb-3 text-right">Paid</th>
+                    <th className="pb-3 pr-4 text-right">Paid</th>
+                    <th className="pb-3 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-hairline">
@@ -104,10 +135,60 @@ export default async function PayoutsPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 pr-4 text-charcoal">{p.bkash ?? "—"}</td>
+                      <td className="py-4 pr-4 text-charcoal">
+                        {p.bank?.account_number ? (
+                          <div className="leading-tight">
+                            <p className="text-ink">{p.bank.account_holder ?? "—"}</p>
+                            <p className="text-xs text-mute">{p.bank.bank_name ?? "—"}</p>
+                            <p className="text-xs text-mute">A/C {p.bank.account_number}</p>
+                          </div>
+                        ) : (
+                          <span className="text-mute">No bank details</span>
+                        )}
+                      </td>
                       <td className="py-4 pr-4 text-right text-ink">{p.orders}</td>
                       <td className="py-4 pr-4 text-right font-medium text-accent-orange">{formatCurrency(p.pending)}</td>
-                      <td className="py-4 text-right font-medium text-accent-green">{formatCurrency(p.paid)}</td>
+                      <td className="py-4 pr-4 text-right font-medium text-accent-green">{formatCurrency(p.paid)}</td>
+                      <td className="py-4 text-right">
+                        <ApprovePayoutDialog
+                          influencerId={p.id}
+                          name={p.name}
+                          pending={p.pending}
+                          bank={p.bank}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </SwissCard>
+        )}
+
+        {payoutHistory.length > 0 && (
+          <SwissCard>
+            <h2 className="text-sm font-medium text-ink mb-4">Payout history</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-hairline text-left text-xs text-mute uppercase tracking-wide">
+                    <th className="pb-3 pr-4">Date</th>
+                    <th className="pb-3 pr-4">Influencer</th>
+                    <th className="pb-3 pr-4">Note</th>
+                    <th className="pb-3 text-right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-hairline">
+                  {payoutHistory.map((row, i) => (
+                    <tr key={i} className="hover:bg-surface-elevated/50">
+                      <td className="py-3 pr-4 text-mute text-xs">{new Date(row.created_at).toLocaleDateString()}</td>
+                      <td className="py-3 pr-4 text-ink">
+                        {influencerMap.get(row.influencer_clerk_user_id)?.display_name ?? "Creator"}
+                      </td>
+                      <td className="py-3 pr-4 text-charcoal">{row.note ?? "—"}</td>
+                      <td className="py-3 text-right font-medium text-accent-green">
+                        {formatCurrency(Number(row.amount ?? 0))}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -120,33 +201,47 @@ export default async function PayoutsPage() {
   );
 }
 
-function buildPayouts(orders: Order[], influencerMap: Map<string, Influencer>) {
-  const byInfluencer = new Map<string, Payout>();
+function buildPayouts(
+  orders: Order[],
+  influencerMap: Map<string, Influencer>,
+  paidByInfluencer: Map<string, number>
+) {
+  const eligibleByInfluencer = new Map<string, { name: string; bank: BankAccount; orders: number; eligible: number }>();
 
   for (const order of orders) {
     const influencer = influencerMap.get(order.influencer_clerk_user_id);
-    const existing = byInfluencer.get(order.influencer_clerk_user_id) ?? {
-      id: order.influencer_clerk_user_id,
+    const existing = eligibleByInfluencer.get(order.influencer_clerk_user_id) ?? {
       name: influencer?.display_name ?? "Creator",
-      bkash: influencer?.bkash_number ?? null,
+      bank: influencer?.bank_account ?? null,
       orders: 0,
-      pending: 0,
-      paid: 0,
+      eligible: 0,
     };
     const amount = Number(order.commission_amount ?? 0);
     const status = String(order.status ?? "").toLowerCase();
 
     existing.orders += 1;
+    // Commission is only payable once the order has been collected/paid.
     if (isPaidStatus(status)) {
-      existing.paid += Number.isFinite(amount) ? amount : 0;
-    } else {
-      existing.pending += Number.isFinite(amount) ? amount : 0;
+      existing.eligible += Number.isFinite(amount) ? amount : 0;
     }
 
-    byInfluencer.set(order.influencer_clerk_user_id, existing);
+    eligibleByInfluencer.set(order.influencer_clerk_user_id, existing);
   }
 
-  return Array.from(byInfluencer.values()).sort((a, b) => b.pending - a.pending || b.orders - a.orders);
+  const result: Payout[] = [];
+  for (const [id, agg] of eligibleByInfluencer) {
+    const paid = paidByInfluencer.get(id) ?? 0;
+    result.push({
+      id,
+      name: agg.name,
+      bank: agg.bank,
+      orders: agg.orders,
+      pending: Math.max(0, agg.eligible - paid),
+      paid,
+    });
+  }
+
+  return result.sort((a, b) => b.pending - a.pending || b.orders - a.orders);
 }
 
 function formatCurrency(value: number) {
