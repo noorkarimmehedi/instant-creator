@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { SettingsBookmarkButton } from "@/components/ui/SettingsBookmarkButton";
+import { dispatchSwissToast } from "@/components/ui/SwissToast";
 import { connectCourier, type CourierConnectState } from "./actions";
 
 const inputClass =
@@ -20,7 +21,12 @@ function SubmitButton() {
 export function CourierConnectForm() {
   const [state, formAction] = useActionState<CourierConnectState, FormData>(connectCourier, {
     error: null,
+    toast: null,
   });
+
+  useEffect(() => {
+    if (state.toast) dispatchSwissToast(state.toast);
+  }, [state]);
 
   return (
     <form action={formAction} className="space-y-4">

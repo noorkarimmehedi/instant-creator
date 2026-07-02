@@ -2,6 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import {
   avatarBucket,
@@ -9,6 +10,7 @@ import {
   buildAvatarStoragePath,
   isAllowedAvatarMimeType,
 } from "@/lib/creator/avatar";
+import { settingsToastUrl } from "@/lib/settings/toast";
 
 async function ensureAvatarBucket(supabase: ReturnType<typeof createSupabaseAdmin>) {
   const { error: bucketError } = await supabase.storage.getBucket(avatarBucket);
@@ -87,6 +89,7 @@ export async function updateProfile(formData: FormData) {
 
   revalidateTag("influencer", "max");
   revalidatePath("/creator/settings");
+  redirect(settingsToastUrl("/creator/settings", "creator-profile"));
 }
 
 export async function updateSocials(formData: FormData) {
@@ -120,6 +123,7 @@ export async function updateSocials(formData: FormData) {
 
   revalidateTag("influencer", "max");
   revalidatePath("/creator/settings");
+  redirect(settingsToastUrl("/creator/settings", "creator-socials"));
 }
 
 export async function updatePayout(formData: FormData) {
@@ -151,4 +155,5 @@ export async function updatePayout(formData: FormData) {
 
   revalidateTag("influencer", "max");
   revalidatePath("/creator/settings");
+  redirect(settingsToastUrl("/creator/settings", "creator-payout"));
 }

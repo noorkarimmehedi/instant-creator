@@ -2,7 +2,9 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
+import { settingsToastUrl } from "@/lib/settings/toast";
 import { getBalance } from "@/lib/courier/steadfast";
 import { issueToken, getStores, pathaoBaseUrl, type PathaoEnvironment } from "@/lib/courier/pathao";
 
@@ -23,6 +25,7 @@ export async function updateProfile(formData: FormData) {
 
   revalidateTag("brand", "max");
   revalidatePath("/dashboard/settings");
+  redirect(settingsToastUrl("/dashboard/settings", "brand-profile"));
 }
 
 export async function disconnectShopify() {
@@ -46,9 +49,10 @@ export async function disconnectShopify() {
   revalidateTag("brand", "max");
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings");
+  redirect(settingsToastUrl("/dashboard/settings", "shopify-disconnected"));
 }
 
-export type CourierConnectState = { error: string | null };
+export type CourierConnectState = { error: string | null; toast: string | null };
 
 // Used with useActionState so credential/validation failures render inline in the
 // form instead of bubbling up and crashing the settings page.
@@ -57,14 +61,14 @@ export async function connectCourier(
   formData: FormData
 ): Promise<CourierConnectState> {
   const { userId } = await auth();
-  if (!userId) return { error: "You must be signed in." };
+  if (!userId) return { error: "You must be signed in.", toast: null };
 
   const provider = String(formData.get("provider") ?? "steadfast");
-  if (provider !== "steadfast") return { error: "Unsupported courier provider." };
+  if (provider !== "steadfast") return { error: "Unsupported courier provider.", toast: null };
 
   const apiKey = String(formData.get("api_key") ?? "").trim();
   const secretKey = String(formData.get("secret_key") ?? "").trim();
-  if (!apiKey || !secretKey) return { error: "API key and secret key are both required." };
+  if (!apiKey || !secretKey) return { error: "API key and secret key are both required.", toast: null };
 
   // Validate the credentials against Steadfast before storing them.
   try {
@@ -73,6 +77,7 @@ export async function connectCourier(
     return {
       error:
         "Steadfast rejected these credentials. Double-check the API key and secret key from your Steadfast portal.",
+      toast: null,
     };
   }
 
@@ -88,7 +93,7 @@ export async function connectCourier(
     { onConflict: "brand_clerk_user_id,provider" }
   );
 
-  if (error) return { error: "Could not save the courier integration. Please try again." };
+  if (error) return { error: "Could not save the courier integration. Please try again.", toast: null };
 
   // Only one courier can be active for dispatch at a time.
   await supabase
@@ -98,7 +103,7 @@ export async function connectCourier(
     .neq("provider", provider);
 
   revalidatePath("/dashboard/settings");
-  return { error: null };
+  return { error: null, toast: "Steadfast connected" };
 }
 
 export async function connectPathao(
@@ -106,7 +111,7 @@ export async function connectPathao(
   formData: FormData
 ): Promise<CourierConnectState> {
   const { userId } = await auth();
-  if (!userId) return { error: "You must be signed in." };
+  if (!userId) return { error: "You must be signed in.", toast: null };
 
   const environment = (String(formData.get("environment") ?? "live") as PathaoEnvironment);
   const clientId = String(formData.get("client_id") ?? "").trim();
@@ -115,7 +120,7 @@ export async function connectPathao(
   const password = String(formData.get("password") ?? "").trim();
 
   if (!clientId || !clientSecret || !username || !password) {
-    return { error: "Client ID, client secret, username, and password are all required." };
+    return { error: "Client ID, client secret, username, and password are all required.", toast: null };
   }
 
   const baseUrl = pathaoBaseUrl(environment);
@@ -126,6 +131,7 @@ export async function connectPathao(
   } catch {
     return {
       error: "Pathao rejected these credentials. Check the client ID, secret, username, and password.",
+      toast: null,
     };
   }
 
@@ -135,10 +141,10 @@ export async function connectPathao(
     const stores = await getStores({ baseUrl, accessToken: token.access_token });
     store = stores.find((s) => s.is_default_store) ?? stores[0];
   } catch {
-    return { error: "Connected, but could not fetch your Pathao stores. Try again." };
+    return { error: "Connected, but could not fetch your Pathao stores. Try again.", toast: null };
   }
   if (!store) {
-    return { error: "No Pathao store found. Create a store in your Pathao merchant panel first." };
+    return { error: "No Pathao store found. Create a store in your Pathao merchant panel first.", toast: null };
   }
 
   const supabase = createSupabaseAdmin();
@@ -164,7 +170,7 @@ export async function connectPathao(
     { onConflict: "brand_clerk_user_id,provider" }
   );
 
-  if (error) return { error: "Could not save the Pathao integration. Please try again." };
+  if (error) return { error: "Could not save the Pathao integration. Please try again.", toast: null };
 
   await supabase
     .from("courier_integrations")
@@ -173,7 +179,7 @@ export async function connectPathao(
     .neq("provider", "pathao");
 
   revalidatePath("/dashboard/settings");
-  return { error: null };
+  return { error: null, toast: "Pathao connected" };
 }
 
 export async function makeCourierActive(formData: FormData) {
@@ -196,6 +202,7 @@ export async function makeCourierActive(formData: FormData) {
     .neq("provider", provider);
 
   revalidatePath("/dashboard/settings");
+  redirect(settingsToastUrl("/dashboard/settings", "courier-active"));
 }
 
 export async function disconnectCourier(formData: FormData) {
@@ -214,4 +221,5 @@ export async function disconnectCourier(formData: FormData) {
   if (error) throw new Error("Failed to disconnect courier");
 
   revalidatePath("/dashboard/settings");
+  redirect(settingsToastUrl("/dashboard/settings", "courier-disconnected"));
 }

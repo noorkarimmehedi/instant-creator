@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { SwissToastViewport } from "@/components/ui/SwissToast";
 
 function SidebarSkeleton() {
   return (
@@ -22,6 +23,9 @@ export default function DashboardLayout({
         <DashboardSidebar />
       </Suspense>
       <main className="flex-1 overflow-y-auto">{children}</main>
+      <Suspense fallback={null}>
+        <SwissToastViewport />
+      </Suspense>
     </div>
   );
 }
