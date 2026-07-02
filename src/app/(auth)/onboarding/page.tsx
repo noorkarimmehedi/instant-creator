@@ -53,7 +53,7 @@ export default async function OnboardingPage() {
   return (
     <div className="w-full max-w-md space-y-8 text-center">
       <div className="space-y-2">
-        <h1 className="font-display text-2xl text-ink">How will you use Zair-Creator?</h1>
+        <h1 className="font-display text-2xl text-ink">How will you use Zair/Creator?</h1>
         <p className="text-sm text-mute">Choose your account type to get started</p>
       </div>
       <RoleSelector />

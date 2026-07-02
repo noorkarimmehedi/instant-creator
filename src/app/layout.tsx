@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zair-Creator — Bangladesh's First Influencer-Brand Marketplace",
+  title: "Zair/Creator — Bangladesh's First Influencer-Brand Marketplace",
   description:
     "Track orders. Filter fraud. Pay creators. The only platform connecting Shopify brands with influencers in Bangladesh.",
 };

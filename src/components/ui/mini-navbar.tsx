@@ -38,7 +38,7 @@ export function MiniNavbar({ links }: { links: NavLink[] }) {
             <span className="absolute bottom-0 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-gray-100/85" />
           </span>
           <span className="whitespace-nowrap text-sm font-semibold tracking-tight">
-            Instant<span className="text-[#f00045]">/</span>Creator
+            Zair<span className="text-[#f00045]">/</span>Creator
           </span>
         </Link>
 

@@ -58,7 +58,7 @@ export function SetupChecklist({ onboardingStep }: SetupChecklistProps) {
       {/* Welcome */}
       <div className="mb-8">
         <h2 className="text-3xl font-semibold text-ink">
-          Welcome to Instant<span className="font-bold text-accent-red">/</span>Creator
+          Welcome to Zair<span className="font-bold text-accent-red">/</span>Creator
         </h2>
         <p className="mt-2 text-charcoal">
           Complete these steps to start running influencer campaigns.
