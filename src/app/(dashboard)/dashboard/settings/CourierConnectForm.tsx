@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { connectCourier, type CourierConnectState } from "./actions";
+import { SettingsBookmarkButton } from "./SettingsBookmarkButton";
 
 const inputClass =
   "w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-blue transition-colors";
@@ -10,13 +11,9 @@ const inputClass =
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="inline-flex h-10 items-center justify-center rounded-[10px] border border-[#111] bg-[linear-gradient(180deg,#2F2F2F,#181818)] px-5 text-sm font-medium text-white transition-opacity hover:opacity-95 disabled:opacity-60"
-    >
-      {pending ? "Connecting…" : "Connect Steadfast"}
-    </button>
+    <SettingsBookmarkButton type="submit" disabled={pending} ariaLabel="Connect Steadfast">
+      {pending ? "Wait" : "Connect"}
+    </SettingsBookmarkButton>
   );
 }
 

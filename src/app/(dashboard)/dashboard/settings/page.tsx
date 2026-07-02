@@ -4,11 +4,11 @@ import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
 import { Badge } from "@/components/ui/Badge";
-import { PressButton } from "@/components/ui/PressButton";
 import { disconnectCourier, disconnectShopify, makeCourierActive, updateProfile } from "./actions";
 import { getBalance } from "@/lib/courier/steadfast";
 import { CourierConnectForm } from "./CourierConnectForm";
 import { PathaoConnectForm } from "./PathaoConnectForm";
+import { SettingsBookmarkButton } from "./SettingsBookmarkButton";
 
 export default async function SettingsPage() {
   const { userId } = await auth();
@@ -97,7 +97,7 @@ export default async function SettingsPage() {
               <p className="text-sm text-ink">{brandEmail || "—"}</p>
             </div>
             <div className="flex justify-end">
-              <PressButton type="submit" tone="brand">Save changes</PressButton>
+              <SettingsBookmarkButton type="submit" ariaLabel="Save changes">Save</SettingsBookmarkButton>
             </div>
           </form>
         </SwissCard>
@@ -122,12 +122,7 @@ export default async function SettingsPage() {
                 Disconnecting removes the stored Shopify token from Instant/Creator. Reconnect Shopify after changing app permissions so Shopify can issue a fresh token.
               </div>
               <form action={disconnectShopify} className="flex justify-end">
-                <button
-                  type="submit"
-                  className="rounded-[8px] border border-accent-red/30 px-4 py-2 text-sm font-medium text-accent-red transition-colors hover:bg-accent-red/10"
-                >
-                  Disconnect Shopify
-                </button>
+                <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Shopify">Disconnect</SettingsBookmarkButton>
               </form>
             </div>
           ) : (
@@ -189,7 +184,7 @@ export default async function SettingsPage() {
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <PressButton type="submit" tone="brand">Connect Shopify</PressButton>
+                  <SettingsBookmarkButton type="submit" ariaLabel="Connect Shopify">Connect</SettingsBookmarkButton>
                 </div>
               </form>
             </div>
@@ -232,22 +227,12 @@ export default async function SettingsPage() {
                   {!steadfast.is_active && (
                     <form action={makeCourierActive}>
                       <input type="hidden" name="provider" value="steadfast" />
-                      <button
-                        type="submit"
-                        className="rounded-[8px] border border-accent-blue/40 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-accent-blue/10"
-                      >
-                        Make active
-                      </button>
+                      <SettingsBookmarkButton type="submit" ariaLabel="Make Steadfast active">Active</SettingsBookmarkButton>
                     </form>
                   )}
                   <form action={disconnectCourier}>
                     <input type="hidden" name="provider" value="steadfast" />
-                    <button
-                      type="submit"
-                      className="rounded-[8px] border border-accent-red/30 px-4 py-2 text-sm font-medium text-accent-red transition-colors hover:bg-accent-red/10"
-                    >
-                      Disconnect
-                    </button>
+                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Steadfast">Disconnect</SettingsBookmarkButton>
                   </form>
                 </div>
               </div>
@@ -282,22 +267,12 @@ export default async function SettingsPage() {
                   {!pathao.is_active && (
                     <form action={makeCourierActive}>
                       <input type="hidden" name="provider" value="pathao" />
-                      <button
-                        type="submit"
-                        className="rounded-[8px] border border-accent-blue/40 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-accent-blue/10"
-                      >
-                        Make active
-                      </button>
+                      <SettingsBookmarkButton type="submit" ariaLabel="Make Pathao active">Active</SettingsBookmarkButton>
                     </form>
                   )}
                   <form action={disconnectCourier}>
                     <input type="hidden" name="provider" value="pathao" />
-                    <button
-                      type="submit"
-                      className="rounded-[8px] border border-accent-red/30 px-4 py-2 text-sm font-medium text-accent-red transition-colors hover:bg-accent-red/10"
-                    >
-                      Disconnect
-                    </button>
+                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Pathao">Disconnect</SettingsBookmarkButton>
                   </form>
                 </div>
               </div>
@@ -342,12 +317,7 @@ export default async function SettingsPage() {
               </p>
               <p className="text-xs text-mute mt-1">Manage your subscription and billing details.</p>
             </div>
-            <a
-              href="#pricing"
-              className="inline-flex h-10 items-center justify-center rounded-[10px] border border-[#111] bg-[linear-gradient(180deg,#2F2F2F,#181818)] px-5 text-sm font-medium text-white transition-opacity hover:opacity-95"
-            >
-              Upgrade
-            </a>
+            <SettingsBookmarkButton href="#pricing" ariaLabel="Upgrade plan">Upgrade</SettingsBookmarkButton>
           </div>
         </SwissCard>
       </div>
