@@ -2,16 +2,22 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { CheckCircle, X } from "lucide-react";
 import { getSettingsToastMessage } from "@/lib/settings/toast";
 
-type ToastEvent = CustomEvent<{ message: string }>;
+type SwissToastPayload = {
+  title?: string;
+  message: string;
+};
+
+type ToastEvent = CustomEvent<SwissToastPayload>;
 
 export function dispatchSwissToast(message: string) {
-  window.dispatchEvent(new CustomEvent("swiss-toast", { detail: { message } }));
+  window.dispatchEvent(new CustomEvent("swiss-toast", { detail: { title: "Success", message } }));
 }
 
 export function SwissToastViewport() {
-  const [message, setMessage] = useState<string | null>(null);
+  const [toast, setToast] = useState<SwissToastPayload | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const pathname = usePathname();
@@ -19,7 +25,7 @@ export function SwissToastViewport() {
 
   useEffect(() => {
     function handleToast(event: Event) {
-      setMessage((event as ToastEvent).detail.message);
+      setToast((event as ToastEvent).detail);
     }
 
     window.addEventListener("swiss-toast", handleToast);
@@ -39,26 +45,31 @@ export function SwissToastViewport() {
   }, [pathname, router, searchParams]);
 
   useEffect(() => {
-    if (!message) return;
-    const timeout = window.setTimeout(() => setMessage(null), 3200);
+    if (!toast) return;
+    const timeout = window.setTimeout(() => setToast(null), 4000);
     return () => window.clearTimeout(timeout);
-  }, [message]);
+  }, [toast]);
 
-  if (!message) return null;
+  if (!toast) return null;
 
   return (
-    <div className="pointer-events-none fixed right-4 top-4 z-50 sm:right-8 sm:top-8" aria-live="polite" aria-atomic="true">
-      <div className="relative min-w-[260px] overflow-hidden rounded-[18px] border border-black/10 bg-[#fbfaf7] px-5 py-4 text-[#101010] shadow-[0_22px_70px_rgba(0,0,0,0.16)]">
-        <div className="absolute inset-0 opacity-[0.08] [background-image:linear-gradient(#111_1px,transparent_1px),linear-gradient(90deg,#111_1px,transparent_1px)] [background-size:18px_18px]" />
-        <div className="relative flex items-center gap-3">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-white text-[13px] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
-            ✓
-          </span>
+    <div className="pointer-events-none fixed bottom-4 right-4 z-50 sm:bottom-8 sm:right-8" aria-live="polite" aria-atomic="true">
+      <div className="pointer-events-auto flex w-full max-w-xs items-center justify-between gap-4 rounded-xl border border-green-600/50 bg-white p-3 text-[#111111] shadow-[0_18px_45px_rgba(15,23,42,0.16)] animate-[fade-up_0.22s_ease-out_both]">
+        <div className="flex items-start gap-2">
+          <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" aria-hidden="true" />
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-black/45">Saved</p>
-            <p className="mt-0.5 text-sm font-medium tracking-[-0.01em] text-black">{message}</p>
+            <h3 className="text-xs font-medium leading-none text-green-600">{toast.title ?? "Success"}</h3>
+            <p className="mt-1 text-xs leading-snug text-[#6b6f72]">{toast.message}</p>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={() => setToast(null)}
+          className="rounded-full p-1 text-[#6b6f72] transition-colors hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-green-600/30"
+          aria-label="Dismiss notification"
+        >
+          <X className="h-3 w-3" aria-hidden="true" />
+        </button>
         {isPending && <span className="sr-only">Updating page URL</span>}
       </div>
     </div>
