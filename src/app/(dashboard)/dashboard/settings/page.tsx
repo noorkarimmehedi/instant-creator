@@ -41,7 +41,7 @@ export default async function SettingsPage() {
   const brandName = brand?.name ?? name;
   const brandEmail = brand?.email ?? email;
   const isConnected = !!brand?.shopify_token;
-  const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://your-instantcreator-domain.com"}/api/shopify/callback`;
+  const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://instant-creator.arclabtechnology.com"}/api/shopify/callback`;
 
   const { data: couriers } = await supabase
     .from("courier_integrations")
