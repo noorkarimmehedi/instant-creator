@@ -122,7 +122,7 @@ export default async function SettingsPage() {
                 Disconnecting removes the stored Shopify token from Instant/Creator. Reconnect Shopify after changing app permissions so Shopify can issue a fresh token.
               </div>
               <form action={disconnectShopify} className="flex justify-end">
-                <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Shopify" wide>Disconnect</SettingsBookmarkButton>
+                <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Shopify" icon="disconnect" wide>Disconnect</SettingsBookmarkButton>
               </form>
             </div>
           ) : (
@@ -184,7 +184,7 @@ export default async function SettingsPage() {
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <SettingsBookmarkButton type="submit" ariaLabel="Connect Shopify">Connect</SettingsBookmarkButton>
+                  <SettingsBookmarkButton type="submit" ariaLabel="Connect Shopify" icon="connect">Connect</SettingsBookmarkButton>
                 </div>
               </form>
             </div>
@@ -227,12 +227,12 @@ export default async function SettingsPage() {
                   {!steadfast.is_active && (
                     <form action={makeCourierActive}>
                       <input type="hidden" name="provider" value="steadfast" />
-                      <SettingsBookmarkButton type="submit" ariaLabel="Make Steadfast active">Active</SettingsBookmarkButton>
+                      <SettingsBookmarkButton type="submit" ariaLabel="Make Steadfast active" icon="active">Active</SettingsBookmarkButton>
                     </form>
                   )}
                   <form action={disconnectCourier}>
                     <input type="hidden" name="provider" value="steadfast" />
-                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Steadfast" wide>Disconnect</SettingsBookmarkButton>
+                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Steadfast" icon="disconnect" wide>Disconnect</SettingsBookmarkButton>
                   </form>
                 </div>
               </div>
@@ -267,12 +267,12 @@ export default async function SettingsPage() {
                   {!pathao.is_active && (
                     <form action={makeCourierActive}>
                       <input type="hidden" name="provider" value="pathao" />
-                      <SettingsBookmarkButton type="submit" ariaLabel="Make Pathao active">Active</SettingsBookmarkButton>
+                      <SettingsBookmarkButton type="submit" ariaLabel="Make Pathao active" icon="active">Active</SettingsBookmarkButton>
                     </form>
                   )}
                   <form action={disconnectCourier}>
                     <input type="hidden" name="provider" value="pathao" />
-                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Pathao" wide>Disconnect</SettingsBookmarkButton>
+                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Pathao" icon="disconnect" wide>Disconnect</SettingsBookmarkButton>
                   </form>
                 </div>
               </div>
@@ -317,7 +317,7 @@ export default async function SettingsPage() {
               </p>
               <p className="text-xs text-mute mt-1">Manage your subscription and billing details.</p>
             </div>
-            <SettingsBookmarkButton href="#pricing" ariaLabel="Upgrade plan">Upgrade</SettingsBookmarkButton>
+            <SettingsBookmarkButton href="#pricing" ariaLabel="Upgrade plan" icon="upgrade">Upgrade</SettingsBookmarkButton>
           </div>
         </SwissCard>
       </div>

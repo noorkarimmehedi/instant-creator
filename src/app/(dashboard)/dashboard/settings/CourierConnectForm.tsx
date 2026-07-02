@@ -11,7 +11,7 @@ const inputClass =
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <SettingsBookmarkButton type="submit" disabled={pending} ariaLabel="Connect Steadfast">
+    <SettingsBookmarkButton type="submit" disabled={pending} ariaLabel="Connect Steadfast" icon={pending ? "wait" : "connect"}>
       {pending ? "Wait" : "Connect"}
     </SettingsBookmarkButton>
   );
