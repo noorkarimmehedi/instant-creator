@@ -83,7 +83,8 @@ export default async function CreatorProductsPage({
   const supabase = createSupabaseAdmin();
   let productsQuery = supabase
     .from("products")
-    .select("id, name, price, source_url, image_url, commission_percentage, coupon_discount_percentage, target_gender");
+    .select("id, name, price, source_url, image_url, commission_percentage, coupon_discount_percentage, target_gender")
+    .eq("archived", false);
 
   if (q) {
     productsQuery = productsQuery.ilike("name", `%${q}%`);

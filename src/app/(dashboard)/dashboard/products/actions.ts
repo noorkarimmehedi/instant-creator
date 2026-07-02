@@ -7,8 +7,6 @@ import { readPercentageValue } from "@/lib/products/formatting";
 
 type Result = { ok: true } | { ok: false; error: string };
 
-type SupabaseError = { code?: string; message?: string };
-
 export async function addProductFromUrl(
   _prev: Result | null,
   formData: FormData
@@ -138,39 +136,19 @@ export async function deleteProduct(
   const productId = String(formData.get("product_id") ?? "").trim();
   if (!productId) return { ok: false, error: "Missing product." };
 
+  // Archive rather than hard-delete: orders reference the product's coupons via
+  // a restricting foreign key, and that history feeds earnings and payouts.
   const supabase = createSupabaseAdmin();
-  const { data: product, error: productError } = await supabase
+  const { data: product, error: archiveError } = await supabase
     .from("products")
-    .select("id")
+    .update({ archived: true })
     .eq("id", productId)
     .eq("clerk_user_id", userId)
-    .single();
+    .select("id")
+    .maybeSingle();
 
-  if (productError || !product) {
-    return { ok: false, error: "Product could not be found." };
-  }
-
-  const { error: couponsError } = await supabase
-    .from("product_coupons")
-    .delete()
-    .eq("product_id", productId);
-  if (couponsError) return { ok: false, error: `Failed to delete product coupons: ${couponsError.message}` };
-
-  const { error: variantsError } = await supabase
-    .from("product_variants")
-    .delete()
-    .eq("product_id", productId);
-  if (variantsError && !isMissingTableError(variantsError)) {
-    return { ok: false, error: `Failed to delete product variants: ${variantsError.message}` };
-  }
-
-  const { error: deleteError } = await supabase
-    .from("products")
-    .delete()
-    .eq("id", productId)
-    .eq("clerk_user_id", userId);
-
-  if (deleteError) return { ok: false, error: `Failed to delete product: ${deleteError.message}` };
+  if (archiveError) return { ok: false, error: `Failed to remove product: ${archiveError.message}` };
+  if (!product) return { ok: false, error: "Product could not be found." };
 
   revalidatePath("/dashboard/products");
   revalidatePath("/creator/products");
@@ -184,12 +162,4 @@ function readPercentage(formData: FormData, key: string) {
 function readTargetGender(formData: FormData) {
   const value = String(formData.get("target_gender") ?? "all");
   return ["all", "women", "men", "kids"].includes(value) ? value : "all";
-}
-
-function isMissingTableError(error: SupabaseError) {
-  return (
-    error.code === "PGRST205" ||
-    error.message?.includes("Could not find the table") ||
-    error.message?.includes("does not exist")
-  );
 }

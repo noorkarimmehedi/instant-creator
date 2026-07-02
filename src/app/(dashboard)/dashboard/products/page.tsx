@@ -15,6 +15,7 @@ export default async function ProductsPage() {
     .from("products")
     .select("id, name, price, source_url, image_url, images, commission_percentage, coupon_discount_percentage, target_gender")
     .eq("clerk_user_id", userId)
+    .eq("archived", false)
     .order("created_at", { ascending: false });
 
   return (

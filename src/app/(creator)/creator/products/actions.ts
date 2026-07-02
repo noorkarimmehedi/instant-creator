@@ -51,6 +51,7 @@ export async function generateShopifyCoupon(
     .from("products")
     .select("id, name, clerk_user_id, coupon_discount_percentage")
     .eq("id", productId)
+    .eq("archived", false)
     .single();
 
   if (productError || !product) {
