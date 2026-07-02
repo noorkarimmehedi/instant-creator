@@ -55,7 +55,7 @@ export function PayoutSection({
         </div>
 
         <div className="flex justify-end">
-          <SettingsBookmarkButton type="submit" ariaLabel="Save payout method" icon="wallet" wide>Payout</SettingsBookmarkButton>
+          <SettingsBookmarkButton type="submit" ariaLabel="Save payout method" icon="wallet">Payout</SettingsBookmarkButton>
         </div>
       </form>
     </SwissCard>

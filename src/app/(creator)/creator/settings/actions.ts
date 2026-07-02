@@ -3,6 +3,27 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
+import {
+  avatarBucket,
+  avatarMaxBytes,
+  buildAvatarStoragePath,
+  isAllowedAvatarMimeType,
+} from "@/lib/creator/avatar";
+
+async function ensureAvatarBucket(supabase: ReturnType<typeof createSupabaseAdmin>) {
+  const { error: bucketError } = await supabase.storage.getBucket(avatarBucket);
+  if (!bucketError) return;
+
+  const { error: createError } = await supabase.storage.createBucket(avatarBucket, {
+    public: true,
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
+    fileSizeLimit: avatarMaxBytes,
+  });
+
+  if (createError && !createError.message.toLowerCase().includes("already exists")) {
+    throw new Error(`Avatar bucket setup failed: ${createError.message}`);
+  }
+}
 
 export async function updateProfile(formData: FormData) {
   const { userId } = await auth();
@@ -20,12 +41,18 @@ export async function updateProfile(formData: FormData) {
   let avatar_url: string | undefined;
 
   if (avatarFile && avatarFile.size > 0) {
-    const ext = avatarFile.name.split(".").pop() ?? "jpg";
-    const path = `avatars/${userId}.${ext}`;
+    if (avatarFile.size > avatarMaxBytes) throw new Error("Avatar image must be 2MB or smaller");
+    if (!isAllowedAvatarMimeType(avatarFile.type)) {
+      throw new Error("Avatar image must be a JPG, PNG, or WebP file");
+    }
+
+    await ensureAvatarBucket(supabase);
+
+    const path = buildAvatarStoragePath(userId, avatarFile.name);
     const bytes = new Uint8Array(await avatarFile.arrayBuffer());
 
     const { error: uploadError } = await supabase.storage
-      .from("meta-media")
+      .from(avatarBucket)
       .upload(path, bytes, {
         contentType: avatarFile.type,
         upsert: true,
@@ -33,7 +60,7 @@ export async function updateProfile(formData: FormData) {
 
     if (uploadError) throw new Error(`Avatar upload failed: ${uploadError.message}`);
 
-    const { data } = supabase.storage.from("meta-media").getPublicUrl(path);
+    const { data } = supabase.storage.from(avatarBucket).getPublicUrl(path);
     avatar_url = `${data.publicUrl}?t=${Date.now()}`;
   }
 
@@ -55,7 +82,8 @@ export async function updateProfile(formData: FormData) {
     updates.onboarding_step = Math.max(influencer.data?.onboarding_step ?? 0, 1);
   }
 
-  await supabase.from("influencers").update(updates).eq("clerk_user_id", userId);
+  const { error: updateError } = await supabase.from("influencers").update(updates).eq("clerk_user_id", userId);
+  if (updateError) throw new Error(`Profile update failed: ${updateError.message}`);
 
   revalidateTag("influencer", "max");
   revalidatePath("/creator/settings");

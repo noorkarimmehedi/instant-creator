@@ -32,7 +32,7 @@ export function AvatarUpload({ currentUrl }: { currentUrl: string | null }) {
         )}
       </button>
       <div>
-        <SettingsBookmarkButton type="button" onClick={() => inputRef.current?.click()} ariaLabel={preview ? "Change photo" : "Upload photo"} icon="upload" wide>
+        <SettingsBookmarkButton type="button" onClick={() => inputRef.current?.click()} ariaLabel={preview ? "Change photo" : "Upload photo"} icon="upload">
           {preview ? "Change" : "Upload"}
         </SettingsBookmarkButton>
         <p className="text-xs text-stone mt-0.5">JPG, PNG. Max 2MB.</p>
