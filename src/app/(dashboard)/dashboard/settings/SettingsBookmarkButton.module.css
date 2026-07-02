@@ -1,8 +1,9 @@
 .bookmarkBtn {
-  width: max-content;
-  min-width: 100px;
+  --button-width: 100px;
+  --text-width: 60px;
+  --hover-icon-width: 90px;
+  width: var(--button-width);
   height: 40px;
-  padding: 0 8px 0 5px;
   border-radius: 40px;
   border: 1px solid rgba(255, 255, 255, 0.349);
   background-color: rgb(12, 12, 12);
@@ -13,7 +14,12 @@
   transition-duration: 0.3s;
   overflow: hidden;
   flex-shrink: 0;
-  box-sizing: border-box;
+}
+
+.wide {
+  --button-width: 140px;
+  --text-width: 100px;
+  --hover-icon-width: 130px;
 }
 
 .IconContainer {
@@ -35,8 +41,7 @@
 
 .text {
   height: 100%;
-  min-width: 50px;
-  padding: 0 10px;
+  width: var(--text-width);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +53,7 @@
 }
 
 .bookmarkBtn:hover .IconContainer {
-  width: calc(100% - 10px);
+  width: var(--hover-icon-width);
   transition-duration: 0.3s;
 }
 

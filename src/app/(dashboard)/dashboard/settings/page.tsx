@@ -122,7 +122,7 @@ export default async function SettingsPage() {
                 Disconnecting removes the stored Shopify token from Instant/Creator. Reconnect Shopify after changing app permissions so Shopify can issue a fresh token.
               </div>
               <form action={disconnectShopify} className="flex justify-end">
-                <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Shopify">Disconnect</SettingsBookmarkButton>
+                <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Shopify" wide>Disconnect</SettingsBookmarkButton>
               </form>
             </div>
           ) : (
@@ -232,7 +232,7 @@ export default async function SettingsPage() {
                   )}
                   <form action={disconnectCourier}>
                     <input type="hidden" name="provider" value="steadfast" />
-                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Steadfast">Disconnect</SettingsBookmarkButton>
+                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Steadfast" wide>Disconnect</SettingsBookmarkButton>
                   </form>
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default async function SettingsPage() {
                   )}
                   <form action={disconnectCourier}>
                     <input type="hidden" name="provider" value="pathao" />
-                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Pathao">Disconnect</SettingsBookmarkButton>
+                    <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Pathao" wide>Disconnect</SettingsBookmarkButton>
                   </form>
                 </div>
               </div>

@@ -6,6 +6,7 @@ type SettingsBookmarkButtonProps = {
   disabled?: boolean;
   href?: string;
   ariaLabel?: string;
+  wide?: boolean;
 };
 
 function ButtonContent({ children }: { children: React.ReactNode }) {
@@ -30,17 +31,20 @@ export function SettingsBookmarkButton({
   disabled = false,
   href,
   ariaLabel,
+  wide = false,
 }: SettingsBookmarkButtonProps) {
+  const className = wide ? `${styles.bookmarkBtn} ${styles.wide}` : styles.bookmarkBtn;
+
   if (href) {
     return (
-      <a className={styles.bookmarkBtn} href={href} aria-label={ariaLabel} aria-disabled={disabled || undefined}>
+      <a className={className} href={href} aria-label={ariaLabel} aria-disabled={disabled || undefined}>
         <ButtonContent>{children}</ButtonContent>
       </a>
     );
   }
 
   return (
-    <button className={styles.bookmarkBtn} type={type} disabled={disabled} aria-label={ariaLabel}>
+    <button className={className} type={type} disabled={disabled} aria-label={ariaLabel}>
       <ButtonContent>{children}</ButtonContent>
     </button>
   );
