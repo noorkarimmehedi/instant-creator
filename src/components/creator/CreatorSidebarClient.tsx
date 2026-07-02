@@ -83,9 +83,9 @@ export function CreatorSidebarClient({
           <Link
             href="/creator"
             className="mb-5 flex h-11 items-center rounded-lg px-2 text-lg font-semibold tracking-[-0.03em] text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
-            aria-label="Instant Creator hub"
+            aria-label="Zair-Creator hub"
           >
-            Instant<span className="text-accent-red">/</span>Creator
+            Zair<span className="text-accent-red">-</span>Creator
           </Link>
 
           <div className="space-y-0.5">
