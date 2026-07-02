@@ -119,7 +119,7 @@ export default async function SettingsPage() {
                 Connected to <span className="text-ink font-medium">{brand?.shopify_store}</span>
               </p>
               <div className="rounded-md border border-hairline bg-surface-elevated p-4 text-sm text-charcoal">
-                Disconnecting removes the stored Shopify token from Zair/Creator. Reconnect Shopify after changing app permissions so Shopify can issue a fresh token.
+                Disconnecting removes the stored Shopify token from Zair&apos;s/Creator. Reconnect Shopify after changing app permissions so Shopify can issue a fresh token.
               </div>
               <form action={disconnectShopify} className="flex justify-end">
                 <SettingsBookmarkButton type="submit" ariaLabel="Disconnect Shopify" icon="disconnect" wide>Disconnect</SettingsBookmarkButton>
@@ -136,8 +136,8 @@ export default async function SettingsPage() {
                   <li>Open Shopify Admin for your store.</li>
                   <li>Go to Settings, then Apps and sales channels.</li>
                   <li>Click Develop apps. If prompted, enable custom app development.</li>
-                  <li>Click Create an app, give it a name like Zair/Creator, and create it.</li>
-                  <li>Open the app configuration and add the callback URL from Zair/Creator: {callbackUrl}.</li>
+                  <li>Click Create an app, give it a name like Zair&apos;s/Creator, and create it.</li>
+                  <li>Open the app configuration and add the callback URL from Zair&apos;s/Creator: {callbackUrl}.</li>
                   <li>Configure Admin API access and allow the permissions needed for products, orders, discounts, and webhooks.</li>
                   <li>Save the app, then install it on your store.</li>
                   <li>Copy the Client ID and Client Secret from the app credentials page.</li>

@@ -12,7 +12,7 @@ export function Footer() {
             Track orders, filter fraud, and pay creators from one marketplace built for Shopify brands.
           </p>
           <p className="mt-6 text-xs text-[#4f2026]/55">
-            &copy; {year} Zair<span className="font-bold text-[#d82f43]">/</span>Creator
+            &copy; {year} Zair&apos;s<span className="font-bold text-[#d82f43]">/</span>Creator
           </p>
         </div>
 
@@ -42,7 +42,7 @@ export function Footer() {
         </div>
 
         <h2 className="pointer-events-none absolute bottom-0 left-0 translate-y-[32%] whitespace-nowrap text-[72px] font-black leading-none tracking-[-0.08em] text-[#ff5941] opacity-95 sm:text-[128px] md:text-[176px] lg:text-[216px]">
-          Zair<span className="text-[#d82f43]">/</span>Creator
+          Zair&apos;s<span className="text-[#d82f43]">/</span>Creator
         </h2>
       </div>
     </footer>
