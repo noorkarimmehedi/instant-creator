@@ -1,6 +1,15 @@
 import styles from "./SettingsBookmarkButton.module.css";
 
-type SettingsBookmarkButtonIcon = "save" | "connect" | "disconnect" | "active" | "upgrade" | "wait";
+type SettingsBookmarkButtonIcon =
+  | "save"
+  | "connect"
+  | "disconnect"
+  | "active"
+  | "upgrade"
+  | "wait"
+  | "upload"
+  | "social"
+  | "wallet";
 
 type SettingsBookmarkButtonProps = {
   children: React.ReactNode;
@@ -10,6 +19,7 @@ type SettingsBookmarkButtonProps = {
   ariaLabel?: string;
   wide?: boolean;
   icon?: SettingsBookmarkButtonIcon;
+  onClick?: () => void;
 };
 
 function Icon({ icon }: { icon: SettingsBookmarkButtonIcon }) {
@@ -53,15 +63,37 @@ function Icon({ icon }: { icon: SettingsBookmarkButtonIcon }) {
     );
   }
 
+  if (icon === "upload") {
+    return (
+      <svg className={styles.icon} width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M12 16V5m0 0-4 4m4-4 4 4M5 19h14" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  if (icon === "social") {
+    return (
+      <svg className={styles.icon} width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M8 12a4 4 0 0 1 4-4h2m-4 8h2a4 4 0 0 0 0-8M9 16H8a4 4 0 1 1 0-8h1" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  if (icon === "wallet") {
+    return (
+      <svg className={styles.icon} width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6.5A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="white" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M16 12h3" stroke="white" strokeWidth="2.4" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
   return (
     <svg className={styles.icon} width="16" height="16" viewBox="0 0 24 24" fill="none">
       <path
-        d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8.5L19 6.5V19a2 2 0 0 1-2 2Z"
-        stroke="white"
-        strokeWidth="2"
-        strokeLinejoin="round"
+        d="M6 4.75C6 3.784 6.784 3 7.75 3h8.5C17.216 3 18 3.784 18 4.75v15.1a.75.75 0 0 1-1.17.62L12 17.2l-4.83 3.27A.75.75 0 0 1 6 19.85V4.75Z"
+        fill="white"
       />
-      <path d="M8 3v6h7V3M8 21v-7h8v7" stroke="white" strokeWidth="2" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -85,6 +117,7 @@ export function SettingsBookmarkButton({
   ariaLabel,
   wide = false,
   icon = "save",
+  onClick,
 }: SettingsBookmarkButtonProps) {
   const className = wide ? `${styles.bookmarkBtn} ${styles.wide}` : styles.bookmarkBtn;
 
@@ -97,7 +130,7 @@ export function SettingsBookmarkButton({
   }
 
   return (
-    <button className={className} type={type} disabled={disabled} aria-label={ariaLabel}>
+    <button className={className} type={type} disabled={disabled} aria-label={ariaLabel} onClick={onClick}>
       <ButtonContent icon={icon}>{children}</ButtonContent>
     </button>
   );

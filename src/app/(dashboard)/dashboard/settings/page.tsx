@@ -4,11 +4,11 @@ import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
 import { Badge } from "@/components/ui/Badge";
+import { SettingsBookmarkButton } from "@/components/ui/SettingsBookmarkButton";
 import { disconnectCourier, disconnectShopify, makeCourierActive, updateProfile } from "./actions";
 import { getBalance } from "@/lib/courier/steadfast";
 import { CourierConnectForm } from "./CourierConnectForm";
 import { PathaoConnectForm } from "./PathaoConnectForm";
-import { SettingsBookmarkButton } from "./SettingsBookmarkButton";
 
 export default async function SettingsPage() {
   const { userId } = await auth();

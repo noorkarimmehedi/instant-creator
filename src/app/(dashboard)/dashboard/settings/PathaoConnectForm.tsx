@@ -2,8 +2,8 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import { SettingsBookmarkButton } from "@/components/ui/SettingsBookmarkButton";
 import { connectPathao, type CourierConnectState } from "./actions";
-import { SettingsBookmarkButton } from "./SettingsBookmarkButton";
 
 const inputClass =
   "w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-blue transition-colors";

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { SettingsBookmarkButton } from "@/components/ui/SettingsBookmarkButton";
 
 export function AvatarUpload({ currentUrl }: { currentUrl: string | null }) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,13 +32,9 @@ export function AvatarUpload({ currentUrl }: { currentUrl: string | null }) {
         )}
       </button>
       <div>
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className="text-sm font-medium text-ink hover:text-accent-orange transition-colors cursor-pointer"
-        >
-          {preview ? "Change photo" : "Upload photo"}
-        </button>
+        <SettingsBookmarkButton type="button" onClick={() => inputRef.current?.click()} ariaLabel={preview ? "Change photo" : "Upload photo"} icon="upload" wide>
+          {preview ? "Change" : "Upload"}
+        </SettingsBookmarkButton>
         <p className="text-xs text-stone mt-0.5">JPG, PNG. Max 2MB.</p>
       </div>
       <input

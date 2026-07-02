@@ -1,7 +1,7 @@
 "use client";
 
 import { SwissCard } from "@/components/ui/SwissCard";
-import { PressButton } from "@/components/ui/PressButton";
+import { SettingsBookmarkButton } from "@/components/ui/SettingsBookmarkButton";
 import { updatePayout } from "./actions";
 
 export function PayoutSection({
@@ -55,7 +55,7 @@ export function PayoutSection({
         </div>
 
         <div className="flex justify-end">
-          <PressButton type="submit" tone="creator">Save payout method</PressButton>
+          <SettingsBookmarkButton type="submit" ariaLabel="Save payout method" icon="wallet" wide>Payout</SettingsBookmarkButton>
         </div>
       </form>
     </SwissCard>
