@@ -8,7 +8,8 @@ type BankAccount = {
   bank_name?: string;
   account_number?: string;
   account_holder?: string;
-  branch_routing_number?: string;
+  branch_name?: string;
+  routing_number?: string;
 } | null;
 
 type Props = {
@@ -71,8 +72,11 @@ export function ApprovePayoutDialog({ influencerId, name, pending, bank }: Props
                     <p className="font-medium">{bank?.account_holder ?? "—"}</p>
                     <p className="text-charcoal">{bank?.bank_name ?? "—"}</p>
                     <p className="text-charcoal">A/C {bank?.account_number}</p>
-                    {bank?.branch_routing_number && (
-                      <p className="text-charcoal">{bank.branch_routing_number}</p>
+                    {bank?.branch_name && (
+                      <p className="text-charcoal">Branch {bank.branch_name}</p>
+                    )}
+                    {bank?.routing_number && (
+                      <p className="text-charcoal">Routing {bank.routing_number}</p>
                     )}
                   </div>
                 ) : (

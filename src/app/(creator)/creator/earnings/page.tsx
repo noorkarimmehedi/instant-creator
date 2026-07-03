@@ -22,7 +22,8 @@ type Influencer = {
     bank_name?: string;
     account_number?: string;
     account_holder?: string;
-    branch_routing_number?: string;
+    branch_name?: string;
+    routing_number?: string;
   } | null;
 };
 

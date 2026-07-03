@@ -82,15 +82,16 @@ export async function savePayout(formData: FormData) {
   const bank_name = String(formData.get("bank_name") ?? "").trim();
   const account_number = String(formData.get("account_number") ?? "").trim();
   const account_holder = String(formData.get("account_holder") ?? "").trim();
-  const branch_routing_number = String(formData.get("branch_routing_number") ?? "").trim();
+  const branch_name = String(formData.get("branch_name") ?? "").trim();
+  const routing_number = String(formData.get("routing_number") ?? "").trim();
 
-  if (!bank_name || !account_number || !account_holder || !branch_routing_number) {
+  if (!bank_name || !account_number || !account_holder || !branch_name || !routing_number) {
     throw new Error("All bank details are required");
   }
 
   const updates: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
-    bank_account: { bank_name, account_number, account_holder, branch_routing_number },
+    bank_account: { bank_name, account_number, account_holder, branch_name, routing_number },
   };
 
   const influencer = await getInfluencer(userId);

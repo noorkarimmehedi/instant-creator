@@ -9,7 +9,8 @@ type BankAccount = {
   bank_name?: string;
   account_number?: string;
   account_holder?: string;
-  branch_routing_number?: string;
+  branch_name?: string;
+  routing_number?: string;
 } | null;
 
 type Order = {
@@ -137,8 +138,11 @@ export default async function PayoutsPage() {
                             <p className="text-ink">{p.bank.account_holder ?? "—"}</p>
                             <p className="text-xs text-mute">{p.bank.bank_name ?? "—"}</p>
                             <p className="text-xs text-mute">A/C {p.bank.account_number}</p>
-                            {p.bank.branch_routing_number && (
-                              <p className="text-xs text-mute">{p.bank.branch_routing_number}</p>
+                            {p.bank.branch_name && (
+                              <p className="text-xs text-mute">Branch {p.bank.branch_name}</p>
+                            )}
+                            {p.bank.routing_number && (
+                              <p className="text-xs text-mute">Routing {p.bank.routing_number}</p>
                             )}
                           </div>
                         ) : (

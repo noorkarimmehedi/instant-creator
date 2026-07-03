@@ -11,6 +11,8 @@ export function PayoutForm({
     bank_name?: string;
     account_number?: string;
     account_holder?: string;
+    branch_name?: string;
+    routing_number?: string;
     branch_routing_number?: string;
   } | null;
 }) {
@@ -58,13 +60,26 @@ export function PayoutForm({
         </div>
         <div>
           <label className="text-xs text-mute uppercase tracking-wide block mb-1">
-            Branch Name and Routing Number
+            Branch Name
           </label>
           <input
-            name="branch_routing_number"
+            name="branch_name"
             type="text"
-            defaultValue={bank?.branch_routing_number ?? ""}
-            placeholder="Branch name and routing number"
+            defaultValue={bank?.branch_name ?? bank?.branch_routing_number ?? ""}
+            placeholder="Branch name"
+            className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-orange transition-colors"
+            required
+          />
+        </div>
+        <div>
+          <label className="text-xs text-mute uppercase tracking-wide block mb-1">
+            Routing Number
+          </label>
+          <input
+            name="routing_number"
+            type="text"
+            defaultValue={bank?.routing_number ?? ""}
+            placeholder="Routing number"
             className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-orange transition-colors"
             required
           />
