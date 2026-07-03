@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 
 export type OnboardingState =
   | { role: "brand"; name: string | null }
@@ -98,7 +98,7 @@ export async function selectRole(formData: FormData) {
     } else {
       await supabase.from("brands").update({ name }).eq("clerk_user_id", userId);
     }
-    revalidateTag("brand", "max");
+    updateTag("brand");
     redirect("/dashboard");
   }
 
@@ -120,7 +120,7 @@ export async function selectRole(formData: FormData) {
     } else {
       await supabase.from("influencers").update({ display_name: name }).eq("clerk_user_id", userId);
     }
-    revalidateTag("influencer", "max");
+    updateTag("influencer");
     redirect("/creator/settings");
   }
 }
@@ -137,13 +137,13 @@ export async function completeOnboarding(formData: FormData) {
 
   if (role === "brand") {
     await supabase.from("brands").update({ name }).eq("clerk_user_id", userId);
-    revalidateTag("brand", "max");
+    updateTag("brand");
     redirect("/dashboard");
   }
 
   if (role === "influencer") {
     await supabase.from("influencers").update({ display_name: name }).eq("clerk_user_id", userId);
-    revalidateTag("influencer", "max");
+    updateTag("influencer");
     redirect("/creator/settings");
   }
 
