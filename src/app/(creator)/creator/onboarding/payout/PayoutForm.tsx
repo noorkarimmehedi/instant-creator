@@ -7,7 +7,12 @@ import { savePayout } from "../actions";
 export function PayoutForm({
   bank,
 }: {
-  bank: { bank_name?: string; account_number?: string; account_holder?: string } | null;
+  bank: {
+    bank_name?: string;
+    account_number?: string;
+    account_holder?: string;
+    branch_routing_number?: string;
+  } | null;
 }) {
   return (
     <SwissCard>
@@ -47,6 +52,19 @@ export function PayoutForm({
             type="text"
             defaultValue={bank?.account_holder ?? ""}
             placeholder="Name on the account"
+            className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-orange transition-colors"
+            required
+          />
+        </div>
+        <div>
+          <label className="text-xs text-mute uppercase tracking-wide block mb-1">
+            Branch Name and Routing Number
+          </label>
+          <input
+            name="branch_routing_number"
+            type="text"
+            defaultValue={bank?.branch_routing_number ?? ""}
+            placeholder="Branch name and routing number"
             className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-orange transition-colors"
             required
           />

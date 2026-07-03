@@ -6,7 +6,6 @@ import { SwissCard } from "@/components/ui/SwissCard";
 import { Badge } from "@/components/ui/Badge";
 import { SettingsBookmarkButton } from "@/components/ui/SettingsBookmarkButton";
 import { disconnectCourier, disconnectShopify, makeCourierActive, updateProfile } from "./actions";
-import { getBalance } from "@/lib/courier/steadfast";
 import { CourierConnectForm } from "./CourierConnectForm";
 import { PathaoConnectForm } from "./PathaoConnectForm";
 
@@ -55,16 +54,6 @@ export default async function SettingsPage() {
   const maskedKey = steadfastApiKey
     ? `${steadfastApiKey.slice(0, 4)}••••${steadfastApiKey.slice(-2)}`
     : "";
-
-  let courierBalance: number | null = null;
-  if (steadfast) {
-    const creds = steadfast.credentials as { api_key: string; secret_key: string };
-    try {
-      courierBalance = await getBalance({ apiKey: creds.api_key, secretKey: creds.secret_key });
-    } catch {
-      courierBalance = null;
-    }
-  }
 
   const pathaoCreds = pathao?.credentials as
     | { store_name?: string; environment?: string }
@@ -216,12 +205,7 @@ export default async function SettingsPage() {
             {steadfast ? (
               <div className="space-y-3">
                 <p className="text-sm text-charcoal">
-                  API key <span className="text-ink font-medium">{maskedKey}</span> · Balance{" "}
-                  <span className="text-ink font-medium">
-                    {courierBalance === null
-                      ? "unavailable"
-                      : courierBalance.toLocaleString("en-US", { style: "currency", currency: "BDT" })}
-                  </span>
+                  API key <span className="text-ink font-medium">{maskedKey}</span>
                 </p>
                 <div className="flex justify-end gap-2">
                   {!steadfast.is_active && (

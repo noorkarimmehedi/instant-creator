@@ -7,7 +7,12 @@ import { updatePayout } from "./actions";
 export function PayoutSection({
   bank,
 }: {
-  bank: { bank_name?: string; account_number?: string; account_holder?: string } | null;
+  bank: {
+    bank_name?: string;
+    account_number?: string;
+    account_holder?: string;
+    branch_routing_number?: string;
+  } | null;
 }) {
   return (
     <SwissCard>
@@ -53,9 +58,22 @@ export function PayoutSection({
             required
           />
         </div>
+        <div>
+          <label className="text-xs text-mute uppercase tracking-wide block mb-1">
+            Branch Name and Routing Number
+          </label>
+          <input
+            name="branch_routing_number"
+            type="text"
+            defaultValue={bank?.branch_routing_number ?? ""}
+            placeholder="Branch name and routing number"
+            className="w-full rounded-md border border-hairline-strong bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-stone focus:outline-none focus:border-accent-orange transition-colors"
+            required
+          />
+        </div>
 
         <div className="flex justify-end">
-          <SettingsBookmarkButton type="submit" ariaLabel="Save payout method" icon="wallet">Payout</SettingsBookmarkButton>
+          <SettingsBookmarkButton type="submit" ariaLabel="Save payout method" icon="wallet">Save</SettingsBookmarkButton>
         </div>
       </form>
     </SwissCard>

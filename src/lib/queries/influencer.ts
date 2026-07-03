@@ -8,7 +8,12 @@ export type Influencer = {
   avatar_url: string | null;
   social_links: Record<string, string>;
   follower_counts: Record<string, number>;
-  bank_account: { bank_name?: string; account_number?: string; account_holder?: string } | null;
+  bank_account: {
+    bank_name?: string;
+    account_number?: string;
+    account_holder?: string;
+    branch_routing_number?: string;
+  } | null;
   verified: boolean;
   onboarding_step: number;
 };
