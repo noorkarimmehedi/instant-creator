@@ -21,7 +21,7 @@ test("dashboard layouts use responsive shell instead of fixed mobile sidebar", a
   const creatorLayout = await read("src/app/(creator)/creator/layout.tsx");
 
   assert.match(brandLayout, /<DashboardShellClient\b|<DashboardSidebar>\s*{children}\s*<\/DashboardSidebar>/);
-  assert.match(creatorLayout, /<DashboardShellClient\b|<DashboardSidebar>\s*{children}\s*<\/DashboardSidebar>/);
+  assert.match(creatorLayout, /<DashboardShellClient\b|<CreatorSidebar>\s*{children}\s*<\/CreatorSidebar>/);
   assert.doesNotMatch(brandLayout, /<div className="flex h-screen/);
   assert.doesNotMatch(creatorLayout, /<div className="flex h-screen/);
 });
