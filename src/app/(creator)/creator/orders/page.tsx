@@ -44,7 +44,7 @@ export default async function CreatorOrdersPage() {
     <>
       <Topbar title="Orders" />
 
-      <div className="p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
+      <div className="p-4 sm:p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <SwissCard>
             <p className="text-xs text-mute uppercase tracking-wide">Orders Driven</p>
@@ -71,7 +71,8 @@ export default async function CreatorOrdersPage() {
             </p>
           </div>
         ) : (
-          <SwissCard>
+          <>
+          <SwissCard className="hidden md:block">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -143,6 +144,81 @@ export default async function CreatorOrdersPage() {
               </table>
             </div>
           </SwissCard>
+
+          {/* Mobile cards */}
+          <div className="space-y-3 md:hidden">
+            {orders.map((order) => (
+              <SwissCard key={order.id} className="space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-medium text-ink">
+                      #{order.shopify_order_number ?? "—"}
+                    </p>
+                    <p className="text-xs text-mute">
+                      {order.shopify_created_at
+                        ? new Date(order.shopify_created_at).toLocaleDateString()
+                        : "—"}
+                    </p>
+                  </div>
+                  <span
+                    className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                      order.status === "paid"
+                        ? "bg-accent-green/10 text-accent-green"
+                        : "bg-surface-elevated text-mute"
+                    }`}
+                  >
+                    {order.status}
+                  </span>
+                </div>
+
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
+                  <div>
+                    <dt className="text-xs text-mute uppercase tracking-wide">Product</dt>
+                    <dd className="text-charcoal">{order.products?.name ?? "—"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-mute uppercase tracking-wide">Delivery</dt>
+                    <dd>
+                      <CourierStatusBadge
+                        status={order.courier_status}
+                        returnStatus={order.return_status}
+                      />
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-mute uppercase tracking-wide">Order Total</dt>
+                    <dd className="text-ink">
+                      {Number(order.order_total).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: order.currency || "BDT",
+                      })}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-mute uppercase tracking-wide">Your Commission</dt>
+                    <dd className="text-accent-green font-medium">
+                      {Number(order.commission_amount).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: order.currency || "BDT",
+                      })}
+                      <span className="ml-1 text-xs text-mute font-normal">
+                        ({order.commission_percentage}%)
+                      </span>
+                    </dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="text-xs text-mute uppercase tracking-wide">Coupon</dt>
+                    <dd>
+                      <code className="rounded bg-surface-elevated px-1.5 py-0.5 text-xs text-ink">
+                        {order.discount_code}
+                      </code>
+                    </dd>
+                  </div>
+                </dl>
+              </SwissCard>
+            ))}
+          </div>
+          </>
         )}
       </div>
     </>

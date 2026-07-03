@@ -130,7 +130,7 @@ export default async function CreatorProductsPage({
     <>
       <Topbar title="Products" />
 
-      <div className="p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
+      <div className="p-4 sm:p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
         <div>
           <p className="text-sm font-medium text-accent-orange">Creator marketplace</p>
           <h1 className="mt-2 text-2xl font-medium tracking-tight text-ink">

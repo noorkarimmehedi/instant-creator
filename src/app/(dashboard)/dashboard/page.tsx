@@ -15,7 +15,7 @@ export default async function DashboardPage() {
   return (
     <>
       <Topbar title="Dashboard" />
-      <div className="p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
+      <div className="p-4 sm:p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
         <StatsRow />
         <SetupChecklist onboardingStep={onboardingStep} />
       </div>

@@ -23,7 +23,7 @@ export default async function SocialsPage() {
   return (
     <>
       <Topbar title="Link Social Accounts" />
-      <div className="p-8 max-w-2xl animate-[fade-up_0.6s_ease-out_both]">
+      <div className="p-4 sm:p-8 max-w-2xl animate-[fade-up_0.6s_ease-out_both]">
         <p className="text-sm text-mute mb-6">
           Step 2 of 3 — Connect at least one social account
         </p>

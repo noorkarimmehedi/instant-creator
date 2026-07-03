@@ -92,7 +92,7 @@ export default async function BrandOrdersPage() {
     <>
       <Topbar title="Orders" />
 
-      <div className="p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
+      <div className="p-4 sm:p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
         <div className="flex items-center justify-between">
           <p className="text-sm text-charcoal">
             {courierConnected ? (
@@ -145,7 +145,8 @@ export default async function BrandOrdersPage() {
             </p>
           </div>
         ) : (
-          <SwissCard>
+          <>
+          <SwissCard className="hidden md:block">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -253,6 +254,120 @@ export default async function BrandOrdersPage() {
               </table>
             </div>
           </SwissCard>
+
+          {/* Mobile cards */}
+          <div className="space-y-3 md:hidden">
+            {orders.map((order) => (
+              <SwissCard key={order.id} className="space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-medium text-ink">
+                      #{order.shopify_order_number ?? "—"}
+                    </p>
+                    <p className="text-xs text-mute">
+                      {order.shopify_created_at
+                        ? new Date(order.shopify_created_at).toLocaleDateString()
+                        : "—"}
+                    </p>
+                  </div>
+                  <span
+                    className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                      order.status === "paid"
+                        ? "bg-accent-green/10 text-accent-green"
+                        : "bg-surface-elevated text-mute"
+                    }`}
+                  >
+                    {order.status}
+                  </span>
+                </div>
+
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
+                  <div>
+                    <dt className="text-xs text-mute uppercase tracking-wide">Product</dt>
+                    <dd className="text-charcoal">
+                      {productNames.get(order.product_id ?? "") ?? "—"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-mute uppercase tracking-wide">Influencer</dt>
+                    <dd className="text-charcoal">
+                      {influencerNames.get(order.influencer_clerk_user_id) ?? "Creator"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-mute uppercase tracking-wide">Total</dt>
+                    <dd className="text-ink">
+                      {Number(order.order_total).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: order.currency || "BDT",
+                      })}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-mute uppercase tracking-wide">Commission</dt>
+                    <dd className="text-accent-orange font-medium">
+                      {Number(order.commission_amount).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: order.currency || "BDT",
+                      })}
+                      <span className="ml-1 text-xs text-mute font-normal">
+                        ({order.commission_percentage}%)
+                      </span>
+                    </dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="text-xs text-mute uppercase tracking-wide">Coupon</dt>
+                    <dd>
+                      <code className="rounded bg-surface-elevated px-1.5 py-0.5 text-xs text-ink">
+                        {order.discount_code}
+                      </code>
+                    </dd>
+                  </div>
+                </dl>
+
+                {courierConnected && (
+                  <div className="border-t border-hairline pt-3">
+                    <p className="mb-1.5 text-xs text-mute uppercase tracking-wide">Courier</p>
+                    {order.sent_to_courier ? (
+                      <div className="space-y-1">
+                        <CourierStatusBadge
+                          status={order.courier_status}
+                          returnStatus={order.return_status}
+                        />
+                        {order.tracking_code && (
+                          <p className="text-[11px] text-stone">{order.tracking_code}</p>
+                        )}
+                        {activeProvider === "steadfast" &&
+                          !order.return_status &&
+                          !isFinalCourierStatus(order.courier_status) && (
+                            <form action={requestReturn}>
+                              <input type="hidden" name="orderId" value={order.id} />
+                              <button
+                                type="submit"
+                                className="text-[11px] text-accent-red hover:underline"
+                              >
+                                Request return
+                              </button>
+                            </form>
+                          )}
+                      </div>
+                    ) : (
+                      <DispatchDialog
+                        orderId={order.id}
+                        orderNumber={order.shopify_order_number ?? order.id.slice(0, 8)}
+                        providerLabel={providerLabel}
+                        defaultName={order.customer_name ?? ""}
+                        defaultPhone={order.phone ?? ""}
+                        defaultAddress={order.address ?? ""}
+                        defaultCod={Math.round(Number(order.order_total))}
+                      />
+                    )}
+                  </div>
+                )}
+              </SwissCard>
+            ))}
+          </div>
+          </>
         )}
       </div>
     </>

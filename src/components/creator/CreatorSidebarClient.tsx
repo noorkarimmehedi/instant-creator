@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
+import { useMobileNav } from "@/components/ui/MobileNav";
 
 function HomeIcon({ className }: { className?: string }) {
   return (
@@ -67,6 +68,8 @@ export function CreatorSidebarClient({
   verified: boolean;
 }) {
   const pathname = usePathname();
+  const { open, setOpen } = useMobileNav();
+  const closeNav = () => setOpen(false);
   const navLinkClass = (active: boolean) => `
     flex h-8 items-center justify-between rounded-lg px-2 text-sm leading-none transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-black/50
     ${
@@ -77,11 +80,25 @@ export function CreatorSidebarClient({
   `;
 
   return (
-    <aside className="h-screen w-[240px] bg-[#e5e5e5] p-0.5">
+    <>
+      {/* Mobile overlay */}
+      <div
+        onClick={closeNav}
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-200 lg:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        aria-hidden="true"
+      />
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 h-screen w-[260px] max-w-[85vw] bg-[#e5e5e5] p-0.5 transition-transform duration-200 ease-out lg:static lg:z-auto lg:w-[240px] lg:max-w-none lg:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
       <div className="flex h-full flex-col overflow-hidden rounded bg-[#F5F5F5]">
         <nav className="flex-1 overflow-hidden p-3 text-ink/75">
           <Link
             href="/creator"
+            onClick={closeNav}
             className="mb-5 flex h-11 items-center rounded-lg px-2 text-lg font-semibold tracking-[-0.03em] text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
             aria-label="Zair's/Creator hub"
           >
@@ -92,7 +109,7 @@ export function CreatorSidebarClient({
             {mainNav.map((item) => {
               const active = pathname === item.href;
               return (
-                <Link key={item.href} href={item.href} className={navLinkClass(active)}>
+                <Link key={item.href} href={item.href} onClick={closeNav} className={navLinkClass(active)}>
                   <span className="flex items-center gap-2.5">
                     <item.icon className="h-4 w-4 shrink-0" />
                     {item.label}
@@ -107,7 +124,7 @@ export function CreatorSidebarClient({
             {settingsNav.map((item) => {
               const active = pathname === item.href;
               return (
-                <Link key={item.href} href={item.href} className={navLinkClass(active)}>
+                <Link key={item.href} href={item.href} onClick={closeNav} className={navLinkClass(active)}>
                   <span className="flex items-center gap-2.5">
                     <item.icon className="h-4 w-4 shrink-0" />
                     {item.label}
@@ -130,6 +147,7 @@ export function CreatorSidebarClient({
           </div>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

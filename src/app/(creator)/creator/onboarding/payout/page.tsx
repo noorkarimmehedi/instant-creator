@@ -13,7 +13,7 @@ export default async function PayoutPage() {
   return (
     <>
       <Topbar title="Add Payout Method" />
-      <div className="p-8 max-w-2xl animate-[fade-up_0.6s_ease-out_both]">
+      <div className="p-4 sm:p-8 max-w-2xl animate-[fade-up_0.6s_ease-out_both]">
         <p className="text-sm text-mute mb-6">
           Step 3 of 3 — How should we pay you?
         </p>

@@ -22,7 +22,7 @@ export default async function ProductsPage() {
     <>
       <Topbar title="Products" />
 
-      <div className="p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
+      <div className="p-4 sm:p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
         <SwissCard>
           <h2 className="text-lg font-medium text-ink mb-4">Add a product</h2>
           <AddProductForm />

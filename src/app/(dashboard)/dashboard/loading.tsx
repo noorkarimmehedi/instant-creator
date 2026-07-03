@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <>
       <Topbar title="…" />
-      <div className="p-8 space-y-6 animate-pulse">
+      <div className="p-4 sm:p-8 space-y-6 animate-pulse">
         <div className="h-16 rounded-lg border border-hairline bg-surface-card" />
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (

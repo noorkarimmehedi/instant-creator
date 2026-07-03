@@ -80,7 +80,7 @@ export default async function PayoutsPage() {
   return (
     <>
       <Topbar title="Payouts" />
-      <div className="p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
+      <div className="p-4 sm:p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <SwissCard>
             <p className="text-xs text-mute uppercase tracking-wide">Influencers</p>

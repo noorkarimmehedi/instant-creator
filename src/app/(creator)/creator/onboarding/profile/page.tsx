@@ -28,7 +28,7 @@ export default async function ProfilePage() {
   return (
     <>
       <Topbar title="Complete Your Profile" />
-      <div className="p-8 max-w-2xl animate-[fade-up_0.6s_ease-out_both]">
+      <div className="p-4 sm:p-8 max-w-2xl animate-[fade-up_0.6s_ease-out_both]">
         <p className="text-sm text-mute mb-6">
           Step 1 of 3 — Tell brands about yourself
         </p>
