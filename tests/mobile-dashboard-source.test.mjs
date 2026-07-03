@@ -20,10 +20,20 @@ test("dashboard layouts use responsive shell instead of fixed mobile sidebar", a
   const brandLayout = await read("src/app/(dashboard)/layout.tsx");
   const creatorLayout = await read("src/app/(creator)/creator/layout.tsx");
 
-  assert.match(brandLayout, /<DashboardShellClient\b|<DashboardSidebar>\s*{children}\s*<\/DashboardSidebar>/);
-  assert.match(creatorLayout, /<DashboardShellClient\b|<CreatorSidebar>\s*{children}\s*<\/CreatorSidebar>/);
+  assert.match(brandLayout, /<DashboardSidebar>\s*{children}\s*<\/DashboardSidebar>/);
+  assert.match(creatorLayout, /<CreatorSidebar>\s*{children}\s*<\/CreatorSidebar>/);
   assert.doesNotMatch(brandLayout, /<div className="flex h-screen/);
   assert.doesNotMatch(creatorLayout, /<div className="flex h-screen/);
+});
+
+test("sidebar server wrappers render the shared responsive shell client", async () => {
+  const brandWrapper = await read("src/components/dashboard/DashboardSidebar.tsx");
+  const creatorWrapper = await read("src/components/creator/CreatorSidebar.tsx");
+
+  assert.match(brandWrapper, /import\s+{\s*DashboardShellClient\s*}\s+from\s+"[^"]*DashboardShellClient"/);
+  assert.match(brandWrapper, /<DashboardShellClient\b/);
+  assert.match(creatorWrapper, /import\s+{\s*DashboardShellClient\s*}\s+from\s+"[^"]*DashboardShellClient"/);
+  assert.match(creatorWrapper, /<DashboardShellClient\b/);
 });
 
 test("topbar and high-traffic pages use mobile-safe spacing", async () => {
