@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { BrandIcon } from "@/components/brand/BrandIcon";
 import { ThemeToggle } from "./ThemeToggle";
 
 type NavLink = {
@@ -31,12 +32,7 @@ export function MiniNavbar({ links }: { links: NavLink[] }) {
     >
       <div className="flex w-full items-center justify-between gap-x-5 sm:gap-x-8">
         <Link href="/" className="flex items-center gap-2.5 text-white">
-          <span className="relative flex h-5 w-5 items-center justify-center" aria-hidden="true">
-            <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-gray-100/85" />
-            <span className="absolute left-0 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-gray-100/85" />
-            <span className="absolute right-0 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-gray-100/85" />
-            <span className="absolute bottom-0 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-gray-100/85" />
-          </span>
+          <BrandIcon className="h-5 w-5 shrink-0" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tight">
             Zair&apos;s<span className="text-[#f00045]">/</span>Creator
           </span>

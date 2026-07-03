@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
+import { BrandIcon } from "@/components/brand/BrandIcon";
 import { useMobileNav } from "@/components/ui/MobileNav";
 
 type NavIcon = React.ComponentType<{ className?: string; strokeWidth?: number }>;
@@ -155,7 +156,10 @@ export function Sidebar({ brandName, plan }: { brandName: string; plan: string }
             className="mb-5 flex h-11 items-center rounded-lg px-2 text-lg font-semibold tracking-[-0.03em] text-ink outline-none transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-black/50"
             aria-label="Zair's/Creator dashboard"
           >
-            Zair&apos;s<span className="text-accent-red">/</span>Creator
+            <BrandIcon className="mr-2 h-5 w-5 shrink-0" />
+            <span>
+              Zair&apos;s<span className="text-accent-red">/</span>Creator
+            </span>
           </Link>
 
           <div className="space-y-0.5">
