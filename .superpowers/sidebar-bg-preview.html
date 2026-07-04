@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sidebar Background Preview</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #0a0a0c;
+        background: #ffffff;
+      }
+      .shell {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 220px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(0, 0, 0, 0.08);
+        background: #F5F5F5;
+      }
+      .brand {
+        height: 56px;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+      }
+      .slash { color: #e13247; font-weight: 800; }
+      nav {
+        flex: 1;
+        padding: 16px 12px;
+      }
+      .section-title {
+        margin: 0 4px 8px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 34px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        padding: 0 10px;
+        color: #6b6f72;
+        font-size: 14px;
+        text-decoration: none;
+      }
+      .link.active {
+        border-color: rgba(0, 0, 0, 0.12);
+        background: #ffffff;
+        color: #0a0a0c;
+        font-weight: 500;
+      }
+      .rule {
+        height: 1px;
+        background: rgba(0, 0, 0, 0.08);
+        margin: 16px 0;
+      }
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 65px;
+        padding: 16px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+      .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: #0a0a0c;
+      }
+      .name { font-size: 14px; margin: 0; }
+      .plan { font-size: 12px; color: #6b6f72; margin: 2px 0 0; }
+      main {
+        flex: 1;
+        padding: 32px;
+      }
+      .topbar {
+        height: 56px;
+        display: flex;
+        align-items: center;
+        margin: -32px -32px 32px;
+        padding: 0 32px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      }
+      h1 { font-size: 20px; margin: 0; font-weight: 500; }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .card {
+        min-height: 112px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        padding: 20px;
+        background: #ffffff;
+      }
+      .label { color: #6b6f72; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; margin: 0; }
+      .value { font-size: 30px; font-weight: 500; margin: 10px 0 0; }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">Instant<span class="slash">/</span>Creator</div>
+        <nav>
+          <p class="section-title">Main Menu</p>
+          <a class="link active" href="#">Dashboard</a>
+          <a class="link" href="#">Products</a>
+          <a class="link" href="#">Influencers</a>
+          <a class="link" href="#">Orders</a>
+          <a class="link" href="#">Payouts</a>
+          <div class="rule"></div>
+          <p class="section-title">Settings</p>
+          <a class="link" href="#">Settings</a>
+        </nav>
+        <div class="profile">
+          <div class="avatar"></div>
+          <div>
+            <p class="name">My Brand</p>
+            <p class="plan">starter</p>
+          </div>
+        </div>
+      </aside>
+      <main>
+        <div class="topbar"><h1>Dashboard</h1></div>
+        <div class="cards">
+          <div class="card"><p class="label">Total Orders</p><p class="value">128</p></div>
+          <div class="card"><p class="label">Active Influencers</p><p class="value">24</p></div>
+          <div class="card"><p class="label">RTO Rate</p><p class="value">9%</p></div>
+          <div class="card"><p class="label">Commission Due</p><p class="value">BDT 42k</p></div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

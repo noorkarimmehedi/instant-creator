@@ -96,7 +96,7 @@ export function ProductPromotionCard({
           <form action={formAction} className="space-y-2">
             <input type="hidden" name="product_id" value={product.id} />
             <Button type="submit" variant={pending ? "ghost" : "primary"} className="w-full">
-              {pending ? "Creating coupon…" : "Generate Shopify coupon"}
+              {pending ? "Creating coupon…" : "Generate coupon"}
             </Button>
             {state && !state.ok ? (
               <p className="text-xs text-accent-red">{state.error}</p>

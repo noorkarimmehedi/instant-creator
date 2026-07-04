@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Utility Rail Sidebar Preview</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #0a0a0c;
+        background: #fff;
+      }
+      .shell { display: flex; min-height: 100vh; }
+      .sidebar {
+        width: 272px;
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        background: #e5e5e5;
+      }
+      .rail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 8px;
+      }
+      .brand-mark {
+        width: 40px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+        color: #0a0a0c;
+      }
+      .slash { color: #e13247; }
+      .rail-bottom { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+      .rail-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: #f8f8f8;
+        display: grid;
+        place-items: center;
+        color: #0a0a0c;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
+      }
+      .avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 50% 35%, #fff 0 18%, transparent 19%), linear-gradient(135deg, #4338ca, #8b5cf6 60%, #fff 61%);
+      }
+      .panel-wrap { padding: 18px 16px 18px 0; overflow: hidden; }
+      .panel {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #F5F5F5;
+      }
+      .nav {
+        flex: 1;
+        overflow: hidden;
+        padding: 36px 24px 20px;
+      }
+      .title {
+        margin: 0 0 56px;
+        font-size: 36px;
+        line-height: 1;
+        font-weight: 750;
+        letter-spacing: -0.04em;
+      }
+      .menu { display: flex; flex-direction: column; gap: 18px; }
+      .link {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 0 18px;
+        border-radius: 14px;
+        color: #454545;
+        font-size: 29px;
+        line-height: 1;
+        text-decoration: none;
+      }
+      .link.active { background: #e7f1ff; color: #2b7fff; }
+      .icon { width: 24px; height: 24px; flex: none; }
+      .section { margin: 46px 0 18px; padding: 0 18px; color: #737373; font-size: 28px; letter-spacing: -0.03em; }
+      .profile {
+        border-top: 1px solid rgba(0,0,0,.12);
+        padding: 28px 24px;
+      }
+      .profile-label { margin: 0 0 28px; font-size: 28px; color: #737373; letter-spacing: -0.03em; }
+      .profile-name { margin: 0 0 6px; font-size: 28px; font-weight: 700; letter-spacing: -0.04em; }
+      .profile-plan { margin: 0; font-size: 24px; color: #737373; }
+      main { flex: 1; min-width: 0; }
+      .topbar { height: 56px; display: flex; align-items: center; border-bottom: 1px solid rgba(0,0,0,.08); padding: 0 32px; }
+      h1 { margin: 0; font-size: 20px; font-weight: 550; }
+      .content { padding: 32px; }
+      .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+      .card { min-height: 112px; border: 1px solid rgba(0,0,0,.12); border-radius: 12px; padding: 20px; background: #fff; }
+      .label { margin: 0; color: #6b6f72; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+      .value { margin: 10px 0 0; font-size: 30px; font-weight: 500; }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="rail">
+          <div class="brand-mark">I<span class="slash">/</span>C</div>
+          <div class="rail-bottom">
+            <div class="rail-button" title="Theme">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+            </div>
+            <div class="avatar" title="Account"></div>
+          </div>
+        </div>
+        <div class="panel-wrap">
+          <div class="panel">
+            <nav class="nav">
+              <h2 class="title">Dashboard</h2>
+              <div class="menu">
+                <a class="link active" href="#"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M2.52 7.823C2 8.77 2 9.915 2 12.203v1.522c0 3.9 0 5.851 1.172 7.063S6.229 22 10 22h4c3.771 0 5.657 0 6.828-1.212S22 17.626 22 13.725v-1.521c0-2.289 0-3.433-.52-4.381c-.518-.949-1.467-1.537-3.364-2.715l-2-1.241C14.111 2.622 13.108 2 12 2s-2.11.622-4.116 1.867l-2 1.241C3.987 6.286 3.038 6.874 2.519 7.823"/></svg>Dashboard</a>
+                <a class="link" href="#"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 3.75 6.5 12 11l8.25-4.5L12 2Z"/><path d="M4 8.15v8.35L11 22v-8.35L4 8.15Z"/><path d="M13 13.65V22l7-5.5V8.15l-7 5.5Z"/></svg>Products</a>
+                <a class="link" href="#"><svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="4"><path fill="currentColor" d="M19 20a7 7 0 1 0 0-14a7 7 0 0 0 0 14"/><path d="M32.608 7A7 7 0 0 1 36 13a7 7 0 0 1-3.392 6"/><path fill="currentColor" d="M4 40.8V42h30v-1.2c0-4.48 0-6.72-.872-8.432a8 8 0 0 0-3.496-3.496C27.92 28 25.68 28 21.2 28h-4.4c-4.48 0-6.72 0-8.432.872a8 8 0 0 0-3.496 3.496C4 34.08 4 36.32 4 40.8"/></svg>Influencers</a>
+                <a class="link" href="#"><svg class="icon" viewBox="0 0 36 36" fill="currentColor"><path d="M13 9.22a5 5 0 1 1 10 0V12h2V9.22a7 7 0 1 0-14 0V12h2Z"/><path d="M25 12v3.1a1 1 0 1 1-2 0V12H13v3.1a1 1 0 0 1-2 0V12H4v20a2 2 0 0 0 2 2h24a2 2 0 0 0 2-2V12Z"/></svg>Orders</a>
+                <a class="link" href="#"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H18a2 2 0 0 1 2 2v1H6.5A2.5 2.5 0 0 0 4 8.5v-3Z"/><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6H20a2 2 0 0 1 2 2v10.5a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 4 18.5v-10Zm14.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>Payouts</a>
+              </div>
+              <div class="section">Configuration</div>
+              <div class="menu">
+                <a class="link" href="#"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v2m0 0a7 7 0 0 0-7 7m7-7a7 7 0 0 1 7 7m0 0h2m-2 0a7 7 0 0 1-7 7m0 0v2m0-2a7 7 0 0 1-7-7m0 0H3m4.5-7.794l1 1.732M18.062 8.5l1.732-1M15.5 18.062l1 1.732M5.938 15.5l-1.732 1"/></svg>Settings</a>
+              </div>
+            </nav>
+            <div class="profile">
+              <p class="profile-label">Workspace</p>
+              <p class="profile-name">Zair Bangladesh</p>
+              <p class="profile-plan">Free</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <main>
+        <div class="topbar"><h1>Dashboard</h1></div>
+        <div class="content">
+          <div class="cards">
+            <div class="card"><p class="label">Total Orders</p><p class="value">128</p></div>
+            <div class="card"><p class="label">Active Influencers</p><p class="value">24</p></div>
+            <div class="card"><p class="label">RTO Rate</p><p class="value">9%</p></div>
+            <div class="card"><p class="label">Commission Due</p><p class="value">BDT 42k</p></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

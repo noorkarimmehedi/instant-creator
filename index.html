@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Instant/Creator — Creator Commerce OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Caveat:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/framer-motion@11.11.13/dist/framer-motion.js"></script>
+  <style>
+    :root {
+      /* crea8tors-inspired palette */
+      --cream: #F2EBDD;
+      --sand: #E6DDCB;
+      --paper: #FBF7EE;
+      --ink: #14110E;
+      --orange: #FF4E22;
+      --orange-ink: #C2390F;
+      --lime: #C9F24A;
+      --purple: #2A0068;
+      --brown: #4A4034;
+      --muted: #8A7E6C;
+
+      /* fonts */
+      --font-head: "Bricolage Grotesque", "Helvetica Neue", system-ui, sans-serif;
+      --font-serif: "Instrument Serif", Georgia, serif;
+      --font-script: "Caveat", "Bradley Hand", cursive;
+      --font-sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", "SFMono-Regular", ui-monospace, Menlo, monospace;
+
+      --radius: 26px;
+
+      /* legacy tokens retained for the untouched closing/footer section */
+      --surface: #ffffff;
+      --fg: #14110E;
+      --border: color-mix(in srgb, var(--ink) 12%, transparent);
+      --shell: #14110E;
+      --shadow: 0 30px 80px rgba(20, 17, 14, 0.14);
+      --font-display: "Helvetica Neue", "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .page { overflow: hidden; }
+    .wrap { width: min(1240px, calc(100% - 48px)); margin: 0 auto; }
+    .center { text-align: center; }
+
+    /* ---------- shared type ---------- */
+    .eyebrow {
+      font-family: var(--font-script);
+      font-size: 27px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--orange-ink);
+    }
+    .eyebrow.lime { color: var(--lime); }
+    .eyebrow.orange { color: var(--orange-ink); }
+
+    .display {
+      margin: 20px 0 20px;
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: clamp(54px, 7.4vw, 108px);
+      line-height: 0.9;
+      letter-spacing: -0.035em;
+      max-width: 13ch;
+    }
+    .big {
+      margin: 14px 0 0;
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: clamp(42px, 5.6vw, 84px);
+      line-height: 0.94;
+      letter-spacing: -0.035em;
+    }
+    .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--orange); letter-spacing: -0.01em; }
+    .ital { font-style: italic; color: var(--orange); }
+    .cream-fg { color: var(--cream); }
+    .ink-fg { color: var(--ink); }
+
+    .lead {
+      max-width: 44ch;
+      color: var(--brown);
+      font-size: clamp(18px, 1.35vw, 21px);
+      line-height: 1.5;
+      margin: 0 0 30px;
+      font-weight: 500;
+    }
+    .hl {
+      background: var(--lime);
+      color: var(--ink);
+      font-weight: 700;
+      padding: 0.06em 0.4em;
+      border-radius: 8px;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    /* ---------- buttons ---------- */
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 54px;
+      padding: 0 26px;
+      border-radius: 999px;
+      background: var(--orange);
+      color: #fff;
+      border: 1px solid var(--orange);
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+    .pill-btn svg { width: 18px; height: 18px; }
+    .pill-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(255, 78, 34, 0.32); }
+    .pill-btn.ghost { background: transparent; color: var(--ink); border-color: color-mix(in srgb, var(--ink) 24%, transparent); }
+    .pill-btn.ghost:hover { background: rgba(20, 17, 14, 0.05); box-shadow: none; border-color: var(--ink); }
+    .pill-btn.dark { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .pill-btn.dark:hover { box-shadow: 0 14px 30px rgba(20, 17, 14, 0.32); }
+
+    /* ---------- floating pill nav ---------- */
+    .topbar {
+      position: sticky;
+      top: 18px;
+      z-index: 60;
+      pointer-events: none;
+    }
+    .topbar .wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .chip {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 46px;
+      padding: 0 20px;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 14.5px;
+      white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(20, 17, 14, 0.12);
+      transition: transform 160ms ease;
+    }
+    .chip:hover { transform: translateY(-1px); }
+    .chip.cta { background: var(--orange); color: #fff; }
+    .wordmark {
+      pointer-events: auto;
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+    }
+    .wordmark span { color: var(--orange); }
+
+    /* ---------- hero ---------- */
+    .hero { position: relative; padding: 40px 0 96px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(500px, 0.98fr);
+      gap: 56px;
+      align-items: center;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .micro {
+      display: flex; gap: 22px; flex-wrap: wrap; margin-top: 34px;
+      color: var(--brown); font-size: 13px; font-weight: 600;
+    }
+    .micro span { display: inline-flex; align-items: center; gap: 8px; }
+    .micro svg { width: 16px; height: 16px; color: var(--orange); }
+
+    .hero-stage { position: relative; }
+    .sticker {
+      position: absolute;
+      z-index: 5;
+      background: #fff;
+      color: var(--ink);
+      border-radius: 14px;
+      padding: 9px 15px;
+      font-family: var(--font-script);
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1.05;
+      box-shadow: 0 16px 34px rgba(20, 17, 14, 0.16);
+    }
+    .sticker.purple { background: var(--purple); color: #fff; }
+    .sticker.s1 { top: -20px; right: 8%; transform: rotate(-6deg); }
+    .sticker.s2 { bottom: 44px; left: -20px; transform: rotate(5deg); }
+    .doodle { position: absolute; left: -40px; top: 40%; width: 78px; color: var(--orange); z-index: 4; }
+
+    /* ---------- console mockup ---------- */
+    .console {
+      position: relative;
+      border-radius: 24px;
+      background: #fff;
+      border: 1px solid var(--sand);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .console-top {
+      height: 54px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 18px; border-bottom: 1px solid var(--sand); background: var(--paper);
+    }
+    .dots { display: flex; gap: 8px; }
+    .dots i { width: 11px; height: 11px; border-radius: 50%; background: var(--sand); }
+    .dots i:first-child { background: var(--orange); }
+    .console-title { color: var(--muted); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .console-body { display: grid; grid-template-columns: 150px 1fr; min-height: 500px; }
+    .sidebar { border-right: 1px solid var(--sand); background: var(--paper); padding: 18px 12px; }
+    .side-item { height: 40px; display: flex; align-items: center; gap: 10px; border-radius: 11px; color: var(--muted); padding: 0 12px; margin-bottom: 4px; font-size: 13px; font-weight: 600; }
+    .side-item.active { color: #fff; background: var(--ink); }
+    .side-item svg { width: 16px; height: 16px; }
+    .dash { padding: 22px; display: grid; gap: 16px; align-content: start; }
+    .dash-head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
+    .dash-head h3 { margin: 0; font-family: var(--font-head); font-size: 26px; line-height: 1; letter-spacing: -0.03em; font-weight: 800; }
+    .kicker { display: block; color: var(--muted); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+    .date-pill { font-family: var(--font-mono); font-size: 11px; color: var(--brown); border: 1px solid var(--sand); padding: 7px 10px; border-radius: 999px; white-space: nowrap; }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .metric { padding: 14px; border-radius: 16px; min-height: 112px; border: 1px solid var(--sand); background: var(--paper); }
+    .metric.lime { background: var(--lime); border-color: var(--lime); }
+    .metric.orange { background: var(--orange); border-color: var(--orange); }
+    .metric label { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; color: var(--muted); }
+    .metric.orange label, .metric.orange small { color: rgba(255,255,255,0.82); }
+    .metric.lime label, .metric.lime small { color: rgba(20,17,14,0.62); }
+    .metric strong { display: block; font-family: var(--font-head); font-size: 27px; line-height: 1; letter-spacing: -0.03em; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .metric.orange strong { color: #fff; }
+    .metric small { display: block; color: var(--muted); margin-top: 8px; font-size: 11.5px; }
+    .main-panels { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 12px; }
+    .panel { padding: 16px; border-radius: 16px; border: 1px solid var(--sand); background: var(--paper); }
+    .table-label { display: block; color: var(--muted); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+    .bar-chart { height: 130px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; align-items: end; padding-top: 8px; }
+    .bar { border-radius: 3px 3px 0 0; background: var(--ink); min-height: 24px; }
+    .bar.hot { background: var(--orange); }
+    .creator-row { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--sand); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--cream); border: 1px solid var(--sand); display: grid; place-items: center; font-size: 11px; font-weight: 800; color: var(--ink); }
+    .name { font-weight: 700; font-size: 13px; }
+    .sub { color: var(--muted); font-size: 12px; }
+    .money { font-family: var(--font-mono); font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+    /* ---------- ticker ---------- */
+    .ticker { border-block: 1px solid var(--ink); background: var(--ink); color: var(--cream); overflow: hidden; }
+    .ticker-track { display: flex; width: max-content; gap: 42px; padding: 18px 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; align-items: center; }
+    .ticker-track strong { color: var(--lime); font-weight: 500; }
+    .ticker-track span { color: rgba(242, 235, 221, 0.5); }
+    .ticker-track em { color: var(--orange); font-style: normal; }
+
+    /* ---------- bands ---------- */
+    .band { padding: 104px 0; }
+    .band.tight { padding-top: 0; }
+    .band.dark { background: var(--ink); color: var(--cream); position: relative; }
+    .band.orange { background: var(--orange); color: var(--ink); }
+
+    .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 0.62fr); gap: 56px; align-items: end; margin-bottom: 44px; }
+    .split-copy { color: var(--brown); margin: 0; font-size: 18px; font-weight: 500; max-width: 46ch; }
+
+    /* stat cards */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat { border-radius: var(--radius); padding: 28px; min-height: 190px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 200ms ease; }
+    .stat:hover { transform: translateY(-4px); }
+    .stat strong { font-family: var(--font-head); font-weight: 800; font-size: clamp(40px, 3.6vw, 58px); line-height: 0.92; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+    .stat span { font-family: var(--font-script); font-size: 21px; font-weight: 600; line-height: 1.1; }
+    .stat.black { background: var(--ink); color: var(--cream); }
+    .stat.black strong { color: var(--lime); }
+    .stat.black span { color: rgba(242, 235, 221, 0.7); }
+    .stat.orange { background: var(--orange); color: var(--ink); }
+    .stat.orange span { color: rgba(20, 17, 14, 0.78); }
+    .stat.lime { background: var(--lime); color: var(--ink); }
+    .stat.lime span { color: rgba(20, 17, 14, 0.66); }
+
+    /* feature cards */
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .feature { border-radius: var(--radius); padding: 30px; min-height: 320px; display: flex; flex-direction: column; justify-content: space-between; gap: 22px; background: #fff; border: 1px solid var(--sand); }
+    .feature.dark { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .feature.lime { background: var(--lime); border-color: var(--lime); }
+    .feature h3 { margin: 0 0 10px; font-family: var(--font-head); font-size: 27px; line-height: 1.04; letter-spacing: -0.02em; font-weight: 800; }
+    .feature p { margin: 0; color: var(--brown); font-size: 15px; font-weight: 500; }
+    .feature.dark p { color: rgba(242, 235, 221, 0.7); }
+    .iconbox { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; background: var(--cream); color: var(--ink); }
+    .feature.dark .iconbox { background: rgba(242, 235, 221, 0.1); color: var(--lime); }
+    .feature.lime .iconbox { background: var(--ink); color: var(--lime); }
+    .iconbox svg { width: 22px; height: 22px; }
+    .mini-ledger { display: grid; gap: 8px; }
+    .mini-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border-radius: 12px; background: rgba(242, 235, 221, 0.06); font-size: 13px; font-weight: 600; }
+    .mini-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+
+    /* how-it-works steps */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 44px; position: relative; z-index: 2; }
+    .step-card { border-radius: var(--radius); padding: 26px; min-height: 240px; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; background: rgba(242, 235, 221, 0.04); border: 1px solid rgba(242, 235, 221, 0.14); }
+    .step-num { font-family: var(--font-head); font-weight: 800; font-size: 40px; color: var(--orange); line-height: 1; }
+    .step-card h3 { margin: 0 0 8px; font-family: var(--font-head); font-size: 22px; line-height: 1.12; letter-spacing: -0.02em; font-weight: 800; color: var(--cream); }
+    .step-card p { margin: 0; color: rgba(242, 235, 221, 0.66); font-size: 14px; font-weight: 500; }
+    .step-icon { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(242, 235, 221, 0.2); display: grid; place-items: center; color: var(--lime); }
+    .step-icon svg { width: 20px; height: 20px; }
+    .watermark { position: absolute; right: -2vw; bottom: -4vw; font-family: var(--font-head); font-weight: 800; font-size: 34vw; line-height: 0.8; color: rgba(242, 235, 221, 0.035); pointer-events: none; z-index: 0; letter-spacing: -0.05em; }
+
+    /* ---------- product lab (interactive) ---------- */
+    .lab-head { margin-bottom: 40px; }
+    .product-lab { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: stretch; }
+    .controls { border-radius: var(--radius); background: #fff; border: 1px solid var(--sand); padding: 16px; align-self: start; position: sticky; top: 92px; }
+    .tab-btn { width: 100%; min-height: 56px; border: 0; border-radius: 14px; background: transparent; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; color: var(--brown); font-family: var(--font-head); font-weight: 700; font-size: 16px; margin-bottom: 6px; transition: background 160ms ease, color 160ms ease; }
+    .tab-btn:hover { background: var(--cream); }
+    .tab-btn.active { background: var(--ink); color: #fff; }
+    .tab-btn span:last-child { font-family: var(--font-mono); font-size: 11px; opacity: 0.6; }
+    .lab-stage { border-radius: var(--radius); border: 1px solid var(--sand); background: #fff; box-shadow: var(--shadow); overflow: hidden; padding: 28px; min-height: 540px; }
+    .lab-grid { display: grid; grid-template-columns: 1fr 0.9fr; gap: 20px; height: 100%; }
+    .lab-title { margin: 0; font-family: var(--font-head); font-size: clamp(28px, 2.6vw, 38px); line-height: 1.04; letter-spacing: -0.03em; font-weight: 800; }
+    .lab-copy { color: var(--brown); margin: 12px 0 22px; max-width: 48ch; font-size: 15px; font-weight: 500; }
+    .module-card { border: 1px solid var(--sand); background: var(--paper); border-radius: 18px; padding: 18px; }
+    .campaign-list { display: grid; gap: 10px; }
+    .campaign-item { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; border: 1px solid var(--sand); background: #fff; border-radius: 14px; padding: 12px 14px; }
+    .rank { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: var(--cream); font-family: var(--font-mono); font-size: 11px; color: var(--brown); }
+    .order-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid var(--sand); }
+    .status { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 5px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; }
+    .status.delivered { background: color-mix(in srgb, var(--lime) 55%, white); color: var(--brown); }
+    .status.returned { background: color-mix(in srgb, var(--orange) 20%, white); color: var(--orange-ink); }
+    .status.pending { background: var(--cream); color: var(--brown); }
+    .estimator { margin-top: 18px; display: grid; gap: 14px; }
+    .field { display: grid; gap: 7px; }
+    .field label { color: var(--brown); font-size: 12.5px; font-weight: 700; }
+    .field input { width: 100%; height: 48px; border-radius: 12px; border: 1px solid var(--sand); background: #fff; padding: 0 14px; color: var(--ink); outline: none; font-variant-numeric: tabular-nums; font-weight: 600; }
+    .field input:focus { border-color: var(--orange); }
+    .estimate-out { display: grid; gap: 6px; border-radius: 18px; background: var(--ink); color: var(--cream); padding: 18px; margin-top: 6px; }
+    .estimate-out small { color: rgba(242, 235, 221, 0.6); font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; font-size: 10.5px; }
+    .estimate-out strong { font-family: var(--font-head); font-size: 32px; line-height: 1; letter-spacing: -0.03em; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--lime); }
+
+    /* payouts */
+    .payout-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--sand); cursor: pointer; }
+    .payout-check { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; border-radius: 7px; border: 1px solid var(--sand); display: grid; place-items: center; margin: 0; transition: background 140ms ease; }
+    .payout-check:checked { background: var(--orange); border-color: var(--orange); }
+    .payout-check:checked::after { content: ""; width: 10px; height: 6px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); }
+    .payout-total { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--sand); }
+
+    /* ---------- legacy: closing / footer (kept intact) ---------- */
+    section { padding: 112px 0; }
+    .btn {
+      min-height: 44px; border-radius: 999px; border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 92%, transparent); color: var(--fg);
+      padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      font-size: 14px; font-weight: 590; letter-spacing: 0.02em;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--fg) 24%, var(--border)); }
+    .btn svg { width: 16px; height: 16px; }
+    .closing { padding: 116px 0 126px; }
+    .close-card {
+      border-radius: 0; background: var(--shell); color: var(--surface);
+      padding: clamp(32px, 7vw, 74px); display: grid; grid-template-columns: 1fr auto;
+      gap: 40px; align-items: end; overflow: hidden; position: relative;
+    }
+    .close-card h2 { margin: 0; max-width: 12ch; font-family: var(--font-display); font-size: clamp(52px, 6.8vw, 96px); line-height: 0.94; letter-spacing: -0.03em; font-weight: 560; }
+    .close-card p { margin: 20px 0 0; max-width: 58ch; color: rgba(255,255,255,0.68); font-size: 17px; }
+    .close-card .btn { background: var(--surface); color: var(--fg); border-color: rgba(255,255,255,0.24); white-space: nowrap; }
+
+    /* ---------- responsive ---------- */
+    @media (max-width: 1020px) {
+      .hero-grid, .split, .lab-grid, .close-card { grid-template-columns: 1fr; }
+      .hero-grid { gap: 40px; }
+      .split { gap: 20px; align-items: start; }
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+      .feature-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .product-lab { grid-template-columns: 1fr; }
+      .controls { position: static; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .tab-btn { margin: 0; }
+      .watermark { font-size: 48vw; }
+    }
+    @media (max-width: 720px) {
+      .wrap { width: min(100% - 30px, 1180px); }
+      body { font-size: 16px; }
+      .topbar .chip { padding: 0 15px; font-size: 13px; height: 42px; }
+      .hero { padding-top: 26px; }
+      .console-body { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .metrics { grid-template-columns: 1fr; }
+      .main-panels { grid-template-columns: 1fr; }
+      .sticker.s1 { right: 4%; }
+      .sticker.s2 { left: 2%; }
+      .doodle { display: none; }
+      .stat-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .band { padding: 62px 0; }
+      .controls { grid-template-columns: 1fr; }
+      .close-card { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useMemo, useState } = React;
+    const { motion, useScroll, useTransform } = window.Motion;
+
+    const Icon = ({ name }) => {
+      const icons = {
+        arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
+        spark: <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" />,
+        grid: <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" />,
+        users: <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />,
+        orders: <path d="M6 2h12l2 4v16H4V6l2-4ZM4 6h16M9 10a3 3 0 0 0 6 0" />,
+        payout: <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" />,
+        box: <path d="m21 8-9-5-9 5 9 5 9-5ZM3 8v8l9 5 9-5V8M12 13v8" />,
+        chart: <path d="M3 3v18h18M7 16l3.5-4 3 2.5L19 7" />,
+        check: <path d="m20 6-11 11-5-5" />,
+        shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />,
+        bank: <path d="M3 21h18M5 21V9M19 21V9M12 21V9M3 9l9-6 9 6H3Z" />
+      };
+      return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icons[name]}</svg>;
+    };
+
+    const reveal = {
+      hidden: { opacity: 0, y: 20 },
+      show: { opacity: 1, y: 0, transition: { duration: 0.82, ease: [0.16, 1, 0.3, 1] } }
+    };
+
+    const creatorRows = [
+      ["NR", "Nadia Rahman", "Glow launch", "BDT 842k"],
+      ["FM", "Farhan M.", "Sneaker drop", "BDT 619k"],
+      ["SA", "Sadia Akter", "Ramadan edit", "BDT 404k"]
+    ];
+
+    const stats = [
+      ["black", "BDT 4.8M", "delivered value, locked"],
+      ["orange", "2,184", "creator-attributed orders"],
+      ["black", "312", "returns held pre-payout"],
+      ["lime", "100%", "paid on delivered sales"]
+    ];
+
+    const workflow = [
+      ["box", "Curate products", "Build a campaign inventory, assign SKUs to creators, and keep ownership visible from the first brief."],
+      ["users", "Commission creators", "Give each influencer trackable links or codes with the commercial rule attached before sales begin."],
+      ["orders", "Reconcile orders", "Separate placed, delivered, and returned orders so performance reflects revenue quality, not noise."],
+      ["payout", "Release finance", "Approve commissions only after delivered value is locked and return deductions are accounted for."]
+    ];
+
+    const tabContent = {
+      campaigns: {
+        title: "Build a campaign with the precision of a trading desk.",
+        copy: "Assign products, creators, commission rules, and delivery windows from one restrained operating surface built for commerce teams in Bangladesh.",
+        list: [
+          ["01", "Beauty Box Eid Push", "18 creators live", "BDT 1.42M"],
+          ["02", "Streetwear Weekend", "9 creators live", "BDT 740k"],
+          ["03", "Home Essentials", "6 creators pending", "BDT 286k"]
+        ],
+        sideTitle: "Campaign control",
+        sideRows: ["SKU allocation", "Promo code health", "Creator capacity", "Courier delivery window"]
+      },
+      orders: {
+        title: "Trace every creator order to the final revenue state.",
+        copy: "Orders stay tied to the creator, product, and return outcome, so finance can see what qualifies for commission without asking marketing for a spreadsheet.",
+        list: [
+          ["#1842", "Delivered from Nadia code", "BDT 18,900"],
+          ["#1839", "Returned after courier attempt", "BDT 0"],
+          ["#1834", "Delivered from Farhan link", "BDT 12,400"]
+        ],
+        sideTitle: "Order intelligence",
+        sideRows: ["Delivered vs returned", "Creator source", "City and courier status", "Commission eligibility"]
+      },
+      payouts: {
+        title: "Release creator payouts from delivered sales only.",
+        copy: "The payout queue separates payable, pending, and returned orders so teams do not overpay before courier confirmation.",
+        list: [
+          ["Nadia Rahman", "Ready payout", "BDT 42,100"],
+          ["Sadia Akter", "Awaiting delivery lock", "BDT 18,650"],
+          ["Farhan M.", "Ready payout", "BDT 31,250"]
+        ],
+        sideTitle: "Finance guardrails",
+        sideRows: ["Commission rule audit", "Bank transfer batch", "Return deductions", "Creator receipt history"]
+      }
+    };
+
+    function formatBDT(value) {
+      return new Intl.NumberFormat("en-BD", { maximumFractionDigits: 0 }).format(Math.max(0, value));
+    }
+
+    function App() {
+      const [activeTab, setActiveTab] = useState("campaigns");
+      const [orders, setOrders] = useState(320);
+      const [ticket, setTicket] = useState(1850);
+      const [delivery, setDelivery] = useState(72);
+      const [selectedPayouts, setSelectedPayouts] = useState(["Nadia Rahman", "Farhan M."]);
+      const { scrollYProgress } = useScroll();
+      const x = useTransform(scrollYProgress, [0, 1], [0, -420]);
+
+      const deliveredRevenue = useMemo(() => orders * ticket * (delivery / 100), [orders, ticket, delivery]);
+      const tab = tabContent[activeTab];
+      const payoutAmounts = { "Nadia Rahman": 42100, "Sadia Akter": 18650, "Farhan M.": 31250 };
+      const payoutTotal = selectedPayouts.reduce((sum, name) => sum + payoutAmounts[name], 0);
+
+      function togglePayout(name) {
+        setSelectedPayouts((current) => current.includes(name) ? current.filter((item) => item !== name) : current.concat(name));
+      }
+
+      return (
+        <main className="page">
+          <nav className="topbar">
+            <div className="wrap">
+              <a className="chip" href="#how">the system</a>
+              <a className="wordmark" href="#top" aria-label="Instant Creator home">Instant<span>/</span>Creator</a>
+              <a className="chip cta" href="#access">request access 👀</a>
+            </div>
+          </nav>
+
+          <header className="hero" id="top">
+            <div className="wrap hero-grid">
+              <motion.div className="hero-copy" initial="hidden" animate="show" variants={reveal}>
+                <div className="eyebrow orange">creator commerce, measured —</div>
+                <h1 className="display">Run creator commerce <span className="accent">like finance.</span></h1>
+                <p className="lead">Products, influencers, orders, returns, and BDT commissions in one exacting system. You pay on <span className="hl">delivered sales only.</span></p>
+                <div className="hero-actions">
+                  <a className="pill-btn" href="#access">Design your campaign <Icon name="arrow" /></a>
+                  <a className="pill-btn ghost" href="#how">See the system</a>
+                </div>
+                <div className="micro">
+                  <span><Icon name="check" /> Delivered-sales only</span>
+                  <span><Icon name="shield" /> Return-aware ledger</span>
+                  <span><Icon name="bank" /> BDT payout control</span>
+                </div>
+              </motion.div>
+
+              <motion.div className="hero-stage" initial={{ opacity: 0, y: 34, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}>
+                <div className="console">
+                  <div className="console-top">
+                    <div className="dots"><i></i><i></i><i></i></div>
+                    <div className="console-title">Instant private console</div>
+                  </div>
+                  <div className="console-body">
+                    <aside className="sidebar">
+                      {[
+                        ["grid", "Overview", true],
+                        ["box", "Products", false],
+                        ["users", "Influencers", false],
+                        ["orders", "Orders", false],
+                        ["payout", "Payouts", false]
+                      ].map(([icon, label, isActive]) => (
+                        <div className={`side-item ${isActive ? "active" : ""}`} key={label}><Icon name={icon} /> {label}</div>
+                      ))}
+                    </aside>
+                    <div className="dash">
+                      <div className="dash-head">
+                        <div>
+                          <span className="kicker">July private campaign</span>
+                          <h3>Commerce atelier</h3>
+                        </div>
+                        <span className="date-pill">BDT · Dhaka</span>
+                      </div>
+                      <div className="metrics">
+                        <motion.div className="metric lime" whileHover={{ y: -3 }}>
+                          <label>Delivered value</label>
+                          <strong>BDT 4.8M</strong>
+                          <small>Locked after courier confirmation</small>
+                        </motion.div>
+                        <motion.div className="metric" whileHover={{ y: -3 }}>
+                          <label>Attributed orders</label>
+                          <strong>2,184</strong>
+                          <small>Creator checkout events</small>
+                        </motion.div>
+                        <motion.div className="metric orange" whileHover={{ y: -3 }}>
+                          <label>Return hold</label>
+                          <strong>312</strong>
+                          <small>Held before approval</small>
+                        </motion.div>
+                      </div>
+                      <div className="main-panels">
+                        <div className="panel">
+                          <span className="table-label">Delivered value by day</span>
+                          <div className="bar-chart">
+                            {[58, 72, 45, 86, 66, 94, 76].map((height, index) => <motion.div className={`bar ${index === 5 ? "hot" : ""}`} key={index} initial={{ height: 18 }} animate={{ height }} transition={{ delay: 0.22 + index * 0.055, duration: 0.82, ease: [0.16, 1, 0.3, 1] }} />)}
+                          </div>
+                        </div>
+                        <div className="panel">
+                          <span className="table-label">Top creators</span>
+                          {creatorRows.map(([initials, name, campaign, amount]) => (
+                            <div className="creator-row" key={name}>
+                              <div className="avatar">{initials}</div>
+                              <div><div className="name">{name}</div><div className="sub">{campaign}</div></div>
+                              <div className="money">{amount}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <motion.div className="sticker s1" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7, duration: 0.5 }}>pov: payout locked ✅</motion.div>
+                <motion.div className="sticker purple s2" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.85, duration: 0.5 }}>delivered-sales only</motion.div>
+                <svg className="doodle" viewBox="0 0 80 80" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M8 14c14 30 34 46 60 50" />
+                  <path d="M52 60l16 4 3-16" />
+                </svg>
+              </motion.div>
+            </div>
+          </header>
+
+          <div className="ticker" aria-hidden="true">
+            <motion.div className="ticker-track" style={{ x }}>
+              {Array.from({ length: 2 }).map((_, group) => (
+                <React.Fragment key={group}>
+                  <strong>Products assigned</strong><em>◦</em><span>Creator links live</span><em>◦</em><strong>Orders attributed</strong><em>◦</em><span>Delivered locked</span><em>◦</em><strong>Returns deducted</strong><em>◦</em><span>Commission released</span><em>◦</em>
+                </React.Fragment>
+              ))}
+            </motion.div>
+          </div>
+
+          <section className="band" id="system">
+            <div className="wrap">
+              <motion.div className="split" initial="hidden" whileInView="show" viewport={{ once: true, margin: "-120px" }} variants={reveal}>
+                <div>
+                  <div className="eyebrow orange">the system —</div>
+                  <h2 className="big">a real ledger. <span className="ital">not a guess.</span></h2>
+                </div>
+                <p className="split-copy">Every creator, product, order, return, and payout stays traceable from launch to finance approval. Delivered value locks before a single taka is released.</p>
+              </motion.div>
+              <div className="stat-grid">
+                {stats.map(([tone, value, label], index) => (
+                  <motion.div className={`stat ${tone}`} key={label} initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ delay: index * 0.07, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+                    <strong>{value}</strong>
+                    <span>{label}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="band tight">
+            <div className="wrap">
+              <div className="feature-grid">
+                <motion.article className="feature" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+                  <div className="iconbox"><Icon name="box" /></div>
+                  <div>
+                    <h3>Assign products to creators</h3>
+                    <p>Build campaign inventory, hand SKUs to influencers with trackable links or codes, and keep ownership visible from the first brief.</p>
+                  </div>
+                </motion.article>
+                <motion.article className="feature dark" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ delay: 0.08, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+                  <div className="iconbox"><Icon name="shield" /></div>
+                  <div>
+                    <h3>Return-aware ledger</h3>
+                    <div className="mini-ledger">
+                      <div className="mini-row"><span><span className="mini-dot" style={{ background: "var(--lime)" }}></span>Delivered</span><span className="money" style={{ color: "var(--lime)" }}>eligible</span></div>
+                      <div className="mini-row"><span><span className="mini-dot" style={{ background: "var(--orange)" }}></span>Returned</span><span className="money" style={{ color: "var(--orange)" }}>deducted</span></div>
+                      <div className="mini-row"><span><span className="mini-dot" style={{ background: "var(--muted)" }}></span>Pending</span><span className="money" style={{ color: "rgba(242,235,221,0.7)" }}>held</span></div>
+                    </div>
+                  </div>
+                </motion.article>
+                <motion.article className="feature lime" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ delay: 0.16, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+                  <div className="iconbox"><Icon name="bank" /></div>
+                  <div>
+                    <h3>BDT payout control</h3>
+                    <p>Approve transfer batches only after delivered value is locked. Returned and pending orders stay out of the payout until reconciled.</p>
+                  </div>
+                </motion.article>
+              </div>
+            </div>
+          </section>
+
+          <section className="band dark" id="how">
+            <div className="wrap">
+              <motion.div initial="hidden" whileInView="show" viewport={{ once: true, margin: "-120px" }} variants={reveal}>
+                <div className="eyebrow lime">how it works —</div>
+                <h2 className="big cream-fg">four steps. <span className="ital">the whole loop.</span></h2>
+              </motion.div>
+              <div className="steps">
+                {workflow.map(([icon, title, copy], index) => (
+                  <motion.article className="step-card" key={title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ delay: index * 0.07, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+                    <div>
+                      <div className="step-num">0{index + 1}</div>
+                      <h3>{title}</h3>
+                      <p>{copy}</p>
+                    </div>
+                    <div className="step-icon"><Icon name={icon} /></div>
+                  </motion.article>
+                ))}
+              </div>
+              <span className="watermark">I/C</span>
+            </div>
+          </section>
+
+          <section className="band" id="console">
+            <div className="wrap">
+              <motion.div className="lab-head" initial="hidden" whileInView="show" viewport={{ once: true, margin: "-120px" }} variants={reveal}>
+                <div className="eyebrow orange">the console —</div>
+                <h2 className="big">calm under <span className="ital">pressure.</span></h2>
+              </motion.div>
+
+              <div className="product-lab">
+                <div className="controls" role="tablist" aria-label="Product modules">
+                  {[
+                    ["campaigns", "Campaigns", "01"],
+                    ["orders", "Orders", "02"],
+                    ["payouts", "Payouts", "03"]
+                  ].map(([id, label, num]) => (
+                    <button className={`tab-btn ${activeTab === id ? "active" : ""}`} role="tab" aria-selected={activeTab === id} key={id} onClick={() => setActiveTab(id)}>
+                      <span>{label}</span><span>{num}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <motion.div className="lab-stage" layout>
+                  <div className="lab-grid">
+                    <motion.div key={activeTab + "-main"} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+                      <span className="kicker">{tab.sideTitle}</span>
+                      <h3 className="lab-title">{tab.title}</h3>
+                      <p className="lab-copy">{tab.copy}</p>
+                      <div className="campaign-list">
+                        {tab.list.map(([a, b, c, d]) => (
+                          <motion.div className="campaign-item" key={b} whileHover={{ x: 3 }}>
+                            <div className="rank">{a.length <= 2 ? a : "•"}</div>
+                            <div><div className="name">{b}</div><div className="sub">{c}</div></div>
+                            <div className="money">{d}</div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                    <motion.div className="module-card" key={activeTab + "-side"} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45 }}>
+                      <span className="table-label">What the team sees</span>
+                      {tab.sideRows.map((row, index) => (
+                        <div className="order-row" key={row}>
+                          <div>
+                            <div className="name">{row}</div>
+                            <div className="sub">{index === 0 ? "Primary control" : "Synced in campaign record"}</div>
+                          </div>
+                          <span className={`status ${index === 1 ? "pending" : "delivered"}`}>{index === 1 ? "Review" : "Ready"}</span>
+                        </div>
+                      ))}
+                      <div className="estimator" id="demo">
+                        <div className="field">
+                          <label>Orders placed</label>
+                          <input type="number" min="0" value={orders} onChange={(event) => setOrders(Number(event.target.value || 0))} />
+                        </div>
+                        <div className="field">
+                          <label>Average order value in BDT</label>
+                          <input type="number" min="0" value={ticket} onChange={(event) => setTicket(Number(event.target.value || 0))} />
+                        </div>
+                        <div className="field">
+                          <label>Delivered rate (%)</label>
+                          <input type="number" min="0" max="100" value={delivery} onChange={(event) => setDelivery(Math.min(100, Number(event.target.value || 0)))} />
+                        </div>
+                        <div className="estimate-out">
+                          <small>Projected delivered amount</small>
+                          <strong>BDT {formatBDT(deliveredRevenue)}</strong>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </section>
+
+          <section className="band tight" id="payouts">
+            <div className="wrap">
+              <motion.div className="lab-head" initial="hidden" whileInView="show" viewport={{ once: true, margin: "-120px" }} variants={reveal}>
+                <div className="eyebrow orange">finance —</div>
+                <h2 className="big">no payout before <span className="ital">delivery lock.</span></h2>
+              </motion.div>
+              <div className="lab-stage">
+                <div className="lab-grid">
+                  <div>
+                    <span className="kicker">Payout queue</span>
+                    <h3 className="lab-title">Approve the batch only after delivery lock.</h3>
+                    <p className="lab-copy">Creator earnings, order evidence, return deductions, and bank-transfer readiness stay in one review path.</p>
+                    <div className="module-card">
+                      {Object.entries(payoutAmounts).map(([name, amount]) => (
+                        <label className="payout-row" key={name}>
+                          <input className="payout-check" type="checkbox" checked={selectedPayouts.includes(name)} onChange={() => togglePayout(name)} />
+                          <span><span className="name">{name}</span><span className="sub">Delivered-sales commission</span></span>
+                          <span className="money">BDT {formatBDT(amount)}</span>
+                        </label>
+                      ))}
+                      <div className="payout-total">
+                        <span className="table-label" style={{ margin: 0 }}>Selected transfer batch</span>
+                        <strong className="money" style={{ fontSize: "16px" }}>BDT {formatBDT(payoutTotal)}</strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="module-card">
+                    <span className="table-label">Return-aware ledger</span>
+                    {[
+                      ["Delivered", "Revenue eligible for commission", "delivered"],
+                      ["Returned", "Deducted before payout", "returned"],
+                      ["Pending", "Held until courier outcome", "pending"]
+                    ].map(([title, copy, state]) => (
+                      <div className="order-row" key={title}>
+                        <div><div className="name">{title}</div><div className="sub">{copy}</div></div>
+                        <span className={`status ${state}`}>{title}</span>
+                      </div>
+                    ))}
+                    <div className="estimate-out">
+                      <small>Finance posture</small>
+                      <strong style={{ fontSize: "20px" }}>Delivered-locked only.</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="band orange center" id="access">
+            <div className="wrap">
+              <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-120px" }} transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}>
+                <div className="sticker purple" style={{ position: "static", display: "inline-block", marginBottom: "22px", transform: "rotate(-2deg)" }}>request access 🔒</div>
+                <h2 className="big ink-fg" style={{ margin: "0 auto", maxWidth: "16ch" }}>step in.</h2>
+                <p style={{ maxWidth: "48ch", margin: "18px auto 30px", fontSize: "18px", fontWeight: 500, color: "rgba(20,17,14,0.78)" }}>A few minutes to a private console where influence is measured like finance. Requesting access should feel like an invite, not a form.</p>
+                <a className="pill-btn dark" href="#top">Request access <Icon name="arrow" /></a>
+              </motion.div>
+            </div>
+          </section>
+
+          <section className="closing">
+            <div className="wrap">
+              <motion.div className="close-card" initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-120px" }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}>
+                <div>
+                  <span className="kicker" style={{ color: "rgba(255,255,255,0.58)" }}>Instant/Creator</span>
+                  <h2>Run creator commerce with taste and control.</h2>
+                  <p>Launch campaigns, track the orders creators generate, separate delivered value from returns, and release commissions from a ledger the whole team can trust.</p>
+                </div>
+                <a className="btn" href="#top">Back to top <Icon name="arrow" /></a>
+              </motion.div>
+            </div>
+          </section>
+        </main>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

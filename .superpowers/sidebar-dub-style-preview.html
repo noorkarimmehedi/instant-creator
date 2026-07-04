@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Two Column Sidebar Preview</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #0a0a0c;
+        background: #ffffff;
+      }
+      .shell { display: flex; min-height: 100vh; }
+      .sidebar {
+        width: 304px;
+        min-height: 100vh;
+        background: #e5e5e5;
+        display: grid;
+        grid-template-columns: 64px 1fr;
+      }
+      .rail {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+      }
+      .brand-mark {
+        width: 46px;
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+      }
+      .slash { color: #e13247; }
+      .rail-group { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+      .rail-btn {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        color: #171717;
+      }
+      .rail-btn.active { background: #ffffff; box-shadow: 0 1px 0 rgba(0,0,0,.04); }
+      .rail-btn:hover { background: rgba(0, 0, 0, 0.04); }
+      .rail-icon { width: 20px; height: 20px; }
+      .panel-wrap { padding: 8px 8px 8px 0; overflow: hidden; }
+      .panel {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #F5F5F5;
+      }
+      .panel-scroll { flex: 1; overflow: hidden; padding: 12px; color: #525252; }
+      .panel-title { margin: 8px 8px 22px; color: #171717; font-size: 18px; font-weight: 650; }
+      .nav-section { display: flex; flex-direction: column; gap: 2px; margin-bottom: 32px; }
+      .section-title { margin: 0 0 8px 8px; font-size: 14px; color: #737373; }
+      .link {
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 8px;
+        padding: 0 8px;
+        color: #404040;
+        font-size: 14px;
+        text-decoration: none;
+      }
+      .link-left { display: flex; align-items: center; gap: 10px; }
+      .link.active { background: rgba(37, 99, 235, 0.10); color: #2563eb; font-weight: 600; }
+      .link:hover { background: rgba(0, 0, 0, 0.05); color: #171717; }
+      .icon { width: 16px; height: 16px; flex: none; }
+      .usage {
+        border-top: 1px solid rgba(0, 0, 0, 0.12);
+        padding: 12px;
+      }
+      .usage-link { color: #737373; font-size: 14px; text-decoration: none; }
+      .usage-row { margin-top: 16px; }
+      .usage-head { display: flex; justify-content: space-between; align-items: center; color: #525252; font-size: 12px; font-weight: 600; }
+      .bar { height: 3px; margin-top: 8px; border-radius: 999px; background: rgba(0,0,0,.1); overflow: hidden; }
+      .bar-fill { height: 100%; width: 34%; border-radius: inherit; background: linear-gradient(90deg, transparent, #2563eb); }
+      .upgrade { width: 100%; height: 34px; margin-top: 16px; border: 0; border-radius: 9px; background: #000; color: #fff; font-weight: 600; }
+      main { flex: 1; }
+      .topbar { height: 56px; display: flex; align-items: center; padding: 0 32px; border-bottom: 1px solid rgba(0,0,0,.08); }
+      h1 { margin: 0; font-size: 20px; font-weight: 550; }
+      .content { padding: 32px; }
+      .cards { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; }
+      .card { min-height: 112px; border: 1px solid rgba(0,0,0,.12); border-radius: 12px; padding: 20px; background: #fff; }
+      .label { margin: 0; color: #6b6f72; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+      .value { margin: 10px 0 0; font-size: 30px; font-weight: 500; }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="rail">
+          <div class="rail-group">
+            <div class="brand-mark">I<span class="slash">/</span>C</div>
+            <div class="rail-btn active" title="Dashboard">
+              <svg class="rail-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M2.52 7.823C2 8.77 2 9.915 2 12.203v1.522c0 3.9 0 5.851 1.172 7.063S6.229 22 10 22h4c3.771 0 5.657 0 6.828-1.212S22 17.626 22 13.725v-1.521c0-2.289 0-3.433-.52-4.381c-.518-.949-1.467-1.537-3.364-2.715l-2-1.241C14.111 2.622 13.108 2 12 2s-2.11.622-4.116 1.867l-2 1.241C3.987 6.286 3.038 6.874 2.519 7.823m6.927 7.575a.75.75 0 1 0-.894 1.204A5.77 5.77 0 0 0 12 17.75a5.77 5.77 0 0 0 3.447-1.148a.75.75 0 1 0-.894-1.204A4.27 4.27 0 0 1 12 16.25a4.27 4.27 0 0 1-2.553-.852" /></svg>
+            </div>
+            <div class="rail-btn" title="Products"><svg class="rail-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 3.75 6.5 12 11l8.25-4.5L12 2Z"/><path d="M4 8.15v8.35L11 22v-8.35L4 8.15Z"/><path d="M13 13.65V22l7-5.5V8.15l-7 5.5Z"/></svg></div>
+            <div class="rail-btn" title="Influencers"><svg class="rail-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><path fill="currentColor" d="M19 20a7 7 0 1 0 0-14a7 7 0 0 0 0 14"/><path d="M32.608 7A7 7 0 0 1 36 13a7 7 0 0 1-3.392 6"/><path fill="currentColor" d="M4 40.8V42h30v-1.2c0-4.48 0-6.72-.872-8.432a8 8 0 0 0-3.496-3.496C27.92 28 25.68 28 21.2 28h-4.4c-4.48 0-6.72 0-8.432.872a8 8 0 0 0-3.496 3.496C4 34.08 4 36.32 4 40.8"/><path d="M44 42v-1.2c0-4.48 0-6.72-.872-8.432a8 8 0 0 0-3.496-3.496"/></svg></div>
+          </div>
+          <div class="rail-group">
+            <div class="rail-btn" title="Help">?</div>
+            <div class="rail-btn" title="Account"><div style="width:28px;height:28px;border-radius:999px;background:#0a0a0c"></div></div>
+          </div>
+        </div>
+
+        <div class="panel-wrap">
+          <div class="panel">
+            <div class="panel-scroll">
+              <div class="panel-title">Dashboard</div>
+              <div class="nav-section">
+                <a class="link active" href="#"><span class="link-left"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M2.52 7.823C2 8.77 2 9.915 2 12.203v1.522c0 3.9 0 5.851 1.172 7.063S6.229 22 10 22h4c3.771 0 5.657 0 6.828-1.212S22 17.626 22 13.725v-1.521c0-2.289 0-3.433-.52-4.381c-.518-.949-1.467-1.537-3.364-2.715l-2-1.241C14.111 2.622 13.108 2 12 2s-2.11.622-4.116 1.867l-2 1.241C3.987 6.286 3.038 6.874 2.519 7.823"/></svg>Dashboard</span></a>
+                <a class="link" href="#"><span class="link-left"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 3.75 6.5 12 11l8.25-4.5L12 2Z"/><path d="M4 8.15v8.35L11 22v-8.35L4 8.15Z"/><path d="M13 13.65V22l7-5.5V8.15l-7 5.5Z"/></svg>Products</span></a>
+                <a class="link" href="#"><span class="link-left"><svg class="icon" viewBox="0 0 36 36" fill="currentColor"><path d="M13 9.22a5 5 0 1 1 10 0V12h2V9.22a7 7 0 1 0-14 0V12h2Z"/><path d="M25 12v3.1a1 1 0 1 1-2 0V12H13v3.1a1 1 0 0 1-2 0V12H4v20a2 2 0 0 0 2 2h24a2 2 0 0 0 2-2V12Z"/></svg>Orders</span></a>
+              </div>
+              <div class="nav-section">
+                <p class="section-title">Growth</p>
+                <a class="link" href="#"><span class="link-left">Influencers</span></a>
+                <a class="link" href="#"><span class="link-left">Payouts</span></a>
+                <a class="link" href="#"><span class="link-left">Analytics</span></a>
+              </div>
+              <div class="nav-section">
+                <p class="section-title">Configuration</p>
+                <a class="link" href="#"><span class="link-left">Settings</span></a>
+                <a class="link" href="#"><span class="link-left">Shopify</span></a>
+                <a class="link" href="#"><span class="link-left">Fraud Rules</span></a>
+              </div>
+            </div>
+            <div class="usage">
+              <a class="usage-link" href="#">Usage</a>
+              <div class="usage-row"><div class="usage-head"><span>Orders</span><span>128 of 1K</span></div><div class="bar"><div class="bar-fill"></div></div></div>
+              <div class="usage-row"><div class="usage-head"><span>Creators</span><span>24 of 100</span></div><div class="bar"><div class="bar-fill" style="width:24%"></div></div></div>
+              <button class="upgrade">Upgrade plan</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <main>
+        <div class="topbar"><h1>Dashboard</h1></div>
+        <div class="content">
+          <div class="cards">
+            <div class="card"><p class="label">Total Orders</p><p class="value">128</p></div>
+            <div class="card"><p class="label">Active Influencers</p><p class="value">24</p></div>
+            <div class="card"><p class="label">RTO Rate</p><p class="value">9%</p></div>
+            <div class="card"><p class="label">Commission Due</p><p class="value">BDT 42k</p></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

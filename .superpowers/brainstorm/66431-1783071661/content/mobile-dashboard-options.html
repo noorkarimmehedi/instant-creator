@@ -1,0 +1,88 @@
+<h2>Mobile Dashboard Direction</h2>
+<p class="subtitle">Three ways to make both the brand and creator dashboards usable on phones. Click one if you have a preference.</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">A: Bottom Tab Bar</div>
+        <div class="mockup-body" style="max-width: 260px; margin: 0 auto; border: 1px solid #ddd; border-radius: 18px; overflow: hidden; background: #fff;">
+          <div style="padding: 14px 16px; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <strong>Orders</strong><span style="font-size:12px; color:#777;">Profile</span>
+          </div>
+          <div style="padding: 14px; display:grid; gap:10px;">
+            <div style="height:58px; border-radius:12px; background:#f4f4f4;"></div>
+            <div style="height:58px; border-radius:12px; background:#f4f4f4;"></div>
+            <div style="height:120px; border-radius:12px; background:#f4f4f4;"></div>
+          </div>
+          <div style="height:58px; border-top: 1px solid #eee; display:grid; grid-template-columns:repeat(5,1fr); align-items:center; text-align:center; font-size:11px; color:#555;">
+            <span>Home</span><span>Products</span><span>Orders</span><span>Money</span><span>Settings</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Bottom tab navigation</h3>
+      <p>Feels app-like and keeps primary pages one tap away. Weak fit for brand dashboard because it has more than five destinations.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">B: Top Bar + Drawer</div>
+        <div class="mockup-body" style="max-width: 260px; margin: 0 auto; border: 1px solid #ddd; border-radius: 18px; overflow: hidden; background: #fff;">
+          <div style="padding: 14px 16px; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:20px;">☰</span><strong>Dashboard</strong><span style="font-size:12px; color:#777;">User</span>
+          </div>
+          <div style="padding: 14px; display:grid; gap:10px;">
+            <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+              <div style="height:58px; border-radius:12px; background:#eef4ff;"></div>
+              <div style="height:58px; border-radius:12px; background:#fff3e6;"></div>
+              <div style="height:58px; border-radius:12px; background:#f4f4f4;"></div>
+            </div>
+            <div style="height:135px; border-radius:12px; background:#f4f4f4;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Top bar with slide-out menu</h3>
+      <p>Best balance. Desktop keeps the sidebar. Mobile gets a compact header, drawer menu, and full-width content.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">C: Horizontal Scroll Nav</div>
+        <div class="mockup-body" style="max-width: 260px; margin: 0 auto; border: 1px solid #ddd; border-radius: 18px; overflow: hidden; background: #fff;">
+          <div style="padding: 14px 16px; border-bottom: 1px solid #eee;"><strong>Products</strong></div>
+          <div style="padding: 10px; border-bottom:1px solid #eee; display:flex; gap:8px; overflow:hidden; font-size:12px;">
+            <span style="padding:8px 10px; border-radius:999px; background:#eef4ff;">Home</span><span style="padding:8px 10px; border-radius:999px; background:#f4f4f4;">Products</span><span style="padding:8px 10px; border-radius:999px; background:#f4f4f4;">Orders</span>
+          </div>
+          <div style="padding: 14px; display:grid; gap:10px;">
+            <div style="height:70px; border-radius:12px; background:#f4f4f4;"></div>
+            <div style="height:70px; border-radius:12px; background:#f4f4f4;"></div>
+            <div style="height:70px; border-radius:12px; background:#f4f4f4;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. Horizontal pill nav</h3>
+      <p>Smallest implementation, but weak once there are many pages. Users may miss hidden nav items on small phones.</p>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons">
+  <div class="pros">
+    <h4>Recommendation</h4>
+    <ul><li>Use option B: responsive top bar plus drawer on mobile, keep sidebar on desktop.</li></ul>
+  </div>
+  <div class="cons">
+    <h4>Scope guard</h4>
+    <ul><li>Fix shell, spacing, cards, and table presentation first. Avoid redesigning business logic.</li></ul>
+  </div>
+</div>
