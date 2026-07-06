@@ -301,7 +301,7 @@ export default async function SettingsPage() {
               </p>
               <p className="text-xs text-mute mt-1">Manage your subscription and billing details.</p>
             </div>
-            <SettingsBookmarkButton href="#pricing" ariaLabel="Upgrade plan" icon="upgrade">Upgrade</SettingsBookmarkButton>
+            <SettingsBookmarkButton href="#pricing" ariaLabel="Upgrade plan" icon="upgrade" variant="upgrade">Upgrade</SettingsBookmarkButton>
           </div>
         </SwissCard>
       </div>
