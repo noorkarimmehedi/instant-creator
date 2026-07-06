@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-type ButtonVariant = "primary" | "ghost" | "outline" | "navbarPrimary" | "navbarToggle";
+type ButtonVariant = "primary" | "ghost" | "outline" | "navbarPrimary" | "navbarToggle" | "productAction";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -22,6 +22,8 @@ const variants: Record<ButtonVariant, string> = {
     "bg-gradient-to-br from-gray-100 to-gray-300 text-black shadow-sm hover:from-gray-200 hover:to-gray-400 hover:text-black",
   navbarToggle:
     "border border-[#333] bg-[rgba(31,31,31,0.62)] text-gray-300 hover:border-[#333] hover:bg-[rgba(31,31,31,0.78)] hover:text-white",
+  productAction:
+    "relative inline-flex shrink-0 items-center justify-center cursor-pointer rounded-[12px] px-6 py-2.5 text-sm font-medium text-zinc-900 bg-[#E3E3E3]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD] disabled:cursor-wait disabled:opacity-50 transition-all hover:bg-[#E3E3E3] active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1a1614] gap-2",
 };
 
 export function Button({
@@ -32,9 +34,12 @@ export function Button({
   onClick,
   type = "button",
 }: ButtonProps) {
-  const base =
-    "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 hover:-translate-y-px cursor-pointer";
-  const classes = `${base} ${variants[variant]} ${className}`;
+  const base = variant === "productAction" 
+    ? "" 
+    : "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 hover:-translate-y-px cursor-pointer";
+  const classes = variant === "productAction" 
+    ? `${variants[variant]} ${className}`
+    : `${base} ${variants[variant]} ${className}`;
 
   if (href) {
     return (

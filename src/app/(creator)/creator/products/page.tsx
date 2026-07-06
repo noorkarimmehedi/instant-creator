@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { ProductPromotionCard } from "./ProductPromotionCard";
+import { Button } from "@/components/ui/Button";
 
 type Product = {
   id: string;
@@ -223,19 +224,13 @@ export default async function CreatorProductsPage({
             </label>
 
             <div className="flex gap-2">
-              <button
-                type="submit"
-                className="h-10 rounded-md bg-ink px-4 text-sm font-medium text-white transition-colors hover:bg-charcoal"
-              >
+              <Button type="submit" variant="productAction">
                 Apply
-              </button>
+              </Button>
               {hasFilters ? (
-                <Link
-                  href="/creator/products"
-                  className="inline-flex h-10 items-center rounded-md border border-hairline px-3 text-sm text-charcoal transition-colors hover:border-overlay-strong hover:text-ink"
-                >
+                <Button href="/creator/products" variant="productAction">
                   Clear
-                </Link>
+                </Button>
               ) : null}
             </div>
           </div>

@@ -103,7 +103,7 @@ export function ProductCard({ product }: { product: Product }) {
             <span className={`text-xs ${state?.ok ? "text-accent-green" : "text-accent-red"}`}>
               {state ? (state.ok ? "Saved" : state.error) : ""}
             </span>
-            <Button type="submit" variant={pending ? "ghost" : "outline"}>
+            <Button type="submit" variant="productAction">
               {pending ? "Saving…" : "Save"}
             </Button>
           </div>
@@ -122,13 +122,14 @@ export function ProductCard({ product }: { product: Product }) {
           <span className={`text-xs ${deleteState?.ok ? "text-accent-green" : "text-accent-red"}`}>
             {deleteState ? (deleteState.ok ? "Deleted" : deleteState.error) : ""}
           </span>
-          <button
+          <Button
             type="submit"
             disabled={deletePending}
-            className="rounded-md border border-accent-red/30 px-3 py-1.5 text-xs font-medium text-accent-red transition-colors hover:bg-accent-red/10 disabled:cursor-not-allowed disabled:opacity-60"
+            variant="productAction"
+            className="text-accent-red"
           >
             {deletePending ? "Deleting…" : "Delete"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

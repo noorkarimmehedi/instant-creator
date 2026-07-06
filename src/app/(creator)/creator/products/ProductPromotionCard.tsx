@@ -153,14 +153,14 @@ export function ProductPromotionCard({
                 <p className="text-[10px] uppercase tracking-wide text-mute">Shopify coupon</p>
                 <p className="mt-1 break-all text-sm font-medium text-ink">{couponCode}</p>
               </div>
-              <Button type="button" variant="outline" className="w-full" onClick={copyLink}>
+              <Button type="button" variant="productAction" className="w-full" onClick={copyLink}>
                 {copied ? "Copied" : "Copy link"}
               </Button>
             </div>
           ) : (
             <form action={formAction} className="space-y-2">
               <input type="hidden" name="product_id" value={product.id} />
-              <Button type="submit" variant={pending ? "ghost" : "primary"} className="w-full">
+              <Button type="submit" variant="productAction" className="w-full">
                 {pending ? "Creating coupon…" : "Generate coupon"}
               </Button>
               {state && !state.ok ? (
