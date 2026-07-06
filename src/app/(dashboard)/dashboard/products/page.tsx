@@ -4,7 +4,7 @@ import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
 import { AddProductForm } from "./AddProductForm";
-import { ProductGroupCard } from "./ProductGroupCard";
+import { ProductsGrid } from "./ProductsGrid";
 
 export default async function ProductsPage() {
   const { userId } = await auth();
@@ -42,33 +42,24 @@ export default async function ProductsPage() {
         </SwissCard>
 
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-ink">
-              Your products
-              {groups.length > 0 ? (
-                <span className="ml-2 text-xs text-mute">
-                  {groups.length}
-                </span>
-              ) : null}
-            </h2>
-          </div>
-
           {groups.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-hairline-strong py-16 text-center">
-              <p className="text-sm text-charcoal">
-                No products yet. Paste a product URL above and Firecrawl will
-                extract the details and images for you.
-              </p>
-            </div>
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-medium text-ink">Your products</h2>
+              </div>
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-hairline-strong py-16 text-center">
+                <p className="text-sm text-charcoal">
+                  No products yet. Paste a product URL above and Firecrawl will
+                  extract the details and images for you.
+                </p>
+              </div>
+            </>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {groups.map((group) => (
-                <ProductGroupCard key={group[0].product_group_id} products={group} />
-              ))}
-            </div>
+            <ProductsGrid groups={groups} />
           )}
         </div>
       </div>
     </>
   );
 }
+

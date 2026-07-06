@@ -218,6 +218,68 @@ export async function deleteProduct(
   return { ok: true };
 }
 
+export async function groupProducts(groupIds: string[]): Promise<Result> {
+  const { userId } = await auth();
+  if (!userId) return { ok: false, error: "Unauthorized" };
+
+  if (!Array.isArray(groupIds) || groupIds.length < 2) {
+    return { ok: false, error: "Select at least two products to group." };
+  }
+
+  const supabase = createSupabaseAdmin();
+
+  // Verify all groups belong to this user.
+  const { data: owned } = await supabase
+    .from("products")
+    .select("product_group_id")
+    .eq("clerk_user_id", userId)
+    .eq("archived", false)
+    .in("product_group_id", groupIds);
+
+  const ownedIds = new Set((owned ?? []).map((p) => p.product_group_id as string));
+  if (groupIds.some((id) => !ownedIds.has(id))) {
+    return { ok: false, error: "Some products could not be found." };
+  }
+
+  const targetGroupId = groupIds[0];
+  const otherGroupIds = groupIds.slice(1);
+
+  // Merge product rows into the target group.
+  const { error } = await supabase
+    .from("products")
+    .update({ product_group_id: targetGroupId })
+    .eq("clerk_user_id", userId)
+    .in("product_group_id", otherGroupIds);
+
+  if (error) return { ok: false, error: `Failed to group products: ${error.message}` };
+
+  // Merge coupons: remove duplicates (same influencer already has a coupon in
+  // the target group), then move the rest into the target group.
+  const { data: targetCoupons } = await supabase
+    .from("product_coupons")
+    .select("influencer_clerk_user_id")
+    .eq("product_group_id", targetGroupId);
+
+  const existingInfluencers = (targetCoupons ?? []).map((c) => c.influencer_clerk_user_id as string);
+
+  if (existingInfluencers.length > 0) {
+    await supabase
+      .from("product_coupons")
+      .delete()
+      .in("product_group_id", otherGroupIds)
+      .in("influencer_clerk_user_id", existingInfluencers);
+  }
+
+  await supabase
+    .from("product_coupons")
+    .update({ product_group_id: targetGroupId })
+    .in("product_group_id", otherGroupIds);
+
+  revalidatePath("/dashboard/products");
+  revalidatePath("/creator/products");
+  return { ok: true };
+}
+
 function readPercentage(formData: FormData, key: string) {
   return readPercentageValue(formData.get(key));
 }
