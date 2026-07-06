@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCachedInfluencer } from "@/lib/queries/influencer";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
+import { SwissCard } from "@/components/ui/SwissCard";
 import { CreatorOnboardingChecklist } from "./CreatorOnboardingChecklist";
 
 type OrderStat = { commission_amount: number | string | null; status: string | null };
@@ -34,9 +35,18 @@ export default async function CreatorDashboardPage() {
       <Topbar title="Creator Dashboard" />
       <div className="p-4 sm:p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard label="Total Orders" value={String(totalOrders)} />
-          <StatCard label="Pending Earnings" value={formatBdt(pendingEarnings)} />
-          <StatCard label="Total Paid" value={formatBdt(paidEarnings)} />
+          <SwissCard className="p-4">
+            <p className="text-xs text-mute uppercase tracking-wide">Total Orders</p>
+            <p className="mt-1 text-2xl font-medium text-ink">{String(totalOrders)}</p>
+          </SwissCard>
+          <SwissCard className="p-4">
+            <p className="text-xs text-mute uppercase tracking-wide">Pending Earnings</p>
+            <p className="mt-1 text-2xl font-medium text-ink">{formatBdt(pendingEarnings)}</p>
+          </SwissCard>
+          <SwissCard className="p-4">
+            <p className="text-xs text-mute uppercase tracking-wide">Total Paid</p>
+            <p className="mt-1 text-2xl font-medium text-ink">{formatBdt(paidEarnings)}</p>
+          </SwissCard>
         </div>
         <CreatorOnboardingChecklist onboardingStep={influencer.onboarding_step} />
       </div>
@@ -44,15 +54,3 @@ export default async function CreatorDashboardPage() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="group relative overflow-hidden rounded-[12px] border border-hairline-strong p-6 bg-surface-card transition-all duration-300 hover:border-overlay-strong hover:-translate-y-0.5 hover:shadow-card">
-      <span className="absolute top-2.5 left-3 text-sm font-light text-marks leading-none select-none">+</span>
-      <span className="absolute top-2.5 right-3 text-sm font-light text-marks leading-none select-none">+</span>
-      <span className="absolute bottom-2.5 left-3 text-sm font-light text-marks leading-none select-none">+</span>
-      <span className="absolute bottom-2.5 right-3 text-sm font-light text-marks leading-none select-none">+</span>
-      <p className="text-sm text-mute">{label}</p>
-      <p className="mt-1 text-2xl font-medium text-ink">{value}</p>
-    </div>
-  );
-}

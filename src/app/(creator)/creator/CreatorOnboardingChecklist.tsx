@@ -27,7 +27,7 @@ export function CreatorOnboardingChecklist({
         {steps.map((step, i) => {
           const done = i < onboardingStep;
           return (
-            <Link key={step.label} href={step.href}>
+            <Link key={step.label} href={step.href} className="block">
               <SwissCard
                 className={`flex items-start gap-3 transition-all duration-200 ${
                   done
