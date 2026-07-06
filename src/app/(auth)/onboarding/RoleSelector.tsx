@@ -19,7 +19,7 @@ export function RoleSelector() {
         </div>
         <button
           type="submit"
-          className="group relative w-full overflow-hidden rounded-[6px] p-5 text-left transition-all duration-300 hover:ring-2 hover:ring-accent-blue hover:-translate-y-px hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD] cursor-pointer bg-[#F7F7F7]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD]"
+          className="group relative w-full overflow-hidden rounded-[6px] p-5 text-left cursor-pointer bg-[#F7F7F7]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.06)]"
         >
           <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-accent-blue/10 text-accent-blue text-lg">
@@ -51,7 +51,7 @@ export function RoleSelector() {
         </div>
         <button
           type="submit"
-          className="group relative w-full overflow-hidden rounded-[6px] p-5 text-left transition-all duration-300 hover:ring-2 hover:ring-accent-orange hover:-translate-y-px hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD] cursor-pointer bg-[#F7F7F7]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD]"
+          className="group relative w-full overflow-hidden rounded-[6px] p-5 text-left cursor-pointer bg-[#F7F7F7]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.06)]"
         >
           <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-accent-orange/10 text-accent-orange text-lg">
