@@ -68,33 +68,42 @@ export async function addProductFromUrl(
   const productGroupId = crypto.randomUUID();
   const supabase = createSupabaseAdmin();
 
-  if (variants.length > 1) {
-    const rows = variants.map((v, idx) => {
-      const variantImages: string[] = (v?.images ?? [])
-        .map((i) => i?.url)
-        .filter((u): u is string => Boolean(u));
-      const priceAmount = v?.price?.amount;
-      const priceNum = typeof priceAmount === "number" ? priceAmount : 0;
-      const variantLabel =
-        v.name || v.color || v.size || `Variant ${idx + 1}`;
+  let rows = variants.map((v, idx) => {
+    const variantImages: string[] = (v?.images ?? [])
+      .map((i) => i?.url)
+      .filter((u): u is string => Boolean(u));
+    const priceAmount = v?.price?.amount;
+    const priceNum = typeof priceAmount === "number" ? priceAmount : 0;
+    const variantLabel =
+      v.name || v.color || v.size || `Variant ${idx + 1}`;
 
-      return {
-        clerk_user_id: userId,
-        name: title,
-        price: priceNum,
-        selling_price: priceNum,
-        url,
-        source_url: url,
-        image_url: variantImages[0] ?? null,
-        images: variantImages,
-        commission_percentage: commissionPercentage,
-        coupon_discount_percentage: couponDiscountPercentage,
-        target_gender: targetGender,
-        product_group_id: productGroupId,
-        variant_label: variantLabel,
-      };
-    });
+    return {
+      clerk_user_id: userId,
+      name: title,
+      price: priceNum,
+      selling_price: priceNum,
+      url,
+      source_url: url,
+      image_url: variantImages[0] ?? null,
+      images: variantImages,
+      commission_percentage: commissionPercentage,
+      coupon_discount_percentage: couponDiscountPercentage,
+      target_gender: targetGender,
+      product_group_id: productGroupId,
+      variant_label: variantLabel,
+    };
+  });
 
+  // Deduplicate variants by image (we only care about visual variations, not sizes)
+  const seenImages = new Set<string>();
+  rows = rows.filter((row) => {
+    const key = row.image_url ?? "no-image";
+    if (seenImages.has(key)) return false;
+    seenImages.add(key);
+    return true;
+  });
+
+  if (rows.length > 1) {
     const { error } = await supabase.from("products").insert(rows);
     if (error) return { ok: false, error: `Failed to save the product: ${error.message}` };
   } else {
