@@ -15,27 +15,23 @@ export function SwissCard({
   elevated = false,
   onClick,
 }: SwissCardProps) {
-  const bg = elevated ? "bg-surface-elevated" : "bg-surface-card";
-  const highlightBorder = highlighted
-    ? "border-accent-blue"
-    : "border-hairline-strong";
+  const highlightClass = highlighted
+    ? "ring-2 ring-accent-blue"
+    : "";
 
   return (
     <div
       onClick={onClick}
       className={`
-        group relative overflow-hidden rounded-[12px] border p-8
-        ${bg} ${highlightBorder}
+        group relative overflow-hidden rounded-[6px] p-5
+        bg-[#E3E3E3]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD]
         transition-all duration-300
-        hover:border-overlay-strong hover:-translate-y-px hover:shadow-card
+        hover:-translate-y-px hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD]
+        ${highlightClass}
         ${onClick ? "cursor-pointer" : ""}
         ${className}
       `}
     >
-      <span className="absolute top-2.5 left-3 text-sm font-light text-marks transition-all duration-300 group-hover:text-marks-strong group-hover:rotate-90 leading-none select-none">+</span>
-      <span className="absolute top-2.5 right-3 text-sm font-light text-marks transition-all duration-300 group-hover:text-marks-strong leading-none select-none">+</span>
-      <span className="absolute bottom-2.5 left-3 text-sm font-light text-marks transition-all duration-300 group-hover:text-marks-strong group-hover:rotate-90 leading-none select-none">+</span>
-      <span className="absolute bottom-2.5 right-3 text-sm font-light text-marks transition-all duration-300 group-hover:text-marks-strong leading-none select-none">+</span>
       {children}
     </div>
   );
