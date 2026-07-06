@@ -224,11 +224,11 @@ export default async function CreatorProductsPage({
             </label>
 
             <div className="flex gap-2">
-              <Button type="submit" variant="productAction">
+              <Button type="submit" variant="productActionLarge">
                 Apply
               </Button>
               {hasFilters ? (
-                <Button href="/creator/products" variant="productAction">
+                <Button href="/creator/products" variant="productActionLarge">
                   Clear
                 </Button>
               ) : null}
