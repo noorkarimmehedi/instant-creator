@@ -37,7 +37,7 @@ export function ProductPromotionCard({
     ? buildTrackedProductUrl(product.source_url, creatorUserId, couponCode)
     : null;
 
-  const allNames = products.map((p) => p.name).join("\\n");
+  const allNames = products.map((p) => p.name).join(", ");
 
   async function copyLink() {
     if (!trackedUrl) return;
@@ -46,15 +46,27 @@ export function ProductPromotionCard({
     window.setTimeout(() => setCopied(false), 1500);
   }
 
+  function nextVariant(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveIdx((i) => (i + 1) % products.length);
+  }
+
+  function prevVariant(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveIdx((i) => (i - 1 + products.length) % products.length);
+  }
+
   return (
-    <div className="group overflow-hidden rounded-lg border border-hairline bg-surface-card transition-colors hover:border-overlay-strong">
+    <div className="group flex h-full flex-col overflow-hidden rounded-lg border border-hairline bg-surface-card transition-colors hover:border-overlay-strong">
       <a
         href={product.source_url ?? "#"}
         target={product.source_url ? "_blank" : undefined}
         rel={product.source_url ? "noreferrer" : undefined}
         className="block"
       >
-        <div className="relative aspect-square w-full bg-surface-elevated">
+        <div className="group/carousel relative aspect-square w-full bg-surface-elevated">
           {product.image_url ? (
             <Image
               src={product.image_url}
@@ -69,43 +81,54 @@ export function ProductPromotionCard({
             </div>
           )}
           {products.length > 1 && (
-            <span className="absolute top-2 right-2 rounded-full bg-ink/70 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-              {products.length} variants
-            </span>
+            <>
+              <span className="absolute right-2 top-2 z-10 rounded-full bg-ink/70 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+                {products.length} variants
+              </span>
+
+              <button
+                type="button"
+                onClick={prevVariant}
+                className="absolute left-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-ink opacity-0 shadow-sm backdrop-blur-sm transition-all hover:bg-white group-hover/carousel:opacity-100"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                onClick={nextVariant}
+                className="absolute right-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-ink opacity-0 shadow-sm backdrop-blur-sm transition-all hover:bg-white group-hover/carousel:opacity-100"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+
+              <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-1.5 rounded-full bg-ink/30 px-2 py-1 backdrop-blur-md">
+                {products.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveIdx(i);
+                    }}
+                    className={`h-1.5 w-1.5 rounded-full transition-all ${
+                      i === activeIdx ? "w-3 bg-white" : "bg-white/50 hover:bg-white/80"
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
           )}
         </div>
       </a>
 
-      {products.length > 1 && (
-        <div className="flex gap-1.5 overflow-x-auto px-3 py-1.5">
-          {products.map((v, idx) => (
-            <button
-              key={v.id}
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setActiveIdx(idx);
-              }}
-              title={v.variant_label ?? v.name}
-              className={`relative h-8 w-8 shrink-0 overflow-hidden rounded-md border transition-all ${
-                idx === activeIdx ? "border-ink ring-1 ring-ink" : "border-hairline hover:border-overlay-strong"
-              }`}
-            >
-              {v.image_url ? (
-                <Image src={v.image_url} alt={v.variant_label ?? v.name} fill sizes="32px" className="object-cover" />
-              ) : (
-                <div className="flex h-full items-center justify-center bg-surface-elevated text-[8px] text-stone">
-                  —
-                </div>
-              )}
-            </button>
-          ))}
-        </div>
-      )}
-
-      <div className="space-y-3 p-3">
-        <div>
+      <div className="flex flex-1 flex-col p-3">
+        <div className="mb-3">
           <p className="truncate text-sm text-ink" title={allNames}>
             {product.name}
           </p>
@@ -114,36 +137,38 @@ export function ProductPromotionCard({
           </p>
         </div>
 
-        <div className="rounded-md border border-hairline bg-surface-elevated p-3 text-xs text-charcoal">
-          <p>
-            You earn <span className="font-medium text-ink">{product.commission_percentage ?? 0}%</span> commission
-          </p>
-          <p className="mt-1">
-            Customer coupon: <span className="font-medium text-ink">{product.coupon_discount_percentage ?? 0}% off</span>
-          </p>
-        </div>
-
-        {couponCode ? (
-          <div className="space-y-2">
-            <div className="rounded-md border border-hairline-strong bg-canvas px-3 py-2">
-              <p className="text-[10px] uppercase tracking-wide text-mute">Shopify coupon</p>
-              <p className="mt-1 break-all text-sm font-medium text-ink">{couponCode}</p>
-            </div>
-            <Button type="button" variant="outline" className="w-full" onClick={copyLink}>
-              {copied ? "Copied" : "Copy link"}
-            </Button>
+        <div className="mt-auto space-y-3">
+          <div className="rounded-md border border-hairline bg-surface-elevated p-3 text-xs text-charcoal">
+            <p>
+              You earn <span className="font-medium text-ink">{product.commission_percentage ?? 0}%</span> commission
+            </p>
+            <p className="mt-1">
+              Customer coupon: <span className="font-medium text-ink">{product.coupon_discount_percentage ?? 0}% off</span>
+            </p>
           </div>
-        ) : (
-          <form action={formAction} className="space-y-2">
-            <input type="hidden" name="product_id" value={product.id} />
-            <Button type="submit" variant={pending ? "ghost" : "primary"} className="w-full">
-              {pending ? "Creating coupon…" : "Generate coupon"}
-            </Button>
-            {state && !state.ok ? (
-              <p className="text-xs text-accent-red">{state.error}</p>
-            ) : null}
-          </form>
-        )}
+
+          {couponCode ? (
+            <div className="space-y-2">
+              <div className="rounded-md border border-hairline-strong bg-canvas px-3 py-2">
+                <p className="text-[10px] uppercase tracking-wide text-mute">Shopify coupon</p>
+                <p className="mt-1 break-all text-sm font-medium text-ink">{couponCode}</p>
+              </div>
+              <Button type="button" variant="outline" className="w-full" onClick={copyLink}>
+                {copied ? "Copied" : "Copy link"}
+              </Button>
+            </div>
+          ) : (
+            <form action={formAction} className="space-y-2">
+              <input type="hidden" name="product_id" value={product.id} />
+              <Button type="submit" variant={pending ? "ghost" : "primary"} className="w-full">
+                {pending ? "Creating coupon…" : "Generate coupon"}
+              </Button>
+              {state && !state.ok ? (
+                <p className="text-xs text-accent-red">{state.error}</p>
+              ) : null}
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );
