@@ -10,6 +10,7 @@ interface ButtonProps {
   onClick?: () => void;
   type?: "button" | "submit";
   disabled?: boolean;
+  title?: string;
 }
 
 const variants: Record<ButtonVariant, string> = {
@@ -37,6 +38,7 @@ export function Button({
   onClick,
   type = "button",
   disabled,
+  title,
 }: ButtonProps) {
   const base = variant === "productAction" || variant === "productActionLarge"
     ? "" 
@@ -54,7 +56,7 @@ export function Button({
   }
 
   return (
-    <button type={type} onClick={onClick} disabled={disabled} className={classes}>
+    <button type={type} onClick={onClick} disabled={disabled} title={title} className={classes}>
       {children}
     </button>
   );
