@@ -23,13 +23,9 @@ export function AddProductForm() {
           type="submit"
           disabled={pending}
           aria-busy={pending}
-          className="group relative inline-block shrink-0 cursor-pointer border-0 bg-transparent p-0 font-sans text-sm font-semibold tracking-[-0.005em] text-white outline-offset-4 [-webkit-tap-highlight-color:transparent] disabled:cursor-wait focus-visible:rounded-[12px] focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-[#1a1614]"
+          className="relative inline-flex shrink-0 items-center justify-center cursor-pointer rounded-[12px] px-6 py-2.5 text-sm font-medium text-zinc-900 bg-[#E3E3E3]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD] disabled:cursor-wait disabled:opacity-50 transition-all hover:bg-[#E3E3E3] active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1a1614]"
         >
-          <span className="absolute inset-0 translate-y-px rounded-[12px] bg-black/25 transition-transform duration-[600ms] ease-[cubic-bezier(0.3,0.7,0.4,1)] will-change-transform group-hover:translate-y-0.5 group-hover:duration-[250ms] group-hover:ease-[cubic-bezier(0.3,0.7,0.4,1.5)] group-active:translate-y-0 group-active:duration-[34ms]" />
-          <span className="absolute inset-0 rounded-[12px] bg-[linear-gradient(to_left,#520019_0%,#a30037_8%,#a30037_92%,#520019_100%)]" />
-          <span className="relative block translate-y-[-2px] rounded-[12px] bg-[#f00045] px-6 py-2.5 text-white transition-transform duration-[600ms] ease-[cubic-bezier(0.3,0.7,0.4,1)] will-change-transform group-hover:translate-y-[-3px] group-hover:duration-[250ms] group-hover:ease-[cubic-bezier(0.3,0.7,0.4,1.5)] group-active:translate-y-[-1px] group-active:duration-[34ms]">
-            {pending ? "Extracting…" : "Add product"}
-          </span>
+          {pending ? "Extracting…" : "Add product"}
         </button>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
