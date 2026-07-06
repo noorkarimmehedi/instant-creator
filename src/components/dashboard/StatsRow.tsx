@@ -1,6 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
-import { SwissCard } from "../ui/SwissCard";
 
 type OrderStat = {
   commission_amount: number | string | null;
@@ -44,10 +43,13 @@ export async function StatsRow() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat) => (
-        <SwissCard key={stat.label} className="p-5">
+        <div 
+          key={stat.label} 
+          className="rounded-[6px] p-3 bg-[#E3E3E3]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD]"
+        >
           <p className="text-xs text-mute uppercase tracking-wide">{stat.label}</p>
-          <p className="mt-2 text-3xl font-medium text-ink">{stat.value}</p>
-        </SwissCard>
+          <p className="mt-1 text-2xl font-medium text-ink">{stat.value}</p>
+        </div>
       ))}
     </div>
   );
