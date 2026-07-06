@@ -19,12 +19,8 @@ export function RoleSelector() {
         </div>
         <button
           type="submit"
-          className="group relative w-full overflow-hidden rounded-[12px] border border-hairline-strong p-6 text-left transition-all duration-300 hover:border-accent-blue hover:-translate-y-0.5 hover:shadow-card cursor-pointer bg-surface-card"
+          className="group relative w-full overflow-hidden rounded-[6px] p-5 text-left transition-all duration-300 hover:ring-2 hover:ring-accent-blue hover:-translate-y-px hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD] cursor-pointer bg-[#E3E3E3]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD]"
         >
-          <span className="absolute top-2.5 left-3 text-sm font-light text-marks leading-none select-none">+</span>
-          <span className="absolute top-2.5 right-3 text-sm font-light text-marks leading-none select-none">+</span>
-          <span className="absolute bottom-2.5 left-3 text-sm font-light text-marks leading-none select-none">+</span>
-          <span className="absolute bottom-2.5 right-3 text-sm font-light text-marks leading-none select-none">+</span>
           <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-accent-blue/10 text-accent-blue text-lg">
               🏪
@@ -55,12 +51,8 @@ export function RoleSelector() {
         </div>
         <button
           type="submit"
-          className="group relative w-full overflow-hidden rounded-[12px] border border-hairline-strong p-6 text-left transition-all duration-300 hover:border-accent-orange hover:-translate-y-0.5 hover:shadow-card cursor-pointer bg-surface-card"
+          className="group relative w-full overflow-hidden rounded-[6px] p-5 text-left transition-all duration-300 hover:ring-2 hover:ring-accent-orange hover:-translate-y-px hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD] cursor-pointer bg-[#E3E3E3]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD]"
         >
-          <span className="absolute top-2.5 left-3 text-sm font-light text-marks leading-none select-none">+</span>
-          <span className="absolute top-2.5 right-3 text-sm font-light text-marks leading-none select-none">+</span>
-          <span className="absolute bottom-2.5 left-3 text-sm font-light text-marks leading-none select-none">+</span>
-          <span className="absolute bottom-2.5 right-3 text-sm font-light text-marks leading-none select-none">+</span>
           <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-accent-orange/10 text-accent-orange text-lg">
               ✨
