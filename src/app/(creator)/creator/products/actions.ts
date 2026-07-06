@@ -12,6 +12,7 @@ type Result =
 type ProductForCoupon = {
   id: string;
   name: string;
+  product_group_id: string;
   clerk_user_id: string | null;
   coupon_discount_percentage: number | string | null;
 };
@@ -36,20 +37,10 @@ export async function generateShopifyCoupon(
   if (!productId) return { ok: false, error: "Missing product." };
 
   const supabase = createSupabaseAdmin();
-  const { data: existingCoupon } = await supabase
-    .from("product_coupons")
-    .select("code")
-    .eq("product_id", productId)
-    .eq("influencer_clerk_user_id", userId)
-    .maybeSingle();
-
-  if (existingCoupon?.code) {
-    return { ok: true, coupon: { code: existingCoupon.code } };
-  }
 
   const { data: product, error: productError } = await supabase
     .from("products")
-    .select("id, name, clerk_user_id, coupon_discount_percentage")
+    .select("id, name, product_group_id, clerk_user_id, coupon_discount_percentage")
     .eq("id", productId)
     .eq("archived", false)
     .single();
@@ -60,6 +51,17 @@ export async function generateShopifyCoupon(
   }
 
   const typedProduct = product as ProductForCoupon;
+
+  const { data: existingCoupon } = await supabase
+    .from("product_coupons")
+    .select("code")
+    .eq("product_group_id", typedProduct.product_group_id)
+    .eq("influencer_clerk_user_id", userId)
+    .maybeSingle();
+
+  if (existingCoupon?.code) {
+    return { ok: true, coupon: { code: existingCoupon.code } };
+  }
   if (!typedProduct.clerk_user_id) {
     return { ok: false, error: "This product is not connected to a brand." };
   }
@@ -85,7 +87,7 @@ export async function generateShopifyCoupon(
     .eq("clerk_user_id", userId)
     .single();
   const typedInfluencer = influencer as InfluencerForCoupon | null;
-  const code = buildCouponCode(typedInfluencer?.display_name ?? null, typedProduct.id, userId);
+  const code = buildCouponCode(typedInfluencer?.display_name ?? null, typedProduct.product_group_id, userId);
   let discount;
   try {
     discount = await createShopifyDiscountCode({
@@ -103,6 +105,7 @@ export async function generateShopifyCoupon(
 
   const { error: insertError } = await supabase.from("product_coupons").insert({
     product_id: productId,
+    product_group_id: typedProduct.product_group_id,
     influencer_clerk_user_id: userId,
     code: discount.code,
     shopify_price_rule_id: discount.priceRuleId,

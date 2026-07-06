@@ -56,36 +56,76 @@ export async function addProductFromUrl(
   const title = (product.title as string) || "Untitled product";
   const variants =
     (product.variants as
-      | Array<{ price?: { amount?: number }; images?: { url?: string }[] }>
+      | Array<{
+          price?: { amount?: number };
+          images?: { url?: string }[];
+          name?: string;
+          color?: string;
+          size?: string;
+        }>
       | undefined) ?? [];
-  const priceAmount = variants[0]?.price?.amount;
-  const priceNum = typeof priceAmount === "number" ? priceAmount : 0;
 
-  const images: string[] = Array.from(
-    new Set(
-      variants
-        .flatMap((v) => (v?.images ?? []))
-        .map((i) => i?.url)
-        .filter((u): u is string => Boolean(u))
-    )
-  );
-
+  const productGroupId = crypto.randomUUID();
   const supabase = createSupabaseAdmin();
-  const { error } = await supabase.from("products").insert({
-    clerk_user_id: userId,
-    name: title,
-    price: priceNum,
-    selling_price: priceNum,
-    url,
-    source_url: url,
-    image_url: images[0] ?? null,
-    images,
-    commission_percentage: commissionPercentage,
-    coupon_discount_percentage: couponDiscountPercentage,
-    target_gender: targetGender,
-  });
 
-  if (error) return { ok: false, error: `Failed to save the product: ${error.message}` };
+  if (variants.length > 1) {
+    const rows = variants.map((v, idx) => {
+      const variantImages: string[] = (v?.images ?? [])
+        .map((i) => i?.url)
+        .filter((u): u is string => Boolean(u));
+      const priceAmount = v?.price?.amount;
+      const priceNum = typeof priceAmount === "number" ? priceAmount : 0;
+      const variantLabel =
+        v.name || v.color || v.size || `Variant ${idx + 1}`;
+
+      return {
+        clerk_user_id: userId,
+        name: title,
+        price: priceNum,
+        selling_price: priceNum,
+        url,
+        source_url: url,
+        image_url: variantImages[0] ?? null,
+        images: variantImages,
+        commission_percentage: commissionPercentage,
+        coupon_discount_percentage: couponDiscountPercentage,
+        target_gender: targetGender,
+        product_group_id: productGroupId,
+        variant_label: variantLabel,
+      };
+    });
+
+    const { error } = await supabase.from("products").insert(rows);
+    if (error) return { ok: false, error: `Failed to save the product: ${error.message}` };
+  } else {
+    const priceAmount = variants[0]?.price?.amount;
+    const priceNum = typeof priceAmount === "number" ? priceAmount : 0;
+    const images: string[] = Array.from(
+      new Set(
+        variants
+          .flatMap((v) => (v?.images ?? []))
+          .map((i) => i?.url)
+          .filter((u): u is string => Boolean(u))
+      )
+    );
+
+    const { error } = await supabase.from("products").insert({
+      clerk_user_id: userId,
+      name: title,
+      price: priceNum,
+      selling_price: priceNum,
+      url,
+      source_url: url,
+      image_url: images[0] ?? null,
+      images,
+      commission_percentage: commissionPercentage,
+      coupon_discount_percentage: couponDiscountPercentage,
+      target_gender: targetGender,
+      product_group_id: productGroupId,
+    });
+
+    if (error) return { ok: false, error: `Failed to save the product: ${error.message}` };
+  }
 
   revalidatePath("/dashboard/products");
   return { ok: true };
@@ -109,6 +149,18 @@ export async function updateProductTerms(
   }
 
   const supabase = createSupabaseAdmin();
+
+  // Lookup the product's group so we can update all variants together.
+  const { data: origin, error: lookupError } = await supabase
+    .from("products")
+    .select("product_group_id")
+    .eq("id", productId)
+    .eq("clerk_user_id", userId)
+    .maybeSingle();
+
+  if (lookupError) return { ok: false, error: `Failed to update the product: ${lookupError.message}` };
+  if (!origin) return { ok: false, error: "Product could not be found." };
+
   const { error } = await supabase
     .from("products")
     .update({
@@ -116,7 +168,7 @@ export async function updateProductTerms(
       coupon_discount_percentage: couponDiscountPercentage,
       target_gender: targetGender,
     })
-    .eq("id", productId)
+    .eq("product_group_id", origin.product_group_id)
     .eq("clerk_user_id", userId);
 
   if (error) return { ok: false, error: `Failed to update the product: ${error.message}` };
@@ -136,19 +188,30 @@ export async function deleteProduct(
   const productId = String(formData.get("product_id") ?? "").trim();
   if (!productId) return { ok: false, error: "Missing product." };
 
-  // Archive rather than hard-delete: orders reference the product's coupons via
-  // a restricting foreign key, and that history feeds earnings and payouts.
   const supabase = createSupabaseAdmin();
-  const { data: product, error: archiveError } = await supabase
+
+  // Lookup the product's group so we can archive all variants together.
+  const { data: origin, error: lookupError } = await supabase
     .from("products")
-    .update({ archived: true })
+    .select("product_group_id")
     .eq("id", productId)
     .eq("clerk_user_id", userId)
-    .select("id")
     .maybeSingle();
 
+  if (lookupError) return { ok: false, error: `Failed to remove product: ${lookupError.message}` };
+  if (!origin) return { ok: false, error: "Product could not be found." };
+
+  // Archive rather than hard-delete: orders reference the product's coupons via
+  // a restricting foreign key, and that history feeds earnings and payouts.
+  const { data: archived, error: archiveError } = await supabase
+    .from("products")
+    .update({ archived: true })
+    .eq("product_group_id", origin.product_group_id)
+    .eq("clerk_user_id", userId)
+    .select("id");
+
   if (archiveError) return { ok: false, error: `Failed to remove product: ${archiveError.message}` };
-  if (!product) return { ok: false, error: "Product could not be found." };
+  if (!archived || archived.length === 0) return { ok: false, error: "Product could not be found." };
 
   revalidatePath("/dashboard/products");
   revalidatePath("/creator/products");

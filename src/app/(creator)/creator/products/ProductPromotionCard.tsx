@@ -15,17 +15,20 @@ type Product = {
   image_url: string | null;
   commission_percentage: number | string | null;
   coupon_discount_percentage: number | string | null;
+  product_group_id: string;
+  variant_label: string | null;
 };
 
 export function ProductPromotionCard({
-  product,
+  products,
   creatorUserId,
   initialCouponCode,
 }: {
-  product: Product;
+  products: Product[];
   creatorUserId: string;
   initialCouponCode?: string;
 }) {
+  const product = products[0];
   const [state, formAction, pending] = useActionState(generateShopifyCoupon, null);
   const [copied, setCopied] = useState(false);
   const couponCode = state?.ok ? state.coupon.code : initialCouponCode;
@@ -62,8 +65,27 @@ export function ProductPromotionCard({
               No image
             </div>
           )}
+          {products.length > 1 && (
+            <span className="absolute top-2 right-2 rounded-full bg-ink/70 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+              {products.length} variants
+            </span>
+          )}
         </div>
       </a>
+
+      {products.length > 1 && (
+        <div className="flex gap-1.5 overflow-x-auto px-3 py-1.5">
+          {products.map((v) => (
+            <div key={v.id} className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md border border-hairline" title={v.variant_label ?? undefined}>
+              {v.image_url ? (
+                <Image src={v.image_url} alt={v.variant_label ?? v.name} fill sizes="32px" className="object-cover" />
+              ) : (
+                <div className="h-full w-full bg-surface-elevated" />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="space-y-3 p-3">
         <div>

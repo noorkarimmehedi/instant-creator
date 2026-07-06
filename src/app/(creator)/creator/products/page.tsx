@@ -14,10 +14,12 @@ type Product = {
   commission_percentage: number | string | null;
   coupon_discount_percentage: number | string | null;
   target_gender: string | null;
+  product_group_id: string;
+  variant_label: string | null;
 };
 
 type ProductCoupon = {
-  product_id: string;
+  product_group_id: string;
   code: string;
 };
 
@@ -83,7 +85,7 @@ export default async function CreatorProductsPage({
   const supabase = createSupabaseAdmin();
   let productsQuery = supabase
     .from("products")
-    .select("id, name, price, source_url, image_url, commission_percentage, coupon_discount_percentage, target_gender")
+    .select("id, name, price, source_url, image_url, commission_percentage, coupon_discount_percentage, target_gender, product_group_id, variant_label")
     .eq("archived", false);
 
   if (q) {
@@ -114,17 +116,28 @@ export default async function CreatorProductsPage({
 
   const { data: products, error } = await productsQuery;
 
-  const productIds = (products ?? []).map((product) => product.id);
-  const { data: coupons } = productIds.length > 0
+  const groupIds = [...new Set((products ?? []).map((p) => (p as Product).product_group_id))];
+  const { data: coupons } = groupIds.length > 0
     ? await supabase
         .from("product_coupons")
-        .select("product_id, code")
+        .select("product_group_id, code")
         .eq("influencer_clerk_user_id", userId)
-        .in("product_id", productIds)
+        .in("product_group_id", groupIds)
     : { data: [] };
-  const couponByProductId = new Map(
-    ((coupons ?? []) as ProductCoupon[]).map((coupon) => [coupon.product_id, coupon.code])
+  const couponByGroupId = new Map(
+    ((coupons ?? []) as ProductCoupon[]).map((coupon) => [coupon.product_group_id, coupon.code])
   );
+
+  const groupMap = new Map<string, Product[]>();
+  for (const p of (products ?? []) as Product[]) {
+    const existing = groupMap.get(p.product_group_id);
+    if (existing) {
+      existing.push(p);
+    } else {
+      groupMap.set(p.product_group_id, [p]);
+    }
+  }
+  const productGroups = [...groupMap.values()];
 
   return (
     <>
@@ -242,12 +255,12 @@ export default async function CreatorProductsPage({
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {(products as Product[]).map((product) => (
+            {productGroups.map((group) => (
               <ProductPromotionCard
-                key={product.id}
-                product={product}
+                key={group[0].product_group_id}
+                products={group}
                 creatorUserId={userId}
-                initialCouponCode={couponByProductId.get(product.id)}
+                initialCouponCode={couponByGroupId.get(group[0].product_group_id)}
               />
             ))}
           </div>
