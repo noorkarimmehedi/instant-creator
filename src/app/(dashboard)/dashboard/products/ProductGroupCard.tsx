@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { formatTaka } from "@/lib/products/formatting";
 import { deleteProduct, updateProductTerms } from "./actions";
@@ -21,9 +21,12 @@ type Product = {
 };
 
 export function ProductGroupCard({ products }: { products: Product[] }) {
-  const primary = products[0];
+  const [activeIdx, setActiveIdx] = useState(0);
+  const primary = products[activeIdx] || products[0];
   const [state, formAction, pending] = useActionState(updateProductTerms, null);
   const [deleteState, deleteAction, deletePending] = useActionState(deleteProduct, null);
+
+  const allNames = products.map((p) => p.name).join("\\n");
 
   return (
     <div className="group overflow-hidden rounded-lg border border-hairline bg-surface-card transition-colors hover:border-overlay-strong">
@@ -58,11 +61,19 @@ export function ProductGroupCard({ products }: { products: Product[] }) {
       <div className="space-y-3 p-3">
         {products.length > 1 && (
           <div className="flex gap-1.5 overflow-x-auto py-1">
-            {products.map((variant) => (
-              <div
+            {products.map((variant, idx) => (
+              <button
                 key={variant.id}
-                title={variant.variant_label ?? undefined}
-                className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md border border-hairline"
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault(); // In case it's in a link (it's not here, but safe)
+                  e.stopPropagation(); // Prevent card clicks if any
+                  setActiveIdx(idx);
+                }}
+                title={variant.variant_label ?? variant.name}
+                className={`relative h-8 w-8 shrink-0 overflow-hidden rounded-md border transition-all ${
+                  idx === activeIdx ? "border-ink ring-1 ring-ink" : "border-hairline hover:border-overlay-strong"
+                }`}
               >
                 {variant.image_url ? (
                   <Image
@@ -77,13 +88,15 @@ export function ProductGroupCard({ products }: { products: Product[] }) {
                     —
                   </div>
                 )}
-              </div>
+              </button>
             ))}
           </div>
         )}
 
         <div>
-          <p className="truncate text-sm text-ink">{primary.name}</p>
+          <p className="truncate text-sm text-ink" title={allNames}>
+            {primary.name}
+          </p>
           <p className="mt-1 text-xs text-mute">{formatTaka(primary.price)}</p>
         </div>
 

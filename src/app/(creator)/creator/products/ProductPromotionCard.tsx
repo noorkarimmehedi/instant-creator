@@ -28,13 +28,16 @@ export function ProductPromotionCard({
   creatorUserId: string;
   initialCouponCode?: string;
 }) {
-  const product = products[0];
+  const [activeIdx, setActiveIdx] = useState(0);
+  const product = products[activeIdx] || products[0];
   const [state, formAction, pending] = useActionState(generateShopifyCoupon, null);
   const [copied, setCopied] = useState(false);
   const couponCode = state?.ok ? state.coupon.code : initialCouponCode;
   const trackedUrl = product.source_url && couponCode
     ? buildTrackedProductUrl(product.source_url, creatorUserId, couponCode)
     : null;
+
+  const allNames = products.map((p) => p.name).join("\\n");
 
   async function copyLink() {
     if (!trackedUrl) return;
@@ -75,21 +78,37 @@ export function ProductPromotionCard({
 
       {products.length > 1 && (
         <div className="flex gap-1.5 overflow-x-auto px-3 py-1.5">
-          {products.map((v) => (
-            <div key={v.id} className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md border border-hairline" title={v.variant_label ?? undefined}>
+          {products.map((v, idx) => (
+            <button
+              key={v.id}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setActiveIdx(idx);
+              }}
+              title={v.variant_label ?? v.name}
+              className={`relative h-8 w-8 shrink-0 overflow-hidden rounded-md border transition-all ${
+                idx === activeIdx ? "border-ink ring-1 ring-ink" : "border-hairline hover:border-overlay-strong"
+              }`}
+            >
               {v.image_url ? (
                 <Image src={v.image_url} alt={v.variant_label ?? v.name} fill sizes="32px" className="object-cover" />
               ) : (
-                <div className="h-full w-full bg-surface-elevated" />
+                <div className="flex h-full items-center justify-center bg-surface-elevated text-[8px] text-stone">
+                  —
+                </div>
               )}
-            </div>
+            </button>
           ))}
         </div>
       )}
 
       <div className="space-y-3 p-3">
         <div>
-          <p className="truncate text-sm text-ink">{product.name}</p>
+          <p className="truncate text-sm text-ink" title={allNames}>
+            {product.name}
+          </p>
           <p className="mt-1 text-xs text-mute">
             {formatTaka(product.price)}
           </p>
