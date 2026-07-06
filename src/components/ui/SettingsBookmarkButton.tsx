@@ -75,7 +75,8 @@ function Icon({ icon }: { icon: SettingsBookmarkButtonIcon }) {
   if (icon === "social") {
     return (
       <svg className={styles.icon} width="16" height="16" viewBox="0 0 24 24" fill="none">
-        <path d="M8 12a4 4 0 0 1 4-4h2m-4 8h2a4 4 0 0 0 0-8M9 16H8a4 4 0 1 1 0-8h1" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     );
   }
