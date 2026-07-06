@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { ProductGroupCard } from "./ProductGroupCard";
 import { groupProducts } from "./actions";
+import { Button } from "@/components/ui/Button";
 
 type Product = {
   id: string;
@@ -62,17 +63,14 @@ export function ProductsGrid({ groups }: { groups: Product[][] }) {
           ) : null}
         </h2>
         {groups.length >= 2 && (
-          <button
+          <Button
             type="button"
             onClick={toggleGrouping}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              isGrouping
-                ? "border border-accent-red/30 text-accent-red hover:bg-accent-red/10"
-                : "border border-hairline-strong text-charcoal hover:border-overlay-strong hover:text-ink"
-            }`}
+            variant="productAction"
+            className={isGrouping ? "text-accent-red" : ""}
           >
             {isGrouping ? "Cancel" : "Group variants"}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -140,14 +138,14 @@ export function ProductsGrid({ groups }: { groups: Product[][] }) {
           <span>
             <span className="font-medium">{selected.size}</span> selected
           </span>
-          <button
+          <Button
             type="button"
             onClick={handleGroup}
             disabled={isPending}
-            className="rounded-full bg-accent-blue px-4 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-blue/80 disabled:opacity-60"
+            variant="productAction"
           >
             {isPending ? "Grouping…" : "Group as variants"}
-          </button>
+          </Button>
         </div>
       )}
     </div>
