@@ -140,7 +140,7 @@ export function SettingsBookmarkButton({
     );
   }
 
-  const twClassName = `relative inline-flex shrink-0 items-center justify-center cursor-pointer rounded-[12px] px-4 py-1.5 text-sm font-medium text-zinc-900 bg-[#E3E3E3]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD] disabled:cursor-wait disabled:opacity-50 transition-all hover:bg-[#E3E3E3] active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1a1614] gap-2 ${wide ? 'w-full' : ''}`;
+  const twClassName = `relative inline-flex shrink-0 items-center justify-center cursor-pointer rounded-[8px] px-4 py-1.5 text-sm font-medium text-zinc-900 bg-[#E3E3E3]/80 shadow-[0_2px_4px_0_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.16),inset_0_1px_0_0_#FDFDFD] disabled:cursor-wait disabled:opacity-50 transition-all hover:bg-[#E3E3E3] active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1a1614] gap-2 ${wide ? 'w-full' : ''}`;
 
   if (href) {
     return (
