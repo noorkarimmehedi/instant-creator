@@ -1,11 +1,15 @@
 import { Badge } from "../ui/Badge";
 import { ContainerTextFlip } from "../ui/container-text-flip";
-import { PressButton } from "../ui/PressButton";
+import { Button } from "../ui/Button";
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden pt-20">
-      {/* Orange atmospheric glow */}
+    <section className="w-full px-4 pt-4 md:px-0 md:pt-0">
+      <div className="relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden rounded-[12px] md:rounded-none bg-[url('/hero-banner.png')] bg-cover bg-center bg-no-repeat pt-20 pb-16 md:pb-0">
+        {/* Foggy blend at bottom */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 md:h-64 bg-gradient-to-t from-[var(--canvas)] to-transparent" />
+
+        {/* Orange atmospheric glow */}
       <div
         className="pointer-events-none absolute top-1/3 left-1/2 h-[500px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full animate-[glow-pulse_7s_ease-in-out_infinite]"
         style={{ background: "radial-gradient(circle, var(--accent-orange-glow), transparent 70%)" }}
@@ -33,16 +37,17 @@ export function Hero() {
           Pay creators.
         </h1>
 
-        <p className="mt-6 text-lg text-charcoal max-w-xl mx-auto leading-relaxed animate-[fade-up_0.6s_ease-out_0.3s_both]">
+        <p className="mt-6 text-lg font-medium text-white drop-shadow-md max-w-xl mx-auto leading-relaxed animate-[fade-up_0.6s_ease-out_0.3s_both]">
           The only platform connecting Shopify brands with influencers in Bangladesh — with built-in RTO fraud detection, order tracking, and automated payouts.
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 animate-[fade-up_0.6s_ease-out_0.45s_both] sm:flex-row">
-          <PressButton href="/get-started" tone="creator">Start Free Trial</PressButton>
-          <PressButton href="#how-it-works" tone="ink">
+          <Button href="/get-started" variant="productActionLarge">Start Free Trial</Button>
+          <Button href="#how-it-works" variant="productActionLarge">
             See How It Works
-          </PressButton>
+          </Button>
         </div>
+      </div>
       </div>
     </section>
   );
