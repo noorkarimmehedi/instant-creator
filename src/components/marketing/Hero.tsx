@@ -7,7 +7,7 @@ export function Hero() {
     <section className="w-full px-4 pt-4 md:px-0 md:pt-0">
       <div className="relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden rounded-[12px] md:rounded-none bg-[url('/hero-banner.png')] bg-cover bg-center bg-no-repeat pt-20 pb-16 md:pb-0">
         {/* Foggy blend at bottom */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 md:h-64 bg-gradient-to-t from-[var(--canvas)] to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-48 md:h-64 bg-gradient-to-t from-[#fff7f3] dark:from-[#000000] to-transparent" />
 
         {/* Orange atmospheric glow */}
       <div
@@ -16,7 +16,7 @@ export function Hero() {
       />
 
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-        <div className="animate-[fade-up_0.6s_ease-out_both]">
+        <div className="animate-[fade-up_0.6s_ease-out_both] flex justify-center">
           <Badge dot>Bangladesh&apos;s First Influencer-Brand Marketplace</Badge>
         </div>
 
@@ -42,8 +42,8 @@ export function Hero() {
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 animate-[fade-up_0.6s_ease-out_0.45s_both] sm:flex-row">
-          <Button href="/get-started" variant="productActionLarge">Start Free Trial</Button>
-          <Button href="#how-it-works" variant="productActionLarge">
+          <Button href="/get-started" variant="productActionLarge" className="!bg-white/95 backdrop-blur-sm">Start Free Trial</Button>
+          <Button href="#how-it-works" variant="productActionLarge" className="!bg-white/95 backdrop-blur-sm">
             See How It Works
           </Button>
         </div>

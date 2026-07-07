@@ -24,7 +24,7 @@ function AnimatedNavLink({ href, children }: { href: string; children: React.Rea
 
 export function MiniNavbar({ links }: { links: NavLink[] }) {
   const [isOpen, setIsOpen] = useState(false);
-  const headerShapeClass = isOpen ? "rounded-2xl" : "rounded-full";
+  const headerShapeClass = isOpen ? "rounded-2xl" : "rounded-[12px] sm:rounded-full";
 
   return (
     <header
