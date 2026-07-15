@@ -5,6 +5,7 @@ import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { SwissCard } from "@/components/ui/SwissCard";
 import { CreatorOnboardingChecklist } from "./CreatorOnboardingChecklist";
+import { BlurReveal, BlurRevealItem } from "@/components/ui/BlurReveal";
 
 type OrderStat = { commission_amount: number | string | null; status: string | null };
 
@@ -33,22 +34,28 @@ export default async function CreatorDashboardPage() {
   return (
     <>
       <Topbar title="Creator Dashboard" />
-      <div className="p-4 sm:p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <SwissCard className="p-4">
-            <p className="text-xs text-mute uppercase tracking-wide">Total Orders</p>
-            <p className="mt-1 text-2xl font-medium text-ink">{String(totalOrders)}</p>
-          </SwissCard>
-          <SwissCard className="p-4">
-            <p className="text-xs text-mute uppercase tracking-wide">Pending Earnings</p>
-            <p className="mt-1 text-2xl font-medium text-ink">{formatBdt(pendingEarnings)}</p>
-          </SwissCard>
-          <SwissCard className="p-4">
-            <p className="text-xs text-mute uppercase tracking-wide">Total Paid</p>
-            <p className="mt-1 text-2xl font-medium text-ink">{formatBdt(paidEarnings)}</p>
-          </SwissCard>
-        </div>
-        <CreatorOnboardingChecklist onboardingStep={influencer.onboarding_step} />
+      <div className="p-4 sm:p-8 space-y-8">
+        <BlurReveal>
+          <BlurRevealItem>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <SwissCard className="p-4">
+                <p className="text-xs text-mute uppercase tracking-wide">Total Orders</p>
+                <p className="mt-1 text-2xl font-medium text-ink">{String(totalOrders)}</p>
+              </SwissCard>
+              <SwissCard className="p-4">
+                <p className="text-xs text-mute uppercase tracking-wide">Pending Earnings</p>
+                <p className="mt-1 text-2xl font-medium text-ink">{formatBdt(pendingEarnings)}</p>
+              </SwissCard>
+              <SwissCard className="p-4">
+                <p className="text-xs text-mute uppercase tracking-wide">Total Paid</p>
+                <p className="mt-1 text-2xl font-medium text-ink">{formatBdt(paidEarnings)}</p>
+              </SwissCard>
+            </div>
+          </BlurRevealItem>
+          <BlurRevealItem>
+            <CreatorOnboardingChecklist onboardingStep={influencer.onboarding_step} />
+          </BlurRevealItem>
+        </BlurReveal>
       </div>
     </>
   );
