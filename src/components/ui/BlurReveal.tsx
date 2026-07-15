@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion";
+import { motion } from "motion/react";
 
 const transition = { duration: 1, ease: [0.25, 0.1, 0.25, 1] };
 const variants = {
