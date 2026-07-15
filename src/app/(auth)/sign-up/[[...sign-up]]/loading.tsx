@@ -1,19 +1,19 @@
 export default function Loading() {
   return (
     <div className="flex items-center justify-center" role="status" aria-label="Loading sign-up">
-      <div className="relative h-14 w-14">
-        {Array.from({ length: 12 }).map((_, index) => (
-          <span
-            key={index}
-            className="absolute left-1/2 top-1/2 h-4 w-1 -translate-x-1/2 -translate-y-[1.625rem] rounded-full bg-ink animate-[spinner-fade_1.2s_linear_infinite] dark:bg-mute"
-            style={{
-              animationDelay: `${index * 0.1}s`,
-              transform: `translateX(-50%) rotate(${index * 30}deg) translateY(-1.625rem)`,
-              transformOrigin: "50% 1.625rem",
-            }}
-          />
-        ))}
-      </div>
+      <svg
+        className="h-5 w-5 animate-spin text-ink dark:text-mute"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-20" />
+        <path
+          d="M12 2a10 10 0 0 1 10 10"
+          stroke="currentColor"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+      </svg>
       <span className="sr-only">Loading sign-up</span>
     </div>
   );
