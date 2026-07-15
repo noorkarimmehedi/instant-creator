@@ -65,6 +65,7 @@
 }
 
 @theme inline {
+  --animate-fade-spin: fade-spin 1.2s linear infinite;
   --color-canvas: var(--canvas);
   --color-ink: var(--ink);
   --color-body: var(--body);
@@ -190,4 +191,9 @@ body {
 @keyframes spinner-fade {
   0% { opacity: 0.85; }
   100% { opacity: 0.16; }
+}
+
+@keyframes fade-spin {
+  0% { opacity: 0.15; }
+  100% { opacity: 1; }
 }
