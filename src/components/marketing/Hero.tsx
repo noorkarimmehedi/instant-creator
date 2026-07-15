@@ -42,7 +42,7 @@ export function Hero() {
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 animate-[fade-up_0.6s_ease-out_0.45s_both] sm:flex-row">
-          <Button href="/dashboard" variant="productActionLarge" className="!bg-white/95 backdrop-blur-sm">Start Free Trial</Button>
+          <Button href="/sign-up" variant="productActionLarge" className="!bg-white/95 backdrop-blur-sm">Start Free Trial</Button>
           <Button href="#how-it-works" variant="productActionLarge" className="!bg-white/95 backdrop-blur-sm">
             See How It Works
           </Button>

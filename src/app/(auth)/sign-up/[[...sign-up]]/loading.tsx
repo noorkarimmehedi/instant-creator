@@ -5,7 +5,7 @@ export default function Loading() {
         {Array.from({ length: 12 }).map((_, index) => (
           <span
             key={index}
-            className="absolute left-1/2 top-1/2 h-4 w-1 -translate-x-1/2 -translate-y-[1.625rem] rounded-full bg-ink opacity-20 motion-safe:animate-[spinner-fade_1.2s_linear_infinite] dark:bg-mute"
+            className="absolute left-1/2 top-1/2 h-4 w-1 -translate-x-1/2 -translate-y-[1.625rem] rounded-full bg-ink animate-[spinner-fade_1.2s_linear_infinite] dark:bg-mute"
             style={{
               animationDelay: `${index * 0.1}s`,
               transform: `translateX(-50%) rotate(${index * 30}deg) translateY(-1.625rem)`,
