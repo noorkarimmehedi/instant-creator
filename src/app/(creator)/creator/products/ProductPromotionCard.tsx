@@ -137,7 +137,7 @@ export function ProductPromotionCard({
           </p>
         </div>
 
-        <div className="mt-auto flex min-h-[184px] flex-col justify-end space-y-3">
+        <div className="mt-4 flex min-h-[184px] flex-col justify-end space-y-3">
           <div className="rounded-md border border-hairline bg-surface-elevated p-3 text-xs text-charcoal">
             <p>
               You earn <span className="font-medium text-ink">{product.commission_percentage ?? 0}%</span> commission
