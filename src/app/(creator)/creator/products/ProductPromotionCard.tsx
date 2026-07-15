@@ -137,7 +137,7 @@ export function ProductPromotionCard({
           </p>
         </div>
 
-        <div className="mt-auto space-y-3">
+        <div className="mt-auto flex min-h-[184px] flex-col justify-end space-y-3">
           <div className="rounded-md border border-hairline bg-surface-elevated p-3 text-xs text-charcoal">
             <p>
               You earn <span className="font-medium text-ink">{product.commission_percentage ?? 0}%</span> commission
@@ -160,6 +160,9 @@ export function ProductPromotionCard({
           ) : (
             <form action={formAction} className="space-y-2">
               <input type="hidden" name="product_id" value={product.id} />
+              <div className="rounded-md border border-dashed border-hairline bg-surface-elevated px-3 py-2 text-xs text-mute">
+                Generate a Shopify coupon to unlock the shareable link.
+              </div>
               <Button type="submit" variant="productAction" className="w-full">
                 {pending ? "Creating coupon…" : "Generate coupon"}
               </Button>
