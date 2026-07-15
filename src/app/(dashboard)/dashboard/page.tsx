@@ -4,6 +4,7 @@ import { getCachedBrand } from "@/lib/queries/brand";
 import { Topbar } from "@/components/dashboard/Topbar";
 import { StatsRow } from "@/components/dashboard/StatsRow";
 import { SetupChecklist } from "@/components/dashboard/SetupChecklist";
+import { BlurReveal, BlurRevealItem } from "@/components/ui/BlurReveal";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -15,9 +16,15 @@ export default async function DashboardPage() {
   return (
     <>
       <Topbar title="Dashboard" />
-      <div className="p-4 sm:p-8 space-y-8 animate-[fade-up_0.6s_ease-out_both]">
-        <StatsRow />
-        <SetupChecklist onboardingStep={onboardingStep} />
+      <div className="p-4 sm:p-8 space-y-8">
+        <BlurReveal>
+          <BlurRevealItem>
+            <StatsRow />
+          </BlurRevealItem>
+          <BlurRevealItem>
+            <SetupChecklist onboardingStep={onboardingStep} />
+          </BlurRevealItem>
+        </BlurReveal>
       </div>
     </>
   );
